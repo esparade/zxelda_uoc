@@ -17,26 +17,24 @@
 
 void main (void) {
     init_pantalla();
-
-    switch(modo_app) {
-        case 0:
-            render_menu();
-        break;
-        case 1:
-            render_mapa();
-        break;
-    }
+    cambiar_pantalla(PANTALLA_MENU);
 
     while(!zx_break()) { //hasta pulsar break
         switch(modo_app) {
-            case 0: //render_menu();
+            case PANTALLA_INTRO:
             break;
 
-            case 1:
+            case PANTALLA_MENU:
+            break;
+
+            case PANTALLA_JUEGO:
                 calculo_frame();
                 animacion_hero();
             break;
-    }
+
+            case PANTALLA_GAME_OVER:
+            break;
+        }
         teclado();
 
         wait_int();

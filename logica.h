@@ -6,10 +6,10 @@ void animacion_hero(void) {
         case 0:
             switch(anim) {
                 case 0:
-                    put_sprite_x16(anim1,hx*2,hy*2);
+                    put_sprite_x16(sprite_linkDownA,hx*2+MAPA_OX,hy*2+MAPA_OY);
                     break;
                 case 1:
-                    put_sprite_x16(anim2,hx*2,hy*2);
+                    put_sprite_x16(sprite_linkDownB,hx*2+MAPA_OX,hy*2+MAPA_OY);
                     break;
             }
             anim++;
@@ -22,10 +22,10 @@ void animacion_hero(void) {
         case 1:
             switch(anim) {
                 case 0:
-                    put_sprite_x16(anim1b,hx*2,hy*2);
+                    put_sprite_x16(sprite_linkUpA,hx*2+MAPA_OX,hy*2+MAPA_OY);
                     break;
                 case 1:
-                    put_sprite_x16(anim2b,hx*2,hy*2);
+                    put_sprite_x16(sprite_linkUpB,hx*2+MAPA_OX,hy*2+MAPA_OY);
                     break;
             }
             anim--;

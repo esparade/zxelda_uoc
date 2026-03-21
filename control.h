@@ -3,14 +3,33 @@
 
 int x8,y8;
 
+// Cambia al mapa adyacente en la direccion dada y coloca al heroe en el borde de entrada opuesto.
+void cambiar_mapa(unsigned char dir) {
+    unsigned char destino = get_mapa_conexion(mapa_actual, dir);
+    if (destino == 0) return;
+    mapa_actual = destino;
+    carga_datos_mapa();
+    switch(dir) {
+        // coloca al heroe en el borde opuesto al que salio
+        case DIR_DER: hx = 0;             break; // salio por derecha -> entra por izquierda
+        case DIR_IZQ: hx = ancho_mapa-1;  break; // salio por izquierda -> entra por derecha
+        case DIR_ABA: hy = 0;             break; // salio por abajo -> entra por arriba
+        case DIR_ARR: hy = alto_mapa-1;   break; // salio por arriba -> entra por abajo
+    }
+    calculo_frame();
+    render_mapa();
+    render_hero(hx*2, hy*2);
+}
+
 void control_teclas_juego (void) {
-    if ((port_in(64510)&1) == 0 && hy > 0) { //tecla Q
+    if ((port_in(64510)&1) == 0) { //tecla Q - arriba
+        if (hy == 0) { //borde superior - cambio mapa
+            cambiar_mapa(DIR_ARR);
+            return;
+        }
         if (mapa_trabajo[hmap-ancho_mapa] == 1) {
             return;
         }
-        //restaura_fondo_tile();
-        //hy--;
-        //calculo_frame();
         x8=hx*2;
         y8=(hy*2)-1;
         restaura_fondo_tile();
@@ -26,13 +45,14 @@ void control_teclas_juego (void) {
         return;
     }
 
-    if ((port_in(65022)&1) == 0 && hy < alto_mapa - 1) { //tecla A
+    if ((port_in(65022)&1) == 0) { //tecla A - abajo
+        if (hy == alto_mapa-1) { //borde inferior - cambio mapa
+            cambiar_mapa(DIR_ABA);
+            return;
+        }
         if (mapa_trabajo[hmap+ancho_mapa] == 1) {
             return;
         }
-        //restaura_fondo_tile();
-        //hy++;
-        //calculo_frame();
         x8=hx*2;
         y8=(hy*2)+1;
         restaura_fondo_tile();
@@ -49,11 +69,8 @@ void control_teclas_juego (void) {
     }
 
     if ((port_in(57342)&2) == 0) { //tecla O
-        if (hx == 0) { //cambio mapa izq
-            mapa_actual--;
-            carga_datos_mapa();
-            hx=ancho_mapa-1;
-            render_mapa();
+        if (hx == 0) { //borde izquierdo - cambio mapa
+            cambiar_mapa(DIR_IZQ);
             return;
         }
 
@@ -89,11 +106,8 @@ void control_teclas_juego (void) {
     }
 
     if ((port_in(57342)&1) == 0) { //tecla P
-        if (hx==ancho_mapa-1) { //cambio mapa der
-            mapa_actual++;
-            carga_datos_mapa();
-            hx=0;
-            render_mapa();
+        if (hx==ancho_mapa-1) { //borde derecho - cambio mapa
+            cambiar_mapa(DIR_DER);
             return;
         }
 
@@ -125,29 +139,41 @@ void control_teclas_juego (void) {
     }
 
     if ((port_in(61438)&1)==0) { //tecla 0 -> menu
-        modo_app=0;
-        cls(0);
-        render_menu();
+        cambiar_pantalla(PANTALLA_MENU);
+    }
+}
+
+void control_teclas_intro(void) {
+    if ((port_in(63486)&1)==0) { //tecla 1 -> menu
+        cambiar_pantalla(PANTALLA_MENU);
     }
 }
 
 void control_teclas_menu(void) {
     if ((port_in(63486)&1)==0) { //tecla 1 -> jugar
-        modo_app=1;
-        cls(0);
-        inicia_variables_juego();
-        render_mapa();
+        cambiar_pantalla(PANTALLA_JUEGO);
+    }
+}
+
+void control_teclas_game_over(void) {
+    if ((port_in(63486)&1)==0) { //tecla 1 -> menu
+        cambiar_pantalla(PANTALLA_MENU);
     }
 }
 
 void teclado(void) {
     switch(modo_app) {
-        case 0:
+        case PANTALLA_INTRO:
+            control_teclas_intro();
+        break;
+        case PANTALLA_MENU:
             control_teclas_menu();
         break;
-
-        case 1:
+        case PANTALLA_JUEGO:
             control_teclas_juego();
+        break;
+        case PANTALLA_GAME_OVER:
+            control_teclas_game_over();
         break;
     }
 }
