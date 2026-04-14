@@ -1,14 +1,13 @@
 // motorzx.h
 
-
-// Tabla de colores para un único valor de papel/tinta
+// - COLORES -
 // - TINTA -
 // NEGRO	0	00000000
 // AZUL		1	00000001
 // ROJO		2	00000010
 // MAGENTA	3	00000011
 // VERDE	4	00000100
-// AZULADO	5	00000101
+// TEAL		5	00000101
 // AMARILLO	6	00000110
 // BLANCO	7	00000111
 //
@@ -18,14 +17,37 @@
 // ROJO		16	00010000
 // MAGENTA	24	00011000
 // VERDE	32	00100000
-// AZULADO	40	00101000
+// TEAL		40	00101000
 // AMARILLO	48	00110000
 // BLANCO	56	00111000
-
+//
+// - FUNCIONES -
+// void cls (int color) //borrar la pantalla a un color
+// void delay (int delay) //pausa el programa
+// void port_out (int port, int value) //escribir en un puerto
+// int __FASTCALL__ port_in (int port) //leer un puerto
+// void wait_int (void) //interrupt CPU
+// void disable_int (void) //desactiva las interrupciones
+// void enable_int (void) //activa las interrupciones
+// void put_sprite_x16 (unsigned char *posicion, unsigned int x, unsigned int y) //muestra sprite 16x16 color
+// void put_sprite_x24 (unsigned char *posicion, unsigned int x, unsigned int y) //muestra sprite 24x24 color
+// void put_sprite_x32 (unsigned char *posicion, unsigned int x, unsigned int y) //muestra sprite 32x32 color
+// void put_sprite_16x24 (unsigned char *posicion, unsigned int x, unsigned int y) //muestra sprite 16x24 color
+// void put_sprite_24x32 (unsigned char *posicion, unsigned int x, unsigned int y) //muestra sprite 24x32 color
+// void put_sprite_32x16 (unsigned char *posicion, unsigned int x, unsigned int y) //muestra sprite de 32x16 color
+// void put_sprite_8x16 (unsigned char *posicion, unsigned int x, unsigned int y) //muestra sprite 8x16 color
+// void put_sprite_16x8 (unsigned char *posicion, unsigned int x, unsigned int y) //muestra sprite 16x8 color
+// void scroll_izquierda (unsigned int x, unsigned int y, unsigned int ancho, unsigned int alto) //scroll izquierda
+// void scroll_derecha (unsigned int x, unsigned int y, unsigned int ancho, unsigned int alto) //scroll derecha
+// void scroll_arriba (unsigned int x, unsigned int y, unsigned int ancho, unsigned int alto) //scroll arriba
+// void scroll_abajo (unsigned int x, unsigned int y, unsigned int ancho, unsigned int alto) //scroll abajo
+// put_partial1h_sprite_x16 (unsigned char *posicion, unsigned int x, unsigned int y) //muestra mitad izq sprite 16x16
+// put_partial2h_sprite_x16 (unsigned char *posicion, unsigned int x, unsigned int y) //muestra mitad der sprite 16x16
+// put_partial1v_sprite_x16 (unsigned char *posicion, unsigned int x, unsigned int y) //muestra mitad inf sprite 16x16
+// put_partial2v_sprite_x16 (unsigned char *posicion, unsigned int x, unsigned int y) //muestra mitad sup sprite 16x16
 
 // Borra la pantalla a un color
 // Usar como color la suma de valores de la tabla que hay al principio
-//____________________________________________________________________
 void cls (int color) {
     #asm
         ld hl,2         ;pasamos la variable de entrada al acumulador
@@ -45,8 +67,7 @@ void cls (int color) {
 	#endasm
 }
 
-// Delay, produce una pausa en el programa
-// _______________________________________
+//pausa en el programa
 void delay (int delay) {
     #asm
 	ld hl,2
@@ -69,8 +90,7 @@ void delay (int delay) {
 	#endasm
 }
 
-// Función para sacar un dato por un puerto
-// ________________________________________
+//escribir en un puerto
 void port_out (int port, int value) {
     #asm
     ld hl,2
@@ -85,8 +105,7 @@ void port_out (int port, int value) {
 	#endasm
 }
 
-// Función para leer un puerto
-// ___________________________
+//leer un puerto
 int __FASTCALL__ port_in (int port) {
     #asm
         ld      b, h
@@ -96,9 +115,7 @@ int __FASTCALL__ port_in (int port) {
 	#endasm
 }
 
-
-// Espera interrupción y para la CPU
-// _________________________________
+//interrupt CPU
 void wait_int (void) {
     #asm
         halt
@@ -106,7 +123,6 @@ void wait_int (void) {
 }
 
 // Desactiva las interrupciones
-// ____________________________
 void disable_int (void) {
     #asm
         di
@@ -114,7 +130,6 @@ void disable_int (void) {
 }
 
 // Activa las interrupciones
-// _________________________
 void enable_int (void) {
     #asm
         ei
@@ -122,17 +137,16 @@ void enable_int (void) {
 }
 
 // Posiciona un Sprite de 16x16 a color
-// ____________________________________
 void put_sprite_x16 (unsigned char *posicion, unsigned int x, unsigned int y) {
 	// -------------------------------------------
 	// RUTINA DE IMPRESION DE UN SPRITE 16x16 PIXELS
 	// CON ATRIBUTOS EN CUALQUIER POSICION DE CARACTER
 	// ENTRADAS:
-	// D será la posición del cursor vertical en caracteres
-	// E será la posición del cursor horizontal en caracteres
-	// HL es la posición de memoria donde tenemos el sprite
+	// D serï¿½ la posiciï¿½n del cursor vertical en caracteres
+	// E serï¿½ la posiciï¿½n del cursor horizontal en caracteres
+	// HL es la posiciï¿½n de memoria donde tenemos el sprite
 	// SALIDAS: se escribe en el mapa de pantalla
-	// ADVERTENCIAS: no comprueba límites de pantalla
+	// ADVERTENCIAS: no comprueba lï¿½mites de pantalla
 	// -------------------------------------------
 	#asm
 		ld hl,2			;pasamos la variable de entrada al acumulador
@@ -148,50 +162,50 @@ void put_sprite_x16 (unsigned char *posicion, unsigned int x, unsigned int y) {
         ld h, (hl)
         ld l, a
 		ld a, d		; recuperamos el valor vertical
-		and 7		; nos quedamos con la posición en el tercio
+		and 7		; nos quedamos con la posiciï¿½n en el tercio
 		rrca
 	    rrca
-	    rrca		; rotamos para dejar su valor en múltiplos de 32 (linea)
+	    rrca		; rotamos para dejar su valor en mï¿½ltiplos de 32 (linea)
 		and 224		; borramos el resto de bits por si las moscas
 		or e		; sumamos el valor horizontal
 		ld e, a		; e preparado
 		ld a, d
-		and 24		; modificamos según el tercio de pantalla
+		and 24		; modificamos segï¿½n el tercio de pantalla
 		or 64		; nos posicionamos a partir de 16384 (16384=64+0 en dos bytes)
-		ld d, a		; d preparado, ya tenemos la posición en pantalla
-		push de		; guardamos DE (la posición de pantalla)
+		ld d, a		; d preparado, ya tenemos la posiciï¿½n en pantalla
+		push de		; guardamos DE (la posiciï¿½n de pantalla)
 		push de
 		ld b, 8
 		ld c,255	; cargamos C con 255 para no afectar B con LDI
 		call draw
 		pop de		; recuperamos DE
-		ld a,e		; incrementamos una línea de caracteres (+32 bytes)
+		ld a,e		; incrementamos una lï¿½nea de caracteres (+32 bytes)
 		add a,32
-		ld e,a		; aquí finaliza la suma de 32 a E
+		ld e,a		; aquï¿½ finaliza la suma de 32 a E
 		jr nc, salto
 		ld a,d
 		add a,8
 		ld d,a
-		.salto		; aquí finaliza la suma de 32 a D
+		.salto		; aquï¿½ finaliza la suma de 32 a D
 		ld b, 8
 		ld c,255
 		call draw
 ; Ahora imprimimos los atributos
 		pop de		; recuperamos el valor horizontal
-		ld a,d		; calculamos el valor de posición en la pantalla
+		ld a,d		; calculamos el valor de posiciï¿½n en la pantalla
 	    rra
 	    rra
 	    rra         ; multiplicamos por 32
         and 3       ; nos quedamos con los tres bits bajos
         or 88       ; apuntamos al comienzo del mapa de atributos
         ld d,a      ; ya tenemos d listo, e no hay que cambiarlo
-        push de     ; guardamos la posición en pantalla
+        push de     ; guardamos la posiciï¿½n en pantalla
         ldi         ; imprimimos los colores de arriba
         ldi
-        pop de      ; recuperamos la posición de pantalla
-        ld a,e      ; incrementamos una línea de caracteres (+32 bytes)
+        pop de      ; recuperamos la posiciï¿½n de pantalla
+        ld a,e      ; incrementamos una lï¿½nea de caracteres (+32 bytes)
 		add a,32
-        ld e,a      ; aquí finaliza la suma de 32 a DE
+        ld e,a      ; aquï¿½ finaliza la suma de 32 a DE
 		ld a,d
 		adc a,0
 		ld d,a
@@ -211,17 +225,16 @@ void put_sprite_x16 (unsigned char *posicion, unsigned int x, unsigned int y) {
 }
 
 // Posiciona un Sprite de 24x24 a color
-// ____________________________________
 void put_sprite_x24 (unsigned char *posicion, unsigned int x, unsigned int y) {
 	// -------------------------------------------
 	// RUTINA DE IMPRESION DE UN SPRITE 24x24 PIXELS
 	// CON ATRIBUTOS EN CUALQUIER POSICION DE CARACTER
 	// ENTRADAS:
-	// D será la posición del cursor vertical en caracteres
-	// E será la posición del cursor horizontal en caracteres
-	// HL es la posición de memoria donde tenemos el sprite
+	// D serï¿½ la posiciï¿½n del cursor vertical en caracteres
+	// E serï¿½ la posiciï¿½n del cursor horizontal en caracteres
+	// HL es la posiciï¿½n de memoria donde tenemos el sprite
 	// SALIDAS: se escribe en el mapa de pantalla
-	// ADVERTENCIAS: no comprueba límites de pantalla
+	// ADVERTENCIAS: no comprueba lï¿½mites de pantalla
 	// -------------------------------------------
 	#asm
 		ld hl,2			;pasamos la variable de entrada al acumulador
@@ -237,75 +250,75 @@ void put_sprite_x24 (unsigned char *posicion, unsigned int x, unsigned int y) {
         ld h, (hl)
         ld l, a
 		ld a, d		; recuperamos el valor vertical
-		and 7		; nos quedamos con la posición en el tercio
+		and 7		; nos quedamos con la posiciï¿½n en el tercio
 		rrca
         rrca
-        rrca        ; rotamos para dejar su valor en múltiplos de 32 (linea)
+        rrca        ; rotamos para dejar su valor en mï¿½ltiplos de 32 (linea)
 		and 224		; borramos el resto de bits por si las moscas
 		or e		; sumamos el valor horizontal
 		ld e, a		; e preparado
 		ld a, d
-		and 24		; modificamos según el tercio de pantalla
+		and 24		; modificamos segï¿½n el tercio de pantalla
 		or 64		; nos posicionamos a partir de 16384 (16384=64+0 en dos bytes)
-		ld d, a		; d preparado, ya tenemos la posición en pantalla
-		push de		; guardamos DE (la posición de pantalla)
+		ld d, a		; d preparado, ya tenemos la posiciï¿½n en pantalla
+		push de		; guardamos DE (la posiciï¿½n de pantalla)
 		push de
 		ld b, 8
 		ld c,255	; cargamos C con 255 para no afectar B con LDI
 		call draw2
 		pop de		; recuperamos DE
-		ld a,e		; incrementamos una línea de caracteres (+32 bytes)
+		ld a,e		; incrementamos una lï¿½nea de caracteres (+32 bytes)
 		add a,32
-		ld e,a		; aquí finaliza la suma de 32 a E
+		ld e,a		; aquï¿½ finaliza la suma de 32 a E
 		jr nc, salto2
 		ld a,d
 		add a,8
 		ld d,a
-		.salto2		; aquí finaliza la suma de 32 a D
+		.salto2		; aquï¿½ finaliza la suma de 32 a D
 		push de		; guardamos DE
 		ld b, 8
 		call draw2
 		pop de		; recuperamos DE
-		ld a,e		; incrementamos una línea de caracteres (+32 bytes)
+		ld a,e		; incrementamos una lï¿½nea de caracteres (+32 bytes)
 		add a,32
-		ld e,a		; aquí finaliza la suma de 32 a E
+		ld e,a		; aquï¿½ finaliza la suma de 32 a E
 		jr nc, salto3
 		ld a,d
 		add a,8
 		ld d,a
-		.salto3     ; aquí finaliza la suma de 32 a D
+		.salto3     ; aquï¿½ finaliza la suma de 32 a D
 		ld b, 8
 		call draw2
 ; Ahora imprimimos los atributos
         pop de		; recuperamos el valor horizontal
-		ld a,d		; calculamos el valor de posición en la pantalla
+		ld a,d		; calculamos el valor de posiciï¿½n en la pantalla
         rra
         rra
         rra         ; multiplicamos por 32
         and 3		; nos quedamos con los tres bits bajos
         or 88		; apuntamos al comienzo del mapa de atributos
         ld d,a      ; ya tenemos d listo, e no hay que cambiarlo
-		push de		; guardamos la posición en pantalla
+		push de		; guardamos la posiciï¿½n en pantalla
 		ldi         ; imprimimos los colores de arriba
 		ldi
 		ldi
-		pop de		; recuperamos la posición de pantalla
-		ld a,e		; incrementamos una línea de caracteres (+32 bytes)
+		pop de		; recuperamos la posiciï¿½n de pantalla
+		ld a,e		; incrementamos una lï¿½nea de caracteres (+32 bytes)
 		add a,32
 		ld e,a
 		ld a,d
-		adc a,0		; aquí finaliza la suma de 32 a DE
+		adc a,0		; aquï¿½ finaliza la suma de 32 a DE
 		ld d,a
 		push de		; guardamos DE
 		ldi         ; ponemos los colores de abajo
 		ldi
 		ldi
-		pop de		; recuperamos la posición de pantalla
-		ld a,e		; incrementamos una línea de caracteres (+32 bytes)
+		pop de		; recuperamos la posiciï¿½n de pantalla
+		ld a,e		; incrementamos una lï¿½nea de caracteres (+32 bytes)
 		add a,32
 		ld e,a
 		ld a,d
-		adc a,0		;aquí finaliza la suma de 32 a DE
+		adc a,0		;aquï¿½ finaliza la suma de 32 a DE
 		ld d,a
 		ldi         ;ponemos los colores de abajo
 		ldi
@@ -326,17 +339,16 @@ void put_sprite_x24 (unsigned char *posicion, unsigned int x, unsigned int y) {
 }
 
 // Posiciona un Sprite de 32x32 a color
-// ____________________________________
 void put_sprite_x32 (unsigned char *posicion, unsigned int x, unsigned int y) {
 	// -------------------------------------------
 	// RUTINA DE IMPRESION DE UN SPRITE 32x32 PIXELS
 	// CON ATRIBUTOS EN CUALQUIER POSICION DE CARACTER
 	// ENTRADAS:
-	// D será la posición del cursor vertical en caracteres
-	// E será la posición del cursor horizontal en caracteres
-	// HL es la posición de memoria donde tenemos el sprite
+	// D serï¿½ la posiciï¿½n del cursor vertical en caracteres
+	// E serï¿½ la posiciï¿½n del cursor horizontal en caracteres
+	// HL es la posiciï¿½n de memoria donde tenemos el sprite
 	// SALIDAS: se escribe en el mapa de pantalla
-	// ADVERTENCIAS: no comprueba límites de pantalla
+	// ADVERTENCIAS: no comprueba lï¿½mites de pantalla
 	// -------------------------------------------
 	#asm
 		ld hl,2			;pasamos la variable de entrada al acumulador
@@ -352,101 +364,101 @@ void put_sprite_x32 (unsigned char *posicion, unsigned int x, unsigned int y) {
         ld h, (hl)
         ld l, a
 		ld a, d		; recuperamos el valor vertical
-		and 7		; nos quedamos con la posición en el tercio
+		and 7		; nos quedamos con la posiciï¿½n en el tercio
 		rrca
         rrca
-        rrca		; rotamos para dejar su valor en múltiplos de 32 (linea)
+        rrca		; rotamos para dejar su valor en mï¿½ltiplos de 32 (linea)
 		and 224		; borramos el resto de bits por si las moscas
 		or e		; sumamos el valor horizontal
 		ld e, a		; e preparado
 		ld a, d
-		and 24		; modificamos según el tercio de pantalla
+		and 24		; modificamos segï¿½n el tercio de pantalla
 		or 64		; nos posicionamos a partir de 16384 (16384=64+0 en dos bytes)
-		ld d, a		; d preparado, ya tenemos la posición en pantalla
-		push de		; guardamos DE (la posición de pantalla)
+		ld d, a		; d preparado, ya tenemos la posiciï¿½n en pantalla
+		push de		; guardamos DE (la posiciï¿½n de pantalla)
 		push de
 		ld b, 8
 		ld c,255	; cargamos C con 255 para no afectar B con LDI
 		call draw3
 		pop de		; recuperamos DE
-		ld a,e		; incrementamos una línea de caracteres (+32 bytes)
+		ld a,e		; incrementamos una lï¿½nea de caracteres (+32 bytes)
 		add a,32
-		ld e,a		; aquí finaliza la suma de 32 a E
+		ld e,a		; aquï¿½ finaliza la suma de 32 a E
 		jr nc, salto4
 		ld a,d
 		add a,8
 		ld d,a
-		.salto4		; aquí finaliza la suma de 32 a D
+		.salto4		; aquï¿½ finaliza la suma de 32 a D
 		push de		; guardamos DE
 		ld b, 8
 		call draw3
 		pop de		; recuperamos DE
-		ld a,e		; incrementamos una línea de caracteres (+32 bytes)
+		ld a,e		; incrementamos una lï¿½nea de caracteres (+32 bytes)
 		add a,32
-		ld e,a		; aquí finaliza la suma de 32 a E
+		ld e,a		; aquï¿½ finaliza la suma de 32 a E
 		jr nc, salto5
 		ld a,d
 		add a,8
 		ld d,a
-		.salto5		; aquí finaliza la suma de 32 a D
+		.salto5		; aquï¿½ finaliza la suma de 32 a D
 		push de		; guardamos DE
 		ld b, 8
 		call draw3
 		pop de		; recuperamos DE
-		ld a,e		; incrementamos una línea de caracteres (+32 bytes)
+		ld a,e		; incrementamos una lï¿½nea de caracteres (+32 bytes)
 		add a,32
-		ld e,a		; aquí finaliza la suma de 32 a E
+		ld e,a		; aquï¿½ finaliza la suma de 32 a E
 		jr nc, salto6
 		ld a,d
 		add a,8
 		ld d,a
-		.salto6		; aquí finaliza la suma de 32 a D
+		.salto6		; aquï¿½ finaliza la suma de 32 a D
 		ld b, 8
 		call draw3
 ; Ahora imprimimos los atributos
 		pop de		; recuperamos el valor horizontal
-		ld a,d		; calculamos el valor de posición en la pantalla
+		ld a,d		; calculamos el valor de posiciï¿½n en la pantalla
         rra
         rra
         rra         ; multiplicamos por 32
         and 3       ; nos quedamos con los tres bits bajos
         or 88       ; apuntamos al comienzo del mapa de atributos
         ld d,a      ; ya tenemos d listo, e no hay que cambiarlo
-		push de		; guardamos la posición en pantalla
+		push de		; guardamos la posiciï¿½n en pantalla
 		ldi         ; imprimimos los colores de arriba
 		ldi
 		ldi
 		ldi
-		pop de		; recuperamos la posición de pantalla
-		ld a,e		; incrementamos una línea de caracteres (+32 bytes)
+		pop de		; recuperamos la posiciï¿½n de pantalla
+		ld a,e		; incrementamos una lï¿½nea de caracteres (+32 bytes)
 		add a,32
 		ld e,a
 		ld a,d
-		adc a,0		; aquí finaliza la suma de 32 a DE
+		adc a,0		; aquï¿½ finaliza la suma de 32 a DE
 		ld d,a
 		push de		; guardamos DE
 		ldi         ; ponemos los colores de abajo
 		ldi
 		ldi
 		ldi
-		pop de		; recuperamos la posición de pantalla
-		ld a,e		; incrementamos una línea de caracteres (+32 bytes)
+		pop de		; recuperamos la posiciï¿½n de pantalla
+		ld a,e		; incrementamos una lï¿½nea de caracteres (+32 bytes)
 		add a,32
 		ld e,a
 		ld a,d
-		adc a,0		; aquí finaliza la suma de 32 a DE
+		adc a,0		; aquï¿½ finaliza la suma de 32 a DE
 		ld d,a
 		push de		; guardamos DE
 		ldi         ; ponemos los colores de abajo
 		ldi
 		ldi
 		ldi
-		pop de		; recuperamos la posición de pantalla
-		ld a,e		; incrementamos una línea de caracteres (+32 bytes)
+		pop de		; recuperamos la posiciï¿½n de pantalla
+		ld a,e		; incrementamos una lï¿½nea de caracteres (+32 bytes)
 		add a,32
 		ld e,a
 		ld a,d
-		adc a,0		; aquí finaliza la suma de 32 a DE
+		adc a,0		; aquï¿½ finaliza la suma de 32 a DE
 		ld d,a
 		ldi         ; ponemos los colores de abajo
 		ldi
@@ -470,17 +482,16 @@ void put_sprite_x32 (unsigned char *posicion, unsigned int x, unsigned int y) {
 }
 
 // Posiciona un Sprite de 16x24 a color
-// ___________________________________________
 void put_sprite_16x24 (unsigned char *posicion, unsigned int x, unsigned int y) {
 	// -------------------------------------------
 	// RUTINA DE IMPRESION DE UN SPRITE 16x24 PIXELS
 	// CON ATRIBUTOS EN CUALQUIER POSICION DE CARACTER
 	// ENTRADAS:
-	// D será la posición del cursor vertical en caracteres
-	// E será la posición del cursor horizontal en caracteres
-	// HL es la posición de memoria donde tenemos el sprite
+	// D serï¿½ la posiciï¿½n del cursor vertical en caracteres
+	// E serï¿½ la posiciï¿½n del cursor horizontal en caracteres
+	// HL es la posiciï¿½n de memoria donde tenemos el sprite
 	// SALIDAS: se escribe en el mapa de pantalla
-	// ADVERTENCIAS: no comprueba límites de pantalla
+	// ADVERTENCIAS: no comprueba lï¿½mites de pantalla
 	// -------------------------------------------
 	#asm
 		ld hl,2			;pasamos la variable de entrada al acumulador
@@ -496,73 +507,73 @@ void put_sprite_16x24 (unsigned char *posicion, unsigned int x, unsigned int y) 
         ld h, (hl)
         ld l, a
 		ld a, d		; recuperamos el valor vertical
-		and 7		; nos quedamos con la posición en el tercio
+		and 7		; nos quedamos con la posiciï¿½n en el tercio
 		rrca
         rrca
-        rrca		; rotamos para dejar su valor en múltiplos de 32 (linea)
+        rrca		; rotamos para dejar su valor en mï¿½ltiplos de 32 (linea)
 		and 224		; borramos el resto de bits por si las moscas
 		or e		; sumamos el valor horizontal
 		ld e, a		; e preparado
 		ld a, d
-		and 24		; modificamos según el tercio de pantalla
+		and 24		; modificamos segï¿½n el tercio de pantalla
 		or 64		; nos posicionamos a partir de 16384 (16384=64+0 en dos bytes)
-		ld d, a		; d preparado, ya tenemos la posición en pantalla
-		push de		; guardamos DE (la posición de pantalla)
+		ld d, a		; d preparado, ya tenemos la posiciï¿½n en pantalla
+		push de		; guardamos DE (la posiciï¿½n de pantalla)
 		push de
 		ld b, 8
 		ld c,255	; cargamos C con 255 para no afectar B con LDI
 		call draw4
 		pop de		; recuperamos DE
-		ld a,e		; incrementamos una línea de caracteres (+32 bytes)
+		ld a,e		; incrementamos una lï¿½nea de caracteres (+32 bytes)
 		add a,32
-		ld e,a		; aquí finaliza la suma de 32 a E
+		ld e,a		; aquï¿½ finaliza la suma de 32 a E
 		jr nc, salto7
 		ld a,d
 		add a,8
 		ld d,a
-		.salto7		; aquí finaliza la suma de 32 a D
+		.salto7		; aquï¿½ finaliza la suma de 32 a D
 		push de		; guardamos DE
 		ld b, 8
 		call draw4
 		pop de		; recuperamos DE
-		ld a,e		; incrementamos una línea de caracteres (+32 bytes)
+		ld a,e		; incrementamos una lï¿½nea de caracteres (+32 bytes)
 		add a,32
-		ld e,a		; aquí finaliza la suma de 32 a E
+		ld e,a		; aquï¿½ finaliza la suma de 32 a E
 		jr nc, salto8
 		ld a,d
 		add a,8
 		ld d,a
-		.salto8		; aquí finaliza la suma de 32 a D
+		.salto8		; aquï¿½ finaliza la suma de 32 a D
 		ld b, 8
 		call draw4
          ; Ahora imprimimos los atributos
 		pop de		; recuperamos el valor horizontal
-		ld a,d		; calculamos el valor de posición en la pantalla
+		ld a,d		; calculamos el valor de posiciï¿½n en la pantalla
         rra
         rra
         rra         ; multiplicamos por 32
         and 3		; nos quedamos con los tres bits bajos
         or 88		; apuntamos al comienzo del mapa de atributos
         ld d,a      ; ya tenemos d listo, e no hay que cambiarlo
-		push de		; guardamos la posición en pantalla
+		push de		; guardamos la posiciï¿½n en pantalla
 		ldi         ; imprimimos los colores de arriba
 		ldi
-		pop de		; recuperamos la posición de pantalla
-		ld a,e		; incrementamos una línea de caracteres (+32 bytes)
+		pop de		; recuperamos la posiciï¿½n de pantalla
+		ld a,e		; incrementamos una lï¿½nea de caracteres (+32 bytes)
 		add a,32
 		ld e,a
 		ld a,d
-		adc a,0		; aquí finaliza la suma de 32 a DE
+		adc a,0		; aquï¿½ finaliza la suma de 32 a DE
 		ld d,a
 		push de		; guardamos DE
 		ldi         ; ponemos los colores de abajo
 		ldi
-		pop de		; recuperamos la posición de pantalla
-		ld a,e		; incrementamos una línea de caracteres (+32 bytes)
+		pop de		; recuperamos la posiciï¿½n de pantalla
+		ld a,e		; incrementamos una lï¿½nea de caracteres (+32 bytes)
 		add a,32
 		ld e,a
 		ld a,d
-		adc a,0		; aquí finaliza la suma de 32 a DE
+		adc a,0		; aquï¿½ finaliza la suma de 32 a DE
 		ld d,a
 		ldi         ; ponemos los colores de abajo
 		ldi
@@ -580,17 +591,16 @@ void put_sprite_16x24 (unsigned char *posicion, unsigned int x, unsigned int y) 
 }
 
 // Posiciona un Sprite de 24x32 a color
-// ___________________________________________
 void put_sprite_24x32 (unsigned char *posicion, unsigned int x, unsigned int y) {
 	// -------------------------------------------
 	// RUTINA DE IMPRESION DE UN SPRITE 24x32 PIXELS
 	// CON ATRIBUTOS EN CUALQUIER POSICION DE CARACTER
 	// ENTRADAS:
-	// D será la posición del cursor vertical en caracteres
-	// E será la posición del cursor horizontal en caracteres
-	// HL es la posición de memoria donde tenemos el sprite
+	// D serï¿½ la posiciï¿½n del cursor vertical en caracteres
+	// E serï¿½ la posiciï¿½n del cursor horizontal en caracteres
+	// HL es la posiciï¿½n de memoria donde tenemos el sprite
 	// SALIDAS: se escribe en el mapa de pantalla
-	// ADVERTENCIAS: no comprueba límites de pantalla
+	// ADVERTENCIAS: no comprueba lï¿½mites de pantalla
 	// -------------------------------------------
 	#asm
 		ld hl,2			;pasamos la variable de entrada al acumulador
@@ -606,98 +616,98 @@ void put_sprite_24x32 (unsigned char *posicion, unsigned int x, unsigned int y) 
         ld h, (hl)
         ld l, a
 		ld a, d		; recuperamos el valor vertical
-		and 7		; nos quedamos con la posición en el tercio
+		and 7		; nos quedamos con la posiciï¿½n en el tercio
 		rrca
         rrca
-        rrca		; rotamos para dejar su valor en múltiplos de 32 (linea)
+        rrca		; rotamos para dejar su valor en mï¿½ltiplos de 32 (linea)
 		and 224		; borramos el resto de bits por si las moscas
 		or e		; sumamos el valor horizontal
 		ld e, a		; e preparado
 		ld a, d
-		and 24		; modificamos según el tercio de pantalla
+		and 24		; modificamos segï¿½n el tercio de pantalla
 		or 64		; nos posicionamos a partir de 16384 (16384=64+0 en dos bytes)
-		ld d, a		; d preparado, ya tenemos la posición en pantalla
-		push de		; guardamos DE (la posición de pantalla)
+		ld d, a		; d preparado, ya tenemos la posiciï¿½n en pantalla
+		push de		; guardamos DE (la posiciï¿½n de pantalla)
 		push de
 		ld b, 8
 		ld c,255	; cargamos C con 255 para no afectar B con LDI
 		call draw5
 		pop de		; recuperamos DE
-		ld a,e		; incrementamos una línea de caracteres (+32 bytes)
+		ld a,e		; incrementamos una lï¿½nea de caracteres (+32 bytes)
 		add a,32
-		ld e,a		; aquí finaliza la suma de 32 a E
+		ld e,a		; aquï¿½ finaliza la suma de 32 a E
 		jr nc, salto9
 		ld a,d
 		add a,8
 		ld d,a
-		.salto9		; aquí finaliza la suma de 32 a D
+		.salto9		; aquï¿½ finaliza la suma de 32 a D
 		push de		; guardamos DE
 		ld b, 8
 		call draw5
 		pop de		; recuperamos DE
-		ld a,e		; incrementamos una línea de caracteres (+32 bytes)
+		ld a,e		; incrementamos una lï¿½nea de caracteres (+32 bytes)
 		add a,32
-		ld e,a		; aquí finaliza la suma de 32 a E
+		ld e,a		; aquï¿½ finaliza la suma de 32 a E
 		jr nc, salto10
 		ld a,d
 		add a,8
 		ld d,a
-		.salto10	; aquí finaliza la suma de 32 a D
+		.salto10	; aquï¿½ finaliza la suma de 32 a D
 		push de		; guardamos DE
 		ld b, 8
 		call draw5
 		pop de		; recuperamos DE
-		ld a,e		; incrementamos una línea de caracteres (+32 bytes)
+		ld a,e		; incrementamos una lï¿½nea de caracteres (+32 bytes)
 		add a,32
-		ld e,a		; aquí finaliza la suma de 32 a E
+		ld e,a		; aquï¿½ finaliza la suma de 32 a E
 		jr nc, salto11
 		ld a,d
 		add a,8
 		ld d,a
-		.salto11	; aquí finaliza la suma de 32 a D
+		.salto11	; aquï¿½ finaliza la suma de 32 a D
 		ld b, 8
 		call draw5
 ; Ahora imprimimos los atributos
 		pop de		; recuperamos el valor horizontal
-		ld a,d		; calculamos el valor de posición en la pantalla
+		ld a,d		; calculamos el valor de posiciï¿½n en la pantalla
         rra
         rra
         rra         ; multiplicamos por 32
         and 3		; nos quedamos con los tres bits bajos
         or 88		; apuntamos al comienzo del mapa de atributos
         ld d,a      ; ya tenemos d listo, e no hay que cambiarlo
-		push de		; guardamos la posición en pantalla
+		push de		; guardamos la posiciï¿½n en pantalla
 		ldi         ; imprimimos los colores de arriba
 		ldi
 		ldi
-		pop de		; recuperamos la posición de pantalla
-		ld a,e		; incrementamos una línea de caracteres (+32 bytes)
+		pop de		; recuperamos la posiciï¿½n de pantalla
+		ld a,e		; incrementamos una lï¿½nea de caracteres (+32 bytes)
 		add a,32
 		ld e,a
 		ld a,d
-		adc a,0		; aquí finaliza la suma de 32 a DE
+		adc a,0		; aquï¿½ finaliza la suma de 32 a DE
 		ld d,a
 		push de		; guardamos DE
 		ldi         ; ponemos los colores de abajo
 		ldi
 		ldi
-		pop de		; recuperamos la posición de pantalla
-		ld a,e		; incrementamos una línea de caracteres (+32 bytes)
+		pop de		; recuperamos la posiciï¿½n de pantalla
+		ld a,e		; incrementamos una lï¿½nea de caracteres (+32 bytes)
 		add a,32
 		ld e,a
 		ld a,d
-		adc a,0		; aquí finaliza la suma de 32 a DE
+		adc a,0		; aquï¿½ finaliza la suma de 32 a DE
 		ld d,a
 		push de		; guardamos DE
 		ldi         ; ponemos los colores de abajo
 		ldi
 		ldi
-		pop de		; recuperamos la posición de pantalla
-		ld a,e		; incrementamos una línea de caracteres (+32 bytes)
+		pop de		; recuperamos la posiciï¿½n de pantalla
+		ld a,e		; incrementamos una lï¿½nea de caracteres (+32 bytes)
 		add a,32
 		ld e,a
 		ld a,d
-		adc a,0		; aquí finaliza la suma de 32 a DE
+		adc a,0		; aquï¿½ finaliza la suma de 32 a DE
 		ld d,a
 		ldi         ; ponemos los colores de abajo
 		ldi
@@ -718,17 +728,16 @@ void put_sprite_24x32 (unsigned char *posicion, unsigned int x, unsigned int y) 
 }
 
 // Posiciona un Sprite de 32x16 a color
-// ____________________________________
 void put_sprite_32x16 (unsigned char *posicion, unsigned int x, unsigned int y) {
 	// -------------------------------------------
 	// RUTINA DE IMPRESION DE UN SPRITE 32x16 PIXELS
 	// CON ATRIBUTOS EN CUALQUIER POSICION DE CARACTER
 	// ENTRADAS:
-	// D será la posición del cursor vertical en caracteres
-	// E será la posición del cursor horizontal en caracteres
-	// HL es la posición de memoria donde tenemos el sprite
+	// D serï¿½ la posiciï¿½n del cursor vertical en caracteres
+	// E serï¿½ la posiciï¿½n del cursor horizontal en caracteres
+	// HL es la posiciï¿½n de memoria donde tenemos el sprite
 	// SALIDAS: se escribe en el mapa de pantalla
-	// ADVERTENCIAS: no comprueba límites de pantalla
+	// ADVERTENCIAS: no comprueba lï¿½mites de pantalla
 	// -------------------------------------------
 	#asm
 		ld hl,2			;pasamos la variable de entrada al acumulador
@@ -744,53 +753,53 @@ void put_sprite_32x16 (unsigned char *posicion, unsigned int x, unsigned int y) 
         ld h, (hl)
         ld l, a
 		ld a, d		; recuperamos el valor vertical
-		and 7		; nos quedamos con la posición en el tercio
+		and 7		; nos quedamos con la posiciï¿½n en el tercio
 		rrca
         rrca
-        rrca		; rotamos para dejar su valor en múltiplos de 32 (linea)
+        rrca		; rotamos para dejar su valor en mï¿½ltiplos de 32 (linea)
 		and 224		; borramos el resto de bits por si las moscas
 		or e		; sumamos el valor horizontal
 		ld e, a		; e preparado
 		ld a, d
-		and 24		; modificamos según el tercio de pantalla
+		and 24		; modificamos segï¿½n el tercio de pantalla
 		or 64		; nos posicionamos a partir de 16384 (16384=64+0 en dos bytes)
-		ld d, a		; d preparado, ya tenemos la posición en pantalla
-		push de		; guardamos DE (la posición de pantalla)
+		ld d, a		; d preparado, ya tenemos la posiciï¿½n en pantalla
+		push de		; guardamos DE (la posiciï¿½n de pantalla)
 		push de
 		ld b, 8
 		ld c,255	; cargamos C con 255 para no afectar B con LDI
 		call draw6
 		pop de		; recuperamos DE
-		ld a,e		; incrementamos una línea de caracteres (+32 bytes)
+		ld a,e		; incrementamos una lï¿½nea de caracteres (+32 bytes)
 		add a,32
-		ld e,a		; aquí finaliza la suma de 32 a E
+		ld e,a		; aquï¿½ finaliza la suma de 32 a E
 		jr nc, salto12
 		ld a,d
 		add a,8
 		ld d,a
-		.salto12	; aquí finaliza la suma de 32 a D
+		.salto12	; aquï¿½ finaliza la suma de 32 a D
 		ld b, 8
 		call draw6
         ; Ahora imprimimos los atributos
 		pop de		; recuperamos el valor horizontal
-		ld a,d		; calculamos el valor de posición en la pantalla
+		ld a,d		; calculamos el valor de posiciï¿½n en la pantalla
         rra
         rra
         rra		; multiplicamos por 32
         and 3		; nos quedamos con los tres bits bajos
         or 88		; apuntamos al comienzo del mapa de atributos
         ld d,a          ; ya tenemos d listo, e no hay que cambiarlo
-		push de		; guardamos la posición en pantalla
+		push de		; guardamos la posiciï¿½n en pantalla
 		ldi		; imprimimos los colores de arriba
 		ldi
 		ldi
 		ldi
-		pop de		; recuperamos la posición de pantalla
-		ld a,e		; incrementamos una línea de caracteres (+32 bytes)
+		pop de		; recuperamos la posiciï¿½n de pantalla
+		ld a,e		; incrementamos una lï¿½nea de caracteres (+32 bytes)
 		add a,32
 		ld e,a
 		ld a,d
-		adc a,0		; aquí finaliza la suma de 32 a DE
+		adc a,0		; aquï¿½ finaliza la suma de 32 a DE
 		ld d,a
 		ldi		; ponemos los colores de abajo
 		ldi
@@ -814,17 +823,16 @@ void put_sprite_32x16 (unsigned char *posicion, unsigned int x, unsigned int y) 
 }
 
 // Posiciona un Sprite de 8x16 a color
-// ___________________________________
 void put_sprite_8x16 (unsigned char *posicion, unsigned int x, unsigned int y) {
 	// -------------------------------------------
 	// RUTINA DE IMPRESION DE UN SPRITE 8x16 PIXELS
 	// CON ATRIBUTOS EN CUALQUIER POSICION DE CARACTER
 	// ENTRADAS:
-	// D será la posición del cursor vertical en caracteres
-	// E será la posición del cursor horizontal en caracteres
-	// HL es la posición de memoria donde tenemos el sprite
+	// D serï¿½ la posiciï¿½n del cursor vertical en caracteres
+	// E serï¿½ la posiciï¿½n del cursor horizontal en caracteres
+	// HL es la posiciï¿½n de memoria donde tenemos el sprite
 	// SALIDAS: se escribe en el mapa de pantalla
-	// ADVERTENCIAS: no comprueba límites de pantalla
+	// ADVERTENCIAS: no comprueba lï¿½mites de pantalla
 	// -------------------------------------------
 	#asm
 		ld hl,2			;pasamos la variable de entrada al acumulador
@@ -840,48 +848,48 @@ void put_sprite_8x16 (unsigned char *posicion, unsigned int x, unsigned int y) {
         ld h, (hl)
         ld l, a
 		ld a, d		; recuperamos el valor vertical
-		and 7		; nos quedamos con la posición en el tercio
+		and 7		; nos quedamos con la posiciï¿½n en el tercio
 		rrca
         rrca
-        rrca		; rotamos para dejar su valor en múltiplos de 32 (linea)
+        rrca		; rotamos para dejar su valor en mï¿½ltiplos de 32 (linea)
 		and 224		; borramos el resto de bits por si las moscas
 		or e		; sumamos el valor horizontal
 		ld e, a		; e preparado
 		ld a, d
-		and 24		; modificamos según el tercio de pantalla
+		and 24		; modificamos segï¿½n el tercio de pantalla
 		or 64		; nos posicionamos a partir de 16384 (16384=64+0 en dos bytes)
-		ld d, a		; d preparado, ya tenemos la posición en pantalla
-		push de		; guardamos DE (la posición de pantalla)
+		ld d, a		; d preparado, ya tenemos la posiciï¿½n en pantalla
+		push de		; guardamos DE (la posiciï¿½n de pantalla)
 		push de
 		ld b, 8
 		ld c,255	; cargamos C con 255 para no afectar B con LDI
 		call draw7
 		pop de		; recuperamos DE
-		ld a,e		; incrementamos una línea de caracteres (+32 bytes)
+		ld a,e		; incrementamos una lï¿½nea de caracteres (+32 bytes)
 		add a,32
-		ld e,a		; aquí finaliza la suma de 32 a E
+		ld e,a		; aquï¿½ finaliza la suma de 32 a E
 		jr nc, salto13
 		ld a,d
 		add a,8
 		ld d,a
-		.salto13	; aquí finaliza la suma de 32 a D
+		.salto13	; aquï¿½ finaliza la suma de 32 a D
 		ld b, 8
 		call draw7
 ; Ahora imprimimos los atributos
 		pop de		; recuperamos el valor horizontal
-		ld a,d		; calculamos el valor de posición en la pantalla
+		ld a,d		; calculamos el valor de posiciï¿½n en la pantalla
         rra
         rra
         rra         ; multiplicamos por 32
         and 3		; nos quedamos con los tres bits bajos
         or 88		; apuntamos al comienzo del mapa de atributos
         ld d,a      ; ya tenemos d listo, e no hay que cambiarlo
-		push de		; guardamos la posición en pantalla
+		push de		; guardamos la posiciï¿½n en pantalla
 		ldi         ; imprimimos los colores de arriba
-		pop de		; recuperamos la posición de pantalla
-		ld a,e		; incrementamos una línea de caracteres (+32 bytes)
+		pop de		; recuperamos la posiciï¿½n de pantalla
+		ld a,e		; incrementamos una lï¿½nea de caracteres (+32 bytes)
 		add a,32
-		ld e,a		; aquí finaliza la suma de 32 a DE (D no es necesario en baja resolución)
+		ld e,a		; aquï¿½ finaliza la suma de 32 a DE (D no es necesario en baja resoluciï¿½n)
 		ldi         ; ponemos los colores de abajo
 		ret
 
@@ -895,17 +903,16 @@ void put_sprite_8x16 (unsigned char *posicion, unsigned int x, unsigned int y) {
 }
 
 // Posiciona un Sprite de 16x8 a color
-// ___________________________________
 void put_sprite_16x8 (unsigned char *posicion, unsigned int x, unsigned int y) {
 	// -------------------------------------------
 	// RUTINA DE IMPRESION DE UN SPRITE 16x8 PIXELS
 	// CON ATRIBUTOS EN CUALQUIER POSICION DE CARACTER
 	// ENTRADAS:
-	// D será la posición del cursor vertical en caracteres
-	// E será la posición del cursor horizontal en caracteres
-	// HL es la posición de memoria donde tenemos el sprite
+	// D serï¿½ la posiciï¿½n del cursor vertical en caracteres
+	// E serï¿½ la posiciï¿½n del cursor horizontal en caracteres
+	// HL es la posiciï¿½n de memoria donde tenemos el sprite
 	// SALIDAS: se escribe en el mapa de pantalla
-	// ADVERTENCIAS: no comprueba límites de pantalla
+	// ADVERTENCIAS: no comprueba lï¿½mites de pantalla
 	// -------------------------------------------
 	#asm
 		ld hl,2			;pasamos la variable de entrada al acumulador
@@ -921,18 +928,18 @@ void put_sprite_16x8 (unsigned char *posicion, unsigned int x, unsigned int y) {
         ld h, (hl)
         ld l, a
 		ld a, d		; recuperamos el valor vertical
-		and 7		; nos quedamos con la posición en el tercio
+		and 7		; nos quedamos con la posiciï¿½n en el tercio
 		rrca
         rrca
-        rrca		; rotamos para dejar su valor en múltiplos de 32 (linea)
+        rrca		; rotamos para dejar su valor en mï¿½ltiplos de 32 (linea)
 		and 224		; borramos el resto de bits por si las moscas
 		or e		; sumamos el valor horizontal
 		ld e, a		; e preparado
 		ld a, d
-		and 24		; modificamos según el tercio de pantalla
+		and 24		; modificamos segï¿½n el tercio de pantalla
 		or 64		; nos posicionamos a partir de 16384 (16384=64+0 en dos bytes)
-		ld d, a		; d preparado, ya tenemos la posición en pantalla
-		push de		; guardamos DE (la posición de pantalla)
+		ld d, a		; d preparado, ya tenemos la posiciï¿½n en pantalla
+		push de		; guardamos DE (la posiciï¿½n de pantalla)
 		ld b, 8
 		ld c,255	; cargamos C con 255 para no afectar B con LDI
 		.draw8
@@ -944,7 +951,7 @@ void put_sprite_16x8 (unsigned char *posicion, unsigned int x, unsigned int y) {
 		djnz draw8	; decrementa B y si es cero deja de saltar a draw
 ; Ahora imprimimos los atributos
 		pop de		; recuperamos el valor horizontal
-		ld a,d		; calculamos el valor de posición en la pantalla
+		ld a,d		; calculamos el valor de posiciï¿½n en la pantalla
         rra
         rra
         rra         ; multiplicamos por 32
@@ -958,7 +965,6 @@ void put_sprite_16x8 (unsigned char *posicion, unsigned int x, unsigned int y) {
 }
 
 // Scroll izquierda
-// ________________
 void scroll_izquierda (unsigned int x, unsigned int y, unsigned int ancho, unsigned int alto) {
 	#asm
 		ld hl,2			;pasamos la variable de entrada al acumulador
@@ -969,7 +975,7 @@ void scroll_izquierda (unsigned int x, unsigned int y, unsigned int ancho, unsig
 		inc hl
 		inc hl
 		ld c, (hl)		; BC = ancho
-		dec c			; decrementamos en uno el ancho, ya que la columna de la derecha no se moverá
+		dec c			; decrementamos en uno el ancho, ya que la columna de la derecha no se moverï¿½
 		inc hl
 		inc hl
 		ld d, (hl)
@@ -978,28 +984,28 @@ void scroll_izquierda (unsigned int x, unsigned int y, unsigned int ancho, unsig
 		ld e, (hl)
 ; FIN DE LA RECOGIDA DE LOS DATOS DE ENTRADA
 		ld a, d		; recuperamos el valor vertical
-		and 7		; nos quedamos con la posición en el tercio
+		and 7		; nos quedamos con la posiciï¿½n en el tercio
 		rrca
         rrca
-        rrca		; rotamos para dejar su valor en múltiplos de 32 (linea)
+        rrca		; rotamos para dejar su valor en mï¿½ltiplos de 32 (linea)
 		and 224		; borramos el resto de bits por si las moscas
 		or e		; sumamos el valor horizontal
 		ld e, a		; e preparado
 		ld a, d
-		and 24		; modificamos según el tercio de pantalla
+		and 24		; modificamos segï¿½n el tercio de pantalla
 		or 64		; nos posicionamos a partir de 16384 (16384=64+0 en dos bytes)
-		ld d, a		; d preparado, ya tenemos la posición en pantalla
-; FIN DEL CÁLCULO DE LA DIRECCIÓN DE PANTALLA
+		ld d, a		; d preparado, ya tenemos la posiciï¿½n en pantalla
+; FIN DEL Cï¿½LCULO DE LA DIRECCIï¿½N DE PANTALLA
 		ld l, e		; introducimos en HL el valor de DE+1
 		inc l
 		ld h,d
 		.otra
-		push de		; guardamos la posición de la línea a mover
-		push de		; guardamos la posición de la línea a mover
+		push de		; guardamos la posiciï¿½n de la lï¿½nea a mover
+		push de		; guardamos la posiciï¿½n de la lï¿½nea a mover
 		ld a,8
 		.scroll
 		push bc		; guardamos los bytes a mover
-		ldir		; scroll de una línea de pixels
+		ldir		; scroll de una lï¿½nea de pixels
 		pop bc		; recuperamos los bytes a mover
 		pop de
 		inc d
@@ -1008,12 +1014,12 @@ void scroll_izquierda (unsigned int x, unsigned int y, unsigned int ancho, unsig
 		inc l
 		ld h,d
 		dec a
-		jr nz, scroll	; iteramos las 8 líneas
+		jr nz, scroll	; iteramos las 8 lï¿½neas
 ; INICIO DEL SCROLL DE LOS ATRIBUTOS
 		pop de
 		pop de		; recuperamos el valor horizontal
 		push de
-		ld a,d		; calculamos el valor de posición en la pantalla
+		ld a,d		; calculamos el valor de posiciï¿½n en la pantalla
         rra
         rra
         rra		; multiplicamos por 32
@@ -1024,24 +1030,24 @@ void scroll_izquierda (unsigned int x, unsigned int y, unsigned int ancho, unsig
 		inc l
 		ld h,d
 		push bc		; guardamos los bytes a mover
-		ldir		; scroll de una línea de pixels
+		ldir		; scroll de una lï¿½nea de pixels
 		pop bc		; recuperamos los bytes a mover
 ; FIN DEL SCROLL DE LOS ATRIBUTOS
-		pop de		; recuperamos la línea a mover
+		pop de		; recuperamos la lï¿½nea a mover
 		pop hl		; recuperamos la altura
 		dec l
-		jr nz, seguir	; iteramos hasta terminar el scroll de toda el área
+		jr nz, seguir	; iteramos hasta terminar el scroll de toda el ï¿½rea
 		ret		; FIN DE LA RUTINA
 		.seguir
 		push hl		; volvemos a guardar la altura
-		ld a,e		; incrementamos una línea de caracteres (+32 bytes)
+		ld a,e		; incrementamos una lï¿½nea de caracteres (+32 bytes)
 		add a,32
-		ld e,a		; aquí finaliza la suma de 32 a E
+		ld e,a		; aquï¿½ finaliza la suma de 32 a E
 		jr nc, saltox
 		ld a,d
 		add a,8
 		ld d,a
-		.saltox		; aquí finaliza la suma de 32 a D
+		.saltox		; aquï¿½ finaliza la suma de 32 a D
 		ld l, e		; introducimos en HL el valor de DE+1
 		inc l
 		ld h,d
@@ -1050,7 +1056,6 @@ void scroll_izquierda (unsigned int x, unsigned int y, unsigned int ancho, unsig
 }
 
 // Scroll derecha
-// ______________
 void scroll_derecha (unsigned int x, unsigned int y, unsigned int ancho, unsigned int alto) {
 	#asm
 		ld hl,2			;pasamos la variable de entrada al acumulador
@@ -1061,7 +1066,7 @@ void scroll_derecha (unsigned int x, unsigned int y, unsigned int ancho, unsigne
 		inc hl
 		inc hl
 		ld c, (hl)		; BC = ancho
-		dec c			; decrementamos en uno el ancho, ya que la columna de la izquierda no se moverá
+		dec c			; decrementamos en uno el ancho, ya que la columna de la izquierda no se moverï¿½
 		inc hl
 		inc hl
 		ld d, (hl)
@@ -1070,18 +1075,18 @@ void scroll_derecha (unsigned int x, unsigned int y, unsigned int ancho, unsigne
 		ld e, (hl)
 ; FIN DE LA RECOGIDA DE LOS DATOS DE ENTRADA
 		ld a, d		; recuperamos el valor vertical
-		and 7		; nos quedamos con la posición en el tercio
+		and 7		; nos quedamos con la posiciï¿½n en el tercio
 		rrca
         rrca
-        rrca		; rotamos para dejar su valor en múltiplos de 32 (linea)
+        rrca		; rotamos para dejar su valor en mï¿½ltiplos de 32 (linea)
 		and 224		; borramos el resto de bits por si las moscas
 		or e		; sumamos el valor horizontal
 		ld e, a		; e preparado
 		ld a, d
-		and 24		; modificamos según el tercio de pantalla
+		and 24		; modificamos segï¿½n el tercio de pantalla
 		or 64		; nos posicionamos a partir de 16384 (16384=64+0 en dos bytes)
-		ld d, a		; d preparado, ya tenemos la posición en pantalla
-; FIN DEL CÁLCULO DE LA DIRECCIÓN DE PANTALLA
+		ld d, a		; d preparado, ya tenemos la posiciï¿½n en pantalla
+; FIN DEL Cï¿½LCULO DE LA DIRECCIï¿½N DE PANTALLA
 		ld h,d		; sumamos a DE el ancho
 		ld l,e
 		add hl,bc
@@ -1091,12 +1096,12 @@ void scroll_derecha (unsigned int x, unsigned int y, unsigned int ancho, unsigne
 		dec l
 		ld h,d
 		.otra2
-		push de		; guardamos la posición de la línea a mover
-		push de		; guardamos la posición de la línea a mover
+		push de		; guardamos la posiciï¿½n de la lï¿½nea a mover
+		push de		; guardamos la posiciï¿½n de la lï¿½nea a mover
 		ld a,8
 		.scroll2
 		push bc		; guardamos los bytes a mover
-		lddr		; scroll de una línea de pixels
+		lddr		; scroll de una lï¿½nea de pixels
 		pop bc		; recuperamos los bytes a mover
 		pop de
 		inc d
@@ -1105,12 +1110,12 @@ void scroll_derecha (unsigned int x, unsigned int y, unsigned int ancho, unsigne
 		dec l
 		ld h,d
 		dec a
-		jr nz, scroll2	; iteramos las 8 líneas
+		jr nz, scroll2	; iteramos las 8 lï¿½neas
 ; INICIO DEL SCROLL DE LOS ATRIBUTOS
 		pop de
 		pop de		; recuperamos el valor horizontal
 		push de
-		ld a,d		; calculamos el valor de posición en la pantalla
+		ld a,d		; calculamos el valor de posiciï¿½n en la pantalla
         rra
         rra
         rra		; multiplicamos por 32
@@ -1121,24 +1126,24 @@ void scroll_derecha (unsigned int x, unsigned int y, unsigned int ancho, unsigne
 		dec l
 		ld h,d
 		push bc		; guardamos los bytes a mover
-		lddr		; scroll de una línea de pixels
+		lddr		; scroll de una lï¿½nea de pixels
 		pop bc		; recuperamos los bytes a mover
 ; FIN DEL SCROLL DE LOS ATRIBUTOS
-		pop de		; recuperamos la línea a mover
+		pop de		; recuperamos la lï¿½nea a mover
 		pop hl		; recuperamos la altura
 		dec l
-		jr nz, seguir2	; iteramos hasta terminar el scroll de toda el área
+		jr nz, seguir2	; iteramos hasta terminar el scroll de toda el ï¿½rea
 		ret		; FIN DE LA RUTINA
 		.seguir2
 		push hl		; volvemos a guardar la altura
-		ld a,e		; incrementamos una línea de caracteres (+32 bytes)
+		ld a,e		; incrementamos una lï¿½nea de caracteres (+32 bytes)
 		add a,32
-		ld e,a		; aquí finaliza la suma de 32 a E
+		ld e,a		; aquï¿½ finaliza la suma de 32 a E
 		jr nc, saltox2
 		ld a,d
 		add a,8
 		ld d,a
-		.saltox2	; aquí finaliza la suma de 32 a D
+		.saltox2	; aquï¿½ finaliza la suma de 32 a D
 		ld l, e		; introducimos en HL el valor de DE-1
 		dec l
 		ld h,d
@@ -1147,14 +1152,13 @@ void scroll_derecha (unsigned int x, unsigned int y, unsigned int ancho, unsigne
 }
 
 // Scroll arriba
-// _____________
 void scroll_arriba (unsigned int x, unsigned int y, unsigned int ancho, unsigned int alto) {
 	#asm
 		ld hl,2			;pasamos la variable de entrada al acumulador
 		add hl,sp
 		ld b, 0
 		ld c, (hl)
-		dec c			; decrementamos en uno la altura, ya que la fila inferior no se moverá
+		dec c			; decrementamos en uno la altura, ya que la fila inferior no se moverï¿½
 		push bc			; la altura la metemos en la pila
 		inc hl
 		inc hl
@@ -1167,37 +1171,37 @@ void scroll_arriba (unsigned int x, unsigned int y, unsigned int ancho, unsigned
 		ld e, (hl)
 ; FIN DE LA RECOGIDA DE LOS DATOS DE ENTRADA
 		ld a, d		; recuperamos el valor vertical
-		and 7		; nos quedamos con la posición en el tercio
+		and 7		; nos quedamos con la posiciï¿½n en el tercio
 		rrca
         rrca
-        rrca		; rotamos para dejar su valor en múltiplos de 32 (linea)
+        rrca		; rotamos para dejar su valor en mï¿½ltiplos de 32 (linea)
 		and 224		; borramos el resto de bits por si las moscas
 		or e		; sumamos el valor horizontal
 		ld e, a		; e preparado
 		ld a, d
-		and 24		; modificamos según el tercio de pantalla
+		and 24		; modificamos segï¿½n el tercio de pantalla
 		or 64		; nos posicionamos a partir de 16384 (16384=64+0 en dos bytes)
-		ld d, a		; d preparado, ya tenemos la posición en pantalla
-; FIN DEL CÁLCULO DE LA DIRECCIÓN DE PANTALLA
+		ld d, a		; d preparado, ya tenemos la posiciï¿½n en pantalla
+; FIN DEL Cï¿½LCULO DE LA DIRECCIï¿½N DE PANTALLA
 		.otra3
-		ld h,d		; ponemos en HL DE + una línea de caracteres
+		ld h,d		; ponemos en HL DE + una lï¿½nea de caracteres
 		ld l,e
-		ld a,l		; incrementamos una línea de caracteres (+32 bytes)
+		ld a,l		; incrementamos una lï¿½nea de caracteres (+32 bytes)
 		add a,32
 		ld l,a
 		jr nc, saltohl
 		ld a,h
 		add a,8
-		ld h,a		; aquí finaliza la suma a HL de un línea
+		ld h,a		; aquï¿½ finaliza la suma a HL de un lï¿½nea
 		.saltohl
-		push de		; guardamos la posición de la línea a mover
-		push hl		; guardamos la posición de la línea a mover
-		push de		; guardamos la posición de la línea a mover
-		push hl		; guardamos la posición de la línea a mover
+		push de		; guardamos la posiciï¿½n de la lï¿½nea a mover
+		push hl		; guardamos la posiciï¿½n de la lï¿½nea a mover
+		push de		; guardamos la posiciï¿½n de la lï¿½nea a mover
+		push hl		; guardamos la posiciï¿½n de la lï¿½nea a mover
 		ld a,8
 		.scroll3
 		push bc		; guardamos los bytes a mover
-		ldir		; scroll de una línea de pixels
+		ldir		; scroll de una lï¿½nea de pixels
 		pop bc		; recuperamos los bytes a mover
 		pop hl
 		pop de
@@ -1208,7 +1212,7 @@ void scroll_arriba (unsigned int x, unsigned int y, unsigned int ancho, unsigned
 		push de
 		push hl
 		dec a
-		jr nz, scroll3	; iteramos las 8 líneas
+		jr nz, scroll3	; iteramos las 8 lï¿½neas
 ; INICIO DEL SCROLL DE LOS ATRIBUTOS
 		pop hl
 		pop de
@@ -1216,7 +1220,7 @@ void scroll_arriba (unsigned int x, unsigned int y, unsigned int ancho, unsigned
 		pop de		; recuperamos el valor horizontal
 
 		push de
-		ld a,d		; calculamos el valor de posición en la pantalla
+		ld a,d		; calculamos el valor de posiciï¿½n en la pantalla
         rra
         rra
         rra		; multiplicamos por 32
@@ -1225,7 +1229,7 @@ void scroll_arriba (unsigned int x, unsigned int y, unsigned int ancho, unsigned
         ld d,a          ; ya tenemos d listo, e no hay que cambiarlo
 
 		push hl
-		ld a,h		; calculamos el valor de posición en la pantalla
+		ld a,h		; calculamos el valor de posiciï¿½n en la pantalla
         rra
         rra
         rra		; multiplicamos por 32
@@ -1234,38 +1238,37 @@ void scroll_arriba (unsigned int x, unsigned int y, unsigned int ancho, unsigned
         ld h,a          ; ya tenemos h listo, h no hay que cambiarlo
 
 		push bc		; guardamos los bytes a mover
-		ldir		; scroll de una línea de pixels
+		ldir		; scroll de una lï¿½nea de pixels
 		pop bc		; recuperamos los bytes a mover
 ; FIN DEL SCROLL DE LOS ATRIBUTOS
 		pop hl		; recuperamos la altura
-		pop de		; recuperamos la línea a mover
+		pop de		; recuperamos la lï¿½nea a mover
 		pop hl		;recuperamos la altura, pero no la metemos en BC
 		dec l
-		jr nz, seguir3	; iteramos hasta terminar el scroll de toda el área
+		jr nz, seguir3	; iteramos hasta terminar el scroll de toda el ï¿½rea
 		ret		; FIN DE LA RUTINA
 		.seguir3
 		push hl
-		ld a,e		; incrementamos una línea de caracteres (+32 bytes)
+		ld a,e		; incrementamos una lï¿½nea de caracteres (+32 bytes)
 		add a,32
-		ld e,a		; aquí finaliza la suma de 32 a E
+		ld e,a		; aquï¿½ finaliza la suma de 32 a E
 		jr nc, saltox3
 		ld a,d
 		add a,8
-		ld d,a		; aquí finaliza la suma de 32 a D
+		ld d,a		; aquï¿½ finaliza la suma de 32 a D
 		.saltox3
 		jr otra3
 	#endasm
 }
 
 // Scroll abajo
-// ____________
 void scroll_abajo (unsigned int x, unsigned int y, unsigned int ancho, unsigned int alto) {
 	#asm
 		ld hl,2			;pasamos la variable de entrada al acumulador
 		add hl,sp
 		ld b, 0
 		ld c, (hl)
-		dec c			; decrementamos en uno la altura, ya que la fila inferior no se moverá
+		dec c			; decrementamos en uno la altura, ya que la fila inferior no se moverï¿½
 		push bc			; la altura la metemos en la pila
 		inc hl
 		inc hl
@@ -1282,10 +1285,10 @@ void scroll_abajo (unsigned int x, unsigned int y, unsigned int ancho, unsigned 
 		add a,l		; le sumamos la altura
 		dec a
 		push hl
-		and 7		; nos quedamos con la posición en el tercio
+		and 7		; nos quedamos con la posiciï¿½n en el tercio
 		rrca
         rrca
-        rrca		; rotamos para dejar su valor en múltiplos de 32 (linea)
+        rrca		; rotamos para dejar su valor en mï¿½ltiplos de 32 (linea)
 		and 224		; borramos el resto de bits por si las moscas
 		or e		; sumamos el valor horizontal
 		ld e, a		; e preparado
@@ -1294,29 +1297,29 @@ void scroll_abajo (unsigned int x, unsigned int y, unsigned int ancho, unsigned 
 		add a,l		; le sumamos la altura
 		dec a
 		push hl
-		and 24		; modificamos según el tercio de pantalla
+		and 24		; modificamos segï¿½n el tercio de pantalla
 		or 64		; nos posicionamos a partir de 16384 (16384=64+0 en dos bytes)
-		ld d, a		; d preparado, ya tenemos la posición en pantalla
-; FIN DEL CÁLCULO DE LA DIRECCIÓN DE PANTALLA
+		ld d, a		; d preparado, ya tenemos la posiciï¿½n en pantalla
+; FIN DEL Cï¿½LCULO DE LA DIRECCIï¿½N DE PANTALLA
 		.otra4
-		ld h,d		; ponemos en DE HL + una línea de caracteres
+		ld h,d		; ponemos en DE HL + una lï¿½nea de caracteres
 		ld l,e
-		ld a,l		; incrementamos una línea de caracteres (+32 bytes)
+		ld a,l		; incrementamos una lï¿½nea de caracteres (+32 bytes)
 		add a,32
 		ld e,a
 		jr nc, saltoh2
 		ld a,h
 		add a,8
-		ld d,a		; aquí finaliza la suma a HL de un línea
+		ld d,a		; aquï¿½ finaliza la suma a HL de un lï¿½nea
 		.saltoh2
-		push de		; guardamos la posición de la línea a mover
-		push hl		; guardamos la posición de la línea a mover
-		push de		; guardamos la posición de la línea a mover
-		push hl		; guardamos la posición de la línea a mover
+		push de		; guardamos la posiciï¿½n de la lï¿½nea a mover
+		push hl		; guardamos la posiciï¿½n de la lï¿½nea a mover
+		push de		; guardamos la posiciï¿½n de la lï¿½nea a mover
+		push hl		; guardamos la posiciï¿½n de la lï¿½nea a mover
 		ld a,8
 		.scroll4
 		push bc		; guardamos los bytes a mover
-		ldir		; scroll de una línea de pixels
+		ldir		; scroll de una lï¿½nea de pixels
 		pop bc		; recuperamos los bytes a mover
 		pop hl
 		pop de
@@ -1327,7 +1330,7 @@ void scroll_abajo (unsigned int x, unsigned int y, unsigned int ancho, unsigned 
 		push de
 		push hl
 		dec a
-		jr nz, scroll4	; iteramos las 8 líneas
+		jr nz, scroll4	; iteramos las 8 lï¿½neas
 ; INICIO DEL SCROLL DE LOS ATRIBUTOS
 		pop hl
 		pop de
@@ -1335,7 +1338,7 @@ void scroll_abajo (unsigned int x, unsigned int y, unsigned int ancho, unsigned 
 		pop de		; recuperamos el valor horizontal
 
 		push de
-		ld a,d		; calculamos el valor de posición en la pantalla
+		ld a,d		; calculamos el valor de posiciï¿½n en la pantalla
         rra
         rra
         rra		; multiplicamos por 32
@@ -1344,7 +1347,7 @@ void scroll_abajo (unsigned int x, unsigned int y, unsigned int ancho, unsigned 
         ld d,a          ; ya tenemos d listo, e no hay que cambiarlo
 
 		push hl
-		ld a,h		; calculamos el valor de posición en la pantalla
+		ld a,h		; calculamos el valor de posiciï¿½n en la pantalla
         rra
         rra
         rra		; multiplicamos por 32
@@ -1353,30 +1356,31 @@ void scroll_abajo (unsigned int x, unsigned int y, unsigned int ancho, unsigned 
         ld h,a          ; ya tenemos h listo, h no hay que cambiarlo
 
 		push bc		; guardamos los bytes a mover
-		ldir		; scroll de una línea de pixels
+		ldir		; scroll de una lï¿½nea de pixels
 		pop bc		; recuperamos los bytes a mover
 ; FIN DEL SCROLL DE LOS ATRIBUTOS
-		pop de		; recuperamos la línea a mover
+		pop de		; recuperamos la lï¿½nea a mover
 		pop hl
 		pop hl		; recuperamos la altura, pero no la metemos en BC
 		dec l
-		jr nz, seguir4	; iteramos hasta terminar el scroll de toda el área
+		jr nz, seguir4	; iteramos hasta terminar el scroll de toda el ï¿½rea
 		ret		; FIN DE LA RUTINA
 		.seguir4
 		push hl
 
-		ld a,e		; decrementamos una línea de caracteres (-32 bytes)
+		ld a,e		; decrementamos una lï¿½nea de caracteres (-32 bytes)
 		sub a,32
-		ld e,a		; aquí finaliza la resta de 32 a E
+		ld e,a		; aquï¿½ finaliza la resta de 32 a E
 		jr nc, saltox4
 		ld a,d
 		sub a,8
-		ld d,a		; aquí finaliza la suma de 32 a D
+		ld d,a		; aquï¿½ finaliza la suma de 32 a D
 		.saltox4
 		jr otra4
 #endasm
 }
 
+// Muestra la mitad izquierda de un Sprite de 16x16
 put_partial1h_sprite_x16 (unsigned char *posicion, unsigned int x, unsigned int y) {
 	#asm
 		ld hl,2			;pasamos la variable de entrada al acumulador
@@ -1392,49 +1396,49 @@ put_partial1h_sprite_x16 (unsigned char *posicion, unsigned int x, unsigned int 
         ld h, (hl)
         ld l, a
 		ld a, d		; recuperamos el valor vertical
-		and 7		; nos quedamos con la posición en el tercio
+		and 7		; nos quedamos con la posiciï¿½n en el tercio
 		rrca
         rrca
-        rrca		; rotamos para dejar su valor en múltiplos de 32 (linea)
+        rrca		; rotamos para dejar su valor en mï¿½ltiplos de 32 (linea)
 		and 224		; borramos el resto de bits por si las moscas
 		or e		; sumamos el valor horizontal
 		ld e, a		; e preparado
 		ld a, d
-		and 24		; modificamos según el tercio de pantalla
+		and 24		; modificamos segï¿½n el tercio de pantalla
 		or 64		; nos posicionamos a partir de 16384 (16384=64+0 en dos bytes)
-		ld d, a		; d preparado, ya tenemos la posición en pantalla
-		push de		; guardamos DE (la posición de pantalla)
+		ld d, a		; d preparado, ya tenemos la posiciï¿½n en pantalla
+		push de		; guardamos DE (la posiciï¿½n de pantalla)
 		push de
 		ld b, 8
 		ld c,255	; cargamos C con 255 para no afectar B con LDI
 		call draw21
 		pop de		; recuperamos DE
-		ld a,e		; incrementamos una línea de caracteres (+32 bytes)
+		ld a,e		; incrementamos una lï¿½nea de caracteres (+32 bytes)
 		add a,32
-		ld e,a		; aquí finaliza la suma de 32 a E
+		ld e,a		; aquï¿½ finaliza la suma de 32 a E
 		jr nc, salto21
 		ld a,d
 		add a,8
 		ld d,a
-		.salto21		; aquí finaliza la suma de 32 a D
+		.salto21		; aquï¿½ finaliza la suma de 32 a D
 		ld b, 8
 		ld c,255
 		call draw21
 ; Ahora imprimimos los atributos
 		pop de		; recuperamos el valor horizontal
-		ld a,d		; calculamos el valor de posición en la pantalla
+		ld a,d		; calculamos el valor de posiciï¿½n en la pantalla
         rra
         rra
         rra		; multiplicamos por 32
         and 3		; nos quedamos con los tres bits bajos
         or 88		; apuntamos al comienzo del mapa de atributos
         ld d,a          ; ya tenemos d listo, e no hay que cambiarlo
-		push de		; guardamos la posición en pantalla
+		push de		; guardamos la posiciï¿½n en pantalla
 		ldi		; imprimimos los colores de arriba
-		pop de		; recuperamos la posición de pantalla
-		ld a,e		; incrementamos una línea de caracteres (+32 bytes)
+		pop de		; recuperamos la posiciï¿½n de pantalla
+		ld a,e		; incrementamos una lï¿½nea de caracteres (+32 bytes)
 		add a,32
-		ld e,a		; aquí finaliza la suma de 32 a DE
+		ld e,a		; aquï¿½ finaliza la suma de 32 a DE
 		ld a,d
 		adc a,0
 		ld d,a
@@ -1451,6 +1455,7 @@ put_partial1h_sprite_x16 (unsigned char *posicion, unsigned int x, unsigned int 
 	#endasm
 }
 
+// Muestra la mitad derecha de un Sprite de 16x16
 put_partial2h_sprite_x16 (unsigned char *posicion, unsigned int x, unsigned int y) {
 	#asm
 		ld hl,2			;pasamos la variable de entrada al acumulador
@@ -1466,51 +1471,51 @@ put_partial2h_sprite_x16 (unsigned char *posicion, unsigned int x, unsigned int 
         ld h, (hl)
         ld l, a
 		ld a, d		; recuperamos el valor vertical
-		and 7		; nos quedamos con la posición en el tercio
+		and 7		; nos quedamos con la posiciï¿½n en el tercio
 		rrca
         rrca
-        rrca		; rotamos para dejar su valor en múltiplos de 32 (linea)
+        rrca		; rotamos para dejar su valor en mï¿½ltiplos de 32 (linea)
 		and 224		; borramos el resto de bits por si las moscas
 		or e		; sumamos el valor horizontal
 		ld e, a		; e preparado
 		ld a, d
-		and 24		; modificamos según el tercio de pantalla
+		and 24		; modificamos segï¿½n el tercio de pantalla
 		or 64		; nos posicionamos a partir de 16384 (16384=64+0 en dos bytes)
-		ld d, a		; d preparado, ya tenemos la posición en pantalla
-		push de		; guardamos DE (la posición de pantalla)
+		ld d, a		; d preparado, ya tenemos la posiciï¿½n en pantalla
+		push de		; guardamos DE (la posiciï¿½n de pantalla)
 		push de
 		ld b, 8
 		ld c,255	; cargamos C con 255 para no afectar B con LDI
 		call draw22
 		pop de		; recuperamos DE
-		ld a,e		; incrementamos una línea de caracteres (+32 bytes)
+		ld a,e		; incrementamos una lï¿½nea de caracteres (+32 bytes)
 		add a,32
-		ld e,a		; aquí finaliza la suma de 32 a E
+		ld e,a		; aquï¿½ finaliza la suma de 32 a E
 		jr nc, salto22
 		ld a,d
 		add a,8
 		ld d,a
-		.salto22		; aquí finaliza la suma de 32 a D
+		.salto22		; aquï¿½ finaliza la suma de 32 a D
 		ld b, 8
 		ld c,255
 		call draw22
 ; Ahora imprimimos los atributos
 		pop de		; recuperamos el valor horizontal
-		ld a,d		; calculamos el valor de posición en la pantalla
+		ld a,d		; calculamos el valor de posiciï¿½n en la pantalla
         rra
         rra
         rra         ; multiplicamos por 32
         and 3		; nos quedamos con los tres bits bajos
         or 88		; apuntamos al comienzo del mapa de atributos
         ld d,a          ; ya tenemos d listo, e no hay que cambiarlo
-		push de		; guardamos la posición en pantalla
+		push de		; guardamos la posiciï¿½n en pantalla
 		inc hl		; imprimimos los colores de arriba
 		ldi
 		inc de
-		pop de		; recuperamos la posición de pantalla
-		ld a,e		; incrementamos una línea de caracteres (+32 bytes)
+		pop de		; recuperamos la posiciï¿½n de pantalla
+		ld a,e		; incrementamos una lï¿½nea de caracteres (+32 bytes)
 		add a,32
-		ld e,a		; aquí finaliza la suma de 32 a DE
+		ld e,a		; aquï¿½ finaliza la suma de 32 a DE
 		ld a,d
 		adc a,0
 		ld d,a
@@ -1528,6 +1533,7 @@ put_partial2h_sprite_x16 (unsigned char *posicion, unsigned int x, unsigned int 
 	#endasm
 }
 
+// Muestra la mitad inferior de un Sprite de 16x16
 put_partial1v_sprite_x16 (unsigned char *posicion, unsigned int x, unsigned int y) {
 	#asm
 		ld hl,2			;pasamos la variable de entrada al acumulador
@@ -1543,18 +1549,18 @@ put_partial1v_sprite_x16 (unsigned char *posicion, unsigned int x, unsigned int 
         ld h, (hl)
         ld l, a
 		ld a, d		; recuperamos el valor vertical
-		and 7		; nos quedamos con la posición en el tercio
+		and 7		; nos quedamos con la posiciï¿½n en el tercio
 		rrca
         rrca
-        rrca		; rotamos para dejar su valor en múltiplos de 32 (linea)
+        rrca		; rotamos para dejar su valor en mï¿½ltiplos de 32 (linea)
 		and 224		; borramos el resto de bits por si las moscas
 		or e		; sumamos el valor horizontal
 		ld e, a		; e preparado
 		ld a, d
-		and 24		; modificamos según el tercio de pantalla
+		and 24		; modificamos segï¿½n el tercio de pantalla
 		or 64		; nos posicionamos a partir de 16384 (16384=64+0 en dos bytes)
-		ld d, a		; d preparado, ya tenemos la posición en pantalla
-		push de		; guardamos DE (la posición de pantalla)
+		ld d, a		; d preparado, ya tenemos la posiciï¿½n en pantalla
+		push de		; guardamos DE (la posiciï¿½n de pantalla)
 		ld b, 8
 		ld c,255	; cargamos C con 255 para no afectar B con LDI
 		call draw23
@@ -1566,7 +1572,7 @@ put_partial1v_sprite_x16 (unsigned char *posicion, unsigned int x, unsigned int 
 		djnz lele23
 ; Ahora imprimimos los atributos
 		pop de		; recuperamos el valor horizontal
-		ld a,d		; calculamos el valor de posición en la pantalla
+		ld a,d		; calculamos el valor de posiciï¿½n en la pantalla
         rra
         rra
         rra		; multiplicamos por 32
@@ -1588,6 +1594,7 @@ put_partial1v_sprite_x16 (unsigned char *posicion, unsigned int x, unsigned int 
 	#endasm
 }
 
+// Muestra la mitad superior de un Sprite de 16x16
 put_partial2v_sprite_x16 (unsigned char *posicion, unsigned int x, unsigned int y) {
 	#asm
 		ld hl,2			;pasamos la variable de entrada al acumulador
@@ -1603,18 +1610,18 @@ put_partial2v_sprite_x16 (unsigned char *posicion, unsigned int x, unsigned int 
         ld h, (hl)
         ld l, a
 		ld a, d		; recuperamos el valor vertical
-		and 7		; nos quedamos con la posición en el tercio
+		and 7		; nos quedamos con la posiciï¿½n en el tercio
 		rrca
         rrca
-        rrca		; rotamos para dejar su valor en múltiplos de 32 (linea)
+        rrca		; rotamos para dejar su valor en mï¿½ltiplos de 32 (linea)
 		and 224		; borramos el resto de bits por si las moscas
 		or e		; sumamos el valor horizontal
 		ld e, a		; e preparado
 		ld a, d
-		and 24		; modificamos según el tercio de pantalla
+		and 24		; modificamos segï¿½n el tercio de pantalla
 		or 64		; nos posicionamos a partir de 16384 (16384=64+0 en dos bytes)
-		ld d, a		; d preparado, ya tenemos la posición en pantalla
-		push de		; guardamos DE (la posición de pantalla)
+		ld d, a		; d preparado, ya tenemos la posiciï¿½n en pantalla
+		push de		; guardamos DE (la posiciï¿½n de pantalla)
 		ld b, 8
 		ld c,255	; cargamos C con 255 para no afectar B con LDI
 		.lele24
@@ -1626,7 +1633,7 @@ put_partial2v_sprite_x16 (unsigned char *posicion, unsigned int x, unsigned int 
 		call draw24
 ; Ahora imprimimos los atributos
 		pop de		; recuperamos el valor horizontal
-		ld a,d		; calculamos el valor de posición en la pantalla
+		ld a,d		; calculamos el valor de posiciï¿½n en la pantalla
 		rra
         rra
         rra         ; multiplicamos por 32
