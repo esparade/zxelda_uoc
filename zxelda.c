@@ -30,6 +30,7 @@ void main (void) {
             case PANTALLA_JUEGO:
                 calculo_frame();
                 check_warp();
+                check_llave();
                 mueve_enemigo();
                 animacion_enemigo();
                 update_attack();

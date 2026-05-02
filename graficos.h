@@ -32,6 +32,8 @@ extern unsigned char swrd_lft [];
 extern unsigned char enmy_octoD_a [];
 extern unsigned char enmy_octoD_b [];
 
+extern unsigned char item_llave [];
+
 #asm
     ._wrld_frst
 	DEFB	224,192,241,240,241,242,113,250
@@ -45,7 +47,7 @@ extern unsigned char enmy_octoD_b [];
 	DEFB	125,213,255,250,223,244,127,106
 	DEFB	247,228,255,160,223,208,126, 32
 	DEFB	 26,  0,  5,192, 14,170, 21, 85
-	DEFB	  4,  4,  4,  4
+	DEFB	  52,  52,  52,  52
 
     ._wrld_door_left
 	DEFB	 60, 63, 66, 96,129, 79,133, 79
@@ -180,6 +182,10 @@ extern unsigned char enmy_octoD_b [];
 	DEFB	  3,192,  3,192,  3,192, 15,240
 	DEFB	 58, 58, 58, 58
 
+
+    ._item_llave
+	DEFB	 14, 19, 17,  9, 22, 32, 80,160
+	DEFB	 62
 
     ._sprite_negro
     defb 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0

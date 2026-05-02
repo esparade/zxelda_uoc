@@ -1,5 +1,37 @@
 // motorzx.h
 
+/*
+creacion de la funcion print sprite 8x8
+
+Formato del sprite (9 bytes total):
+
+Bytes 0–7: datos de píxeles (1 byte por fila × 8 filas)
+Byte 8: atributo de color (tinta + papel, usando la tabla del encabezado)
+
+Lógica del bucle draw9:
+
+ldi — copia 1 byte de píxeles de HL→DE y avanza ambos
+dec de — retrocede DE a la misma columna (deshace el avance de LDI)
+inc d — sube al siguiente pixel-row dentro del bloque de carácter (incrementa los bits 10–8 de la dirección de pantalla)
+djnz draw9 — repite 8 veces (C=255 evita que LDI afecte a B)
+Atributos: un solo ldi escribe el único byte de color para la celda de 1×1 carácter.
+
+Uso:
+unsigned char mi_sprite[9] = {
+    0b00111100,  // fila 0
+    0b01111110,  // fila 1
+    0b11011011,  // fila 2
+    0b11111111,  // fila 3
+    0b11111111,  // fila 4
+    0b11011011,  // fila 5
+    0b01111110,  // fila 6
+    0b00111100,  // fila 7
+    6            // color: tinta amarilla sobre papel negro
+};
+
+put_sprite_x8(mi_sprite, 10, 5);  // columna 10, fila 5
+*/
+
 // - COLORES -
 // - TINTA -
 // NEGRO	0	00000000
@@ -27,8 +59,9 @@
 // void port_out (int port, int value) //escribir en un puerto
 // int __FASTCALL__ port_in (int port) //leer un puerto
 // void wait_int (void) //interrupt CPU
-// void disable_int (void) //desactiva las interrupciones
 // void enable_int (void) //activa las interrupciones
+// void disable_int (void) //desactiva las interrupciones
+// void put_sprite_x8 (unsigned char *posicion, unsigned int x, unsigned int y) //muestra sprite 8x8 color
 // void put_sprite_x16 (unsigned char *posicion, unsigned int x, unsigned int y) //muestra sprite 16x16 color
 // void put_sprite_x24 (unsigned char *posicion, unsigned int x, unsigned int y) //muestra sprite 24x24 color
 // void put_sprite_x32 (unsigned char *posicion, unsigned int x, unsigned int y) //muestra sprite 32x32 color
@@ -122,6 +155,13 @@ void wait_int (void) {
     #endasm
 }
 
+// Activa las interrupciones
+void enable_int (void) {
+    #asm
+        ei
+    #endasm
+}
+
 // Desactiva las interrupciones
 void disable_int (void) {
     #asm
@@ -129,11 +169,63 @@ void disable_int (void) {
     #endasm
 }
 
-// Activa las interrupciones
-void enable_int (void) {
-    #asm
-        ei
-    #endasm
+// Posiciona un Sprite de 8x8 a color
+void put_sprite_x8 (unsigned char *posicion, unsigned int x, unsigned int y) {
+	// -------------------------------------------
+	// RUTINA DE IMPRESION DE UN SPRITE 8x8 PIXELS
+	// CON ATRIBUTOS EN CUALQUIER POSICION DE CARACTER
+	// ENTRADAS:
+	// D ser� la posici�n del cursor vertical en caracteres
+	// E ser� la posici�n del cursor horizontal en caracteres
+	// HL es la posici�n de memoria donde tenemos el sprite
+	// SALIDAS: se escribe en el mapa de pantalla
+	// ADVERTENCIAS: no comprueba l�mites de pantalla
+	// -------------------------------------------
+	#asm
+		ld hl,2			;pasamos la variable de entrada al acumulador
+		add hl,sp
+		ld d, (hl)
+		inc hl
+		inc hl
+		ld e, (hl)
+		inc hl
+		inc hl
+		ld a, (hl)
+        inc hl
+        ld h, (hl)
+        ld l, a
+		ld a, d		; recuperamos el valor vertical
+		and 7		; nos quedamos con la posici�n en el tercio
+		rrca
+        rrca
+        rrca		; rotamos para dejar su valor en m�ltiplos de 32 (linea)
+		and 224		; borramos el resto de bits por si las moscas
+		or e		; sumamos el valor horizontal
+		ld e, a		; e preparado
+		ld a, d
+		and 24		; modificamos seg�n el tercio de pantalla
+		or 64		; nos posicionamos a partir de 16384 (16384=64+0 en dos bytes)
+		ld d, a		; d preparado, ya tenemos la posici�n en pantalla
+		push de		; guardamos DE (la posici�n de pantalla)
+		ld b, 8
+		ld c,255	; cargamos C con 255 para no afectar B con LDI
+		.draw9
+		ldi
+		dec de
+		inc d
+		djnz draw9	; decrementa B y si es cero deja de saltar a draw
+; Ahora imprimimos los atributos
+		pop de		; recuperamos el valor horizontal
+		ld a,d		; calculamos el valor de posici�n en la pantalla
+        rra
+        rra
+        rra         ; multiplicamos por 32
+        and 3       ; nos quedamos con los tres bits bajos
+        or 88       ; apuntamos al comienzo del mapa de atributos
+        ld d,a      ; ya tenemos d listo, e no hay que cambiarlo
+		ldi         ; imprimimos el color
+		ret
+	#endasm
 }
 
 // Posiciona un Sprite de 16x16 a color

@@ -49,6 +49,7 @@ void restaura_fondo_tile (void) {
 // Dibuja el tile con el ID dado en la celda (x,y) de la rejilla del mapa.
 // IDs de tile: 0=suelo_mundo  1=arbol  2=matorral  3=bloque_dngn  4=baldosa  5=pared
 //              6=puerta_izq   7=puerta_der  8=puerta_arr  9=void/negro
+//              13=llave
 int render_tile(int grafico, int x, int y) {
     switch (grafico) {
         case 0:
@@ -81,6 +82,15 @@ int render_tile(int grafico, int x, int y) {
         case 9:
             put_sprite_x16 (sprite_negro, x*2+MAPA_OX, y*2+MAPA_OY);
         break;
+        case 13:
+            put_sprite_x8 (item_llave, x*2+MAPA_OX, y*2+MAPA_OY);
+        break;
+    }
+}
+
+void render_hud_llave(void) {
+    if (tiene_llave) {
+        put_sprite_x16(item_llave, 14, 2);
     }
 }
 
@@ -170,6 +180,7 @@ void cambiar_pantalla (unsigned char nueva) {
             inicia_variables_juego();
             render_hud_fondo();
             render_mapa();
+            render_hud_llave();
             render_hero(hx*2, hy*2);
         break;
         case PANTALLA_GAME_OVER:

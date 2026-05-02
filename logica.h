@@ -75,10 +75,10 @@ void calculo_frame(void) {
 }
 
 // Gestiona los teletransportadores especiales (tile VO/9 en posicion fija).
-// mapa1→cueva(mapa5), mapa4→mapa3, mapa3→mapa4, cueva→mapa1.
-// La posicion de la entrada esta fija en los datos del mapa (no es aleatoria).
-void check_warp(void) { //entrada a cueva en mapa 1
-    if (mapa_actual == 1 && mapa_trabajo[hmap] == 9) {
+// entrada(mapa1/2)→cueva(mapa5), mapa4→mapa3, mapa3→mapa4, cueva→mapa1.
+// La posicion de la entrada al mundo es aleatoria cada partida (randomiza_entrada).
+void check_warp(void) { //entrada a cueva (posicion aleatoria cada partida)
+    if (mapa_actual == entrada_mapa && mapa_trabajo[hmap] == 9) {
         mapa_actual = 5;
         hx = 6;
         hy = 7;
@@ -158,7 +158,8 @@ void sword_erase(void) {
     }
 }
 
-// Comprueba si el tile delante del heroe contiene al enemigo y lo elimina con 1 golpe.
+// Comprueba si el tile delante del heroe contiene al enemigo y lo elimina con 1 golpe,
+// soltando la llave en ese tile con probabilidad 50%.
 void check_sword_hit(void) {
     unsigned char tx, ty;
     if (!eactive) return;
@@ -170,8 +171,25 @@ void check_sword_hit(void) {
     }
     if (ex == tx && ey == ty) {
         eactive = 0;
+        if (rand_next() & 1) { // 50% drop chance
+            llave_mapa = mapa_actual;
+            llave_pos  = ey * ancho_mapa + ex;
+            mapa_trabajo[llave_pos] = 13;
+            llave_en_mapa = 1;
+        }
         render_tile(mapa_trabajo[ey*ancho_mapa+ex], ex, ey);
     }
+}
+
+void check_llave(void) {
+    if (!llave_en_mapa) return;
+    if (mapa_actual != llave_mapa) return;
+    if (hmap != llave_pos) return;
+    llave_en_mapa = 0;
+    tiene_llave = 1;
+    mapa_trabajo[llave_pos] = 0;
+    render_tile(0, llave_pos % ancho_mapa, llave_pos / ancho_mapa);
+    render_hud_llave();
 }
 
 void update_attack(void) {
