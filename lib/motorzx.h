@@ -62,7 +62,12 @@ put_sprite_x8(mi_sprite, 10, 5);  // columna 10, fila 5
 // void enable_int (void) //activa las interrupciones
 // void disable_int (void) //desactiva las interrupciones
 // void put_sprite_x8 (unsigned char *posicion, unsigned int x, unsigned int y) //muestra sprite 8x8 color
+// void put_sprite_x8_mask (unsigned char *posicion, unsigned int x, unsigned int y) //muestra sprite 8x8 con fondo transparente (formato: mask0,pix0,...,mask7,pix7,attr)
+// void put_sprite_x8_noclr (unsigned char *posicion, unsigned int x, unsigned int y) //muestra sprite 8x8 sin escribir atributo de color (formato: 8 bytes de pixeles)
+// void put_sprite_x8_mask_noclr (unsigned char *posicion, unsigned int x, unsigned int y) //muestra sprite 8x8 con fondo transparente y sin escribir atributo (formato: mask0,pix0,...,mask7,pix7)
 // void put_sprite_x16 (unsigned char *posicion, unsigned int x, unsigned int y) //muestra sprite 16x16 color
+// void put_sprite_x16_mask_noclr (unsigned char *posicion, unsigned int x, unsigned int y) //muestra sprite 16x16 con fondo transparente sin escribir atributos
+// void put_sprite_x16_mask_ink (unsigned char *posicion, unsigned int x, unsigned int y) //muestra sprite 16x16 con fondo transparente; conserva papel del tile, aplica tinta del sprite
 // void put_sprite_x24 (unsigned char *posicion, unsigned int x, unsigned int y) //muestra sprite 24x24 color
 // void put_sprite_x32 (unsigned char *posicion, unsigned int x, unsigned int y) //muestra sprite 32x32 color
 // void put_sprite_16x24 (unsigned char *posicion, unsigned int x, unsigned int y) //muestra sprite 16x24 color
@@ -228,6 +233,143 @@ void put_sprite_x8 (unsigned char *posicion, unsigned int x, unsigned int y) {
 	#endasm
 }
 
+// Posiciona un Sprite de 8x8 sin escribir atributo de color
+// Los pixeles se dibujan con la tinta que ya tenga la celda en pantalla
+// Formato sprite (8 bytes): pix0, pix1, ..., pix7
+void put_sprite_x8_noclr (unsigned char *posicion, unsigned int x, unsigned int y) {
+	#asm
+		ld hl,2
+		add hl,sp
+		ld d, (hl)
+		inc hl
+		inc hl
+		ld e, (hl)
+		inc hl
+		inc hl
+		ld a, (hl)
+		inc hl
+		ld h, (hl)
+		ld l, a
+		ld a, d
+		and 7
+		rrca
+		rrca
+		rrca
+		and 224
+		or e
+		ld e, a
+		ld a, d
+		and 24
+		or 64
+		ld d, a
+		ld b, 8
+		ld c, 255
+	.draw9nc
+		ldi
+		dec de
+		inc d
+		djnz draw9nc
+		ret
+	#endasm
+}
+
+// Posiciona un Sprite de 8x8 con fondo transparente, sin escribir atributo de color
+// Formato sprite (16 bytes): mask0,pix0, mask1,pix1, ..., mask7,pix7
+// Mascara: 1=transparente, 0=opaco
+void put_sprite_x8_mask_noclr (unsigned char *posicion, unsigned int x, unsigned int y) {
+	#asm
+		ld hl,2
+		add hl,sp
+		ld d, (hl)
+		inc hl
+		inc hl
+		ld e, (hl)
+		inc hl
+		inc hl
+		ld a, (hl)
+		inc hl
+		ld h, (hl)
+		ld l, a
+		ld a, d
+		and 7
+		rrca
+		rrca
+		rrca
+		and 224
+		or e
+		ld e, a
+		ld a, d
+		and 24
+		or 64
+		ld d, a
+		ld b, 8
+	.draw9mn
+		ld a, (de)
+		and (hl)
+		inc hl
+		or (hl)
+		ld (de), a
+		inc hl
+		inc d
+		djnz draw9mn
+		ret
+	#endasm
+}
+
+// Posiciona un Sprite de 8x8 con fondo transparente (mascarado AND/OR)
+// Formato sprite (17 bytes): mask0,pix0, mask1,pix1, ..., mask7,pix7, attr
+// Mascara: 1=transparente (conserva fondo), 0=opaco (dibuja sprite)
+void put_sprite_x8_mask (unsigned char *posicion, unsigned int x, unsigned int y) {
+	#asm
+		ld hl,2
+		add hl,sp
+		ld d, (hl)
+		inc hl
+		inc hl
+		ld e, (hl)
+		inc hl
+		inc hl
+		ld a, (hl)
+		inc hl
+		ld h, (hl)
+		ld l, a
+		ld a, d
+		and 7
+		rrca
+		rrca
+		rrca
+		and 224
+		or e
+		ld e, a
+		ld a, d
+		and 24
+		or 64
+		ld d, a
+		push de
+		ld b, 8
+	.draw9m
+		ld a, (de)
+		and (hl)
+		inc hl
+		or (hl)
+		ld (de), a
+		inc hl
+		inc d
+		djnz draw9m
+	; escribe atributo de color
+		pop de
+		ld a,d
+		rra
+		rra
+		rra
+		and 3
+		or 88
+		ld d,a
+		ldi
+		ret
+	#endasm
+}
+
 // Posiciona un Sprite de 16x16 a color
 void put_sprite_x16 (unsigned char *posicion, unsigned int x, unsigned int y) {
 	// -------------------------------------------
@@ -312,6 +454,290 @@ void put_sprite_x16 (unsigned char *posicion, unsigned int x, unsigned int y) {
 		dec de
 		inc d
 		djnz draw	; decrementa B y si es cero deja de saltar a draw
+		ret
+	#endasm
+}
+
+// Posiciona un Sprite de 16x16 con fondo transparente (mascara calculada automaticamente)
+// Formato sprite: igual que put_sprite_x16 (pixeles + attrs). Mascara = ~pixel por fila.
+// void put_sprite_x16_mask (unsigned char *posicion, unsigned int x, unsigned int y)
+void put_sprite_x16_mask (unsigned char *posicion, unsigned int x, unsigned int y) {
+	#asm
+		ld hl,2
+		add hl,sp
+		ld d, (hl)
+		inc hl
+		inc hl
+		ld e, (hl)
+		inc hl
+		inc hl
+		ld a, (hl)
+		inc hl
+		ld h, (hl)
+		ld l, a
+		ld a, d
+		and 7
+		rrca
+		rrca
+		rrca
+		and 224
+		or e
+		ld e, a
+		ld a, d
+		and 24
+		or 64
+		ld d, a
+		push de
+		push de
+		ld b, 8
+		call drawmx
+		pop de
+		ld a, e
+		add a, 32
+		ld e, a
+		jr nc, saltomx
+		ld a, d
+		add a, 8
+		ld d, a
+		.saltomx
+		ld b, 8
+		call drawmx
+		pop de
+		ld a, d
+		rra
+		rra
+		rra
+		and 3
+		or 88
+		ld d, a
+		push de
+		ldi
+		ldi
+		pop de
+		ld a, e
+		add a, 32
+		ld e, a
+		ld a, d
+		adc a, 0
+		ld d, a
+		ldi
+		ldi
+		ret
+
+		.drawmx
+		ld a, (de)
+		ld c, a
+		ld a, (hl)
+		cpl
+		and c
+		or (hl)
+		ld (de), a
+		inc hl
+		inc de
+		ld a, (de)
+		ld c, a
+		ld a, (hl)
+		cpl
+		and c
+		or (hl)
+		ld (de), a
+		inc hl
+		dec de
+		inc d
+		djnz drawmx
+		ret
+	#endasm
+}
+
+// Posiciona un Sprite de 16x16 con fondo transparente sin escribir atributos de color
+// Formato sprite: igual que put_sprite_x16 (pixeles + attrs). Los attrs son ignorados.
+void put_sprite_x16_mask_noclr (unsigned char *posicion, unsigned int x, unsigned int y) {
+	#asm
+		ld hl,2
+		add hl,sp
+		ld d, (hl)
+		inc hl
+		inc hl
+		ld e, (hl)
+		inc hl
+		inc hl
+		ld a, (hl)
+		inc hl
+		ld h, (hl)
+		ld l, a
+		ld a, d
+		and 7
+		rrca
+		rrca
+		rrca
+		and 224
+		or e
+		ld e, a
+		ld a, d
+		and 24
+		or 64
+		ld d, a
+		push de
+		ld b, 8
+		call drawmxnc
+		pop de
+		ld a, e
+		add a, 32
+		ld e, a
+		jr nc, saltomxnc
+		ld a, d
+		add a, 8
+		ld d, a
+		.saltomxnc
+		ld b, 8
+		call drawmxnc
+		ret
+
+		.drawmxnc
+		ld a, (de)
+		ld c, a
+		ld a, (hl)
+		cpl
+		and c
+		or (hl)
+		ld (de), a
+		inc hl
+		inc de
+		ld a, (de)
+		ld c, a
+		ld a, (hl)
+		cpl
+		and c
+		or (hl)
+		ld (de), a
+		inc hl
+		dec de
+		inc d
+		djnz drawmxnc
+		ret
+	#endasm
+}
+
+// Posiciona un Sprite de 16x16 con fondo transparente
+// Pixeles: mascara = ~pixel. Atributos: conserva papel del tile, aplica tinta del sprite.
+void put_sprite_x16_mask_ink (unsigned char *posicion, unsigned int x, unsigned int y) {
+	#asm
+		ld hl,2
+		add hl,sp
+		ld d, (hl)
+		inc hl
+		inc hl
+		ld e, (hl)
+		inc hl
+		inc hl
+		ld a, (hl)
+		inc hl
+		ld h, (hl)
+		ld l, a
+		ld a, d
+		and 7
+		rrca
+		rrca
+		rrca
+		and 224
+		or e
+		ld e, a
+		ld a, d
+		and 24
+		or 64
+		ld d, a
+		push de
+		push de
+		ld b, 8
+		call drawmxi
+		pop de
+		ld a, e
+		add a, 32
+		ld e, a
+		jr nc, saltomxi
+		ld a, d
+		add a, 8
+		ld d, a
+		.saltomxi
+		ld b, 8
+		call drawmxi
+		pop de
+		ld a, d
+		rra
+		rra
+		rra
+		and 3
+		or 88
+		ld d, a
+		push de
+		; attr top-left: conserva papel, aplica tinta del sprite
+		ld a, (hl)
+		and 7
+		ld c, a
+		ld a, (de)
+		and 248
+		or c
+		ld (de), a
+		inc hl
+		inc de
+		; attr top-right
+		ld a, (hl)
+		and 7
+		ld c, a
+		ld a, (de)
+		and 248
+		or c
+		ld (de), a
+		inc hl
+		inc de
+		pop de
+		ld a, e
+		add a, 32
+		ld e, a
+		ld a, d
+		adc a, 0
+		ld d, a
+		; attr bottom-left
+		ld a, (hl)
+		and 7
+		ld c, a
+		ld a, (de)
+		and 248
+		or c
+		ld (de), a
+		inc hl
+		inc de
+		; attr bottom-right
+		ld a, (hl)
+		and 7
+		ld c, a
+		ld a, (de)
+		and 248
+		or c
+		ld (de), a
+		ret
+
+		.drawmxi
+		ld a, (de)
+		ld c, a
+		ld a, (hl)
+		cpl
+		and c
+		or (hl)
+		ld (de), a
+		inc hl
+		inc de
+		ld a, (de)
+		ld c, a
+		ld a, (hl)
+		cpl
+		and c
+		or (hl)
+		ld (de), a
+		inc hl
+		dec de
+		inc d
+		djnz drawmxi
 		ret
 	#endasm
 }

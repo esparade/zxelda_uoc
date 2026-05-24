@@ -6,9 +6,9 @@ extern unsigned char sprite_amaD [];
 
 extern unsigned char wrld_frst [];
 extern unsigned char wrld_bush [];
-extern unsigned char wrld_door_left [];
-extern unsigned char wrld_door_rght [];
 extern unsigned char wrld_door_up [];
+extern unsigned char wrld_door_left [];
+extern unsigned char wrld_door_right [];
 
 extern unsigned char dngn_tile [];
 extern unsigned char dngn_blck [];
@@ -33,6 +33,21 @@ extern unsigned char enmy_octoD_a [];
 extern unsigned char enmy_octoD_b [];
 
 extern unsigned char item_llave [];
+extern unsigned char item_llave_trans [];
+
+extern unsigned char hud_corazon_ama [];
+extern unsigned char hud_corazon_neg [];
+extern unsigned char hud_corazon_vacio_ama [];
+extern unsigned char hud_corazon_vacio_neg [];
+
+extern unsigned char hud_lV_ama [];
+extern unsigned char hud_lI_ama [];
+extern unsigned char hud_lD_ama [];
+extern unsigned char hud_lA_ama [];
+extern unsigned char hud_lV_neg [];
+extern unsigned char hud_lI_neg [];
+extern unsigned char hud_lD_neg [];
+extern unsigned char hud_lA_neg [];
 
 #asm
     ._wrld_frst
@@ -49,24 +64,24 @@ extern unsigned char item_llave [];
 	DEFB	 26,  0,  5,192, 14,170, 21, 85
 	DEFB	  52,  52,  52,  52
 
-    ._wrld_door_left
-	DEFB	 60, 63, 66, 96,129, 79,133, 79
-	DEFB	141, 76,153, 76, 66, 79, 60,204
-	DEFB	126,255, 24,204,126, 76,133,127
-	DEFB	131, 76,129,127,129, 76,129,127
-	DEFB	 56, 56, 56, 56
-
-    ._wrld_door_rght
-	DEFB	252, 60,  6, 66,242,129,242,161
-	DEFB	 50,177, 50,153,242, 66, 51, 60
-	DEFB	255,126, 51, 24, 50,126,254,161
-	DEFB	 50,193,254,129, 50,129,254,129
-	DEFB	 56, 56, 56, 56
-
-    ._wrld_door_up
+	._wrld_door_up
 	DEFB	199,227,252, 63,135,225,192,  3
 	DEFB	222,123,204, 51,128,  1,170,171
 	DEFB	 56, 56
+
+    ._wrld_door_left
+	DEFB	126, 63, 24, 96, 62, 79, 69, 79
+	DEFB	131, 76,185, 76,169, 79,129, 76
+	DEFB	 81, 63,138, 76,146, 76,177, 63
+	DEFB	129, 76,153,127,145, 76, 81,127
+	DEFB	 56, 56, 56, 56
+
+    ._wrld_door_right
+	DEFB	252,126,  6, 24,242,124,242,132
+	DEFB	 50,179, 50,153,242,137, 50,161
+	DEFB	252,157, 50,129, 50,145,252,137
+	DEFB	 50,153,254, 65, 50,162,254,177
+	DEFB	 56, 56, 56, 56
 
     ._dngn_tile
 	DEFB	  0,  0, 96,  1, 64,  1,  0,  1
@@ -184,8 +199,65 @@ extern unsigned char item_llave [];
 
 
     ._item_llave
-	DEFB	 14, 19, 17,  9, 22, 32, 80,160
-	DEFB	 62
+	; formato: mascara,pixel x8 filas + 1 byte attr
+	; mascara = ~pixel (1=transparente, 0=opaco)
+	DEFB	241, 14,236, 19,238, 17,246,  9
+	DEFB	233, 22,223, 32,175, 80, 95,160
+	DEFB	 52, 52, 52, 52
+
+	._item_llave_trans
+	; formato: mascara,pixel x8 filas, sin byte attr
+	DEFB	241, 14,236, 19,238, 17,246,  9
+	DEFB	233, 22,223, 32,175, 80, 95,160
+
+
+    ; --- letras VIDA, papel amarillo (attr=48: tinta negra) ---
+    ._hud_lV_ama
+	DEFB 195,195,102,102, 60, 24,  0,  0
+	DEFB  48
+    ._hud_lI_ama
+	DEFB  60, 24, 24, 24, 24, 60,  0,  0
+	DEFB  48
+    ._hud_lD_ama
+	DEFB 240,204,198,198,204,240,  0,  0
+	DEFB  48
+    ._hud_lA_ama
+	DEFB  56,108,198,254,198,198,  0,  0
+	DEFB  48
+
+    ; --- letras VIDA, papel negro (attr=7: tinta blanca) ---
+    ._hud_lV_neg
+	DEFB 195,195,102,102, 60, 24,  0,  0
+	DEFB   7
+    ._hud_lI_neg
+	DEFB  60, 24, 24, 24, 24, 60,  0,  0
+	DEFB   7
+    ._hud_lD_neg
+	DEFB 240,204,198,198,204,240,  0,  0
+	DEFB   7
+    ._hud_lA_neg
+	DEFB  56,108,198,254,198,198,  0,  0
+	DEFB   7
+
+    ._hud_corazon_ama
+	; corazon lleno: papel amarillo (48) + tinta roja (2) = 50
+	DEFB 108,254,254,254,124, 56, 16,  0
+	DEFB  50
+
+    ._hud_corazon_neg
+	; corazon lleno: papel negro (0) + tinta roja (2) = 2
+	DEFB 108,254,254,254,124, 56, 16,  0
+	DEFB   2
+
+    ._hud_corazon_vacio_ama
+	; corazon vacio: papel amarillo (48) + tinta negra (0) = 48
+	DEFB 108,130,130, 68, 40, 16,  0,  0
+	DEFB  48
+
+    ._hud_corazon_vacio_neg
+	; corazon vacio: papel negro (0) + tinta azul (1) = 1
+	DEFB 108,130,130, 68, 40, 16,  0,  0
+	DEFB   1
 
     ._sprite_negro
     defb 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0

@@ -1,15 +1,36 @@
 //zxelda v0.1b
 //07abr'26
 
+void anima_llave(void) {
+    unsigned char ink;
+    if (!llave_en_mapa || mapa_actual != llave_mapa) return;
+    llave_anim++;
+    if (llave_anim >= 28) llave_anim = 0;
+    if (llave_anim & 1) return;                  // actua cada frame
+    ink = (llave_anim >> 2);                     // ink de la llave
+    item_llave[16] = 48 | ink;                   // paper amarillo (48) + nueva tinta
+    item_llave[17] = 48 | ink;
+    item_llave[18] = 48 | ink;
+    item_llave[19] = 48 | ink;
+    render_tile(13, llave_pos % ancho_mapa, llave_pos / ancho_mapa);
+}
+
+// Tiles solidos (bloquean movimiento): arbol(1), bloque(3), pared(5),
+// puerta_izq(6), puerta_der(7), puerta_arr(8).
+// Son pasables: suelo(0), matorral(2), baldosa(4), void(9), llave(13).
+int es_solido(unsigned char tile) {
+    return tile==1 || tile==3 || tile==5 || tile==6 || tile==7 || tile==8;
+}
+
 void animacion_hero(void) {
     switch(vista) {
         case 0: // anim plyr up
             switch(anim) {
                 case 0: //frame 0
-                    put_sprite_x16(plyr_upA,hx*2+MAPA_OX,hy*2+MAPA_OY);
+                    put_sprite_x16_mask_ink(plyr_upA,hx*2+MAPA_OX,hy*2+MAPA_OY);
                     break;
                 case 1: //frame 1
-                    put_sprite_x16(plyr_upB,hx*2+MAPA_OX,hy*2+MAPA_OY);
+                    put_sprite_x16_mask_ink(plyr_upB,hx*2+MAPA_OX,hy*2+MAPA_OY);
                     break;
             }
             anim++;
@@ -22,10 +43,10 @@ void animacion_hero(void) {
         case 1: //anim plyr rgh
             switch(anim) {
                 case 0:
-                    put_sprite_x16(plyr_rghA,hx*2+MAPA_OX,hy*2+MAPA_OY);
+                    put_sprite_x16_mask_ink(plyr_rghA,hx*2+MAPA_OX,hy*2+MAPA_OY);
                     break;
                 case 1:
-                    put_sprite_x16(plyr_rghB,hx*2+MAPA_OX,hy*2+MAPA_OY);
+                    put_sprite_x16_mask_ink(plyr_rghB,hx*2+MAPA_OX,hy*2+MAPA_OY);
                     break;
             }
             anim++;
@@ -34,14 +55,14 @@ void animacion_hero(void) {
                 anim = 0;
             }
             break;
-        
+
         case 2: //anim plyr dwn
             switch(anim) {
                 case 0:
-                    put_sprite_x16(plyr_dwnA,hx*2+MAPA_OX,hy*2+MAPA_OY);
+                    put_sprite_x16_mask_ink(plyr_dwnA,hx*2+MAPA_OX,hy*2+MAPA_OY);
                     break;
                 case 1:
-                    put_sprite_x16(plyr_dwnB,hx*2+MAPA_OX,hy*2+MAPA_OY);
+                    put_sprite_x16_mask_ink(plyr_dwnB,hx*2+MAPA_OX,hy*2+MAPA_OY);
                     break;
             }
             anim++;
@@ -50,14 +71,14 @@ void animacion_hero(void) {
                 anim = 0;
             }
             break;
-        
+
         case 3: //anim plyr lft
             switch(anim) {
                 case 0:
-                    put_sprite_x16(plyr_lftA,hx*2+MAPA_OX,hy*2+MAPA_OY);
+                    put_sprite_x16_mask_ink(plyr_lftA,hx*2+MAPA_OX,hy*2+MAPA_OY);
                     break;
                 case 1:
-                    put_sprite_x16(plyr_lftB,hx*2+MAPA_OX,hy*2+MAPA_OY);
+                    put_sprite_x16_mask_ink(plyr_lftB,hx*2+MAPA_OX,hy*2+MAPA_OY);
                     break;
             }
             anim++;
@@ -75,8 +96,8 @@ void calculo_frame(void) {
 }
 
 // Gestiona los teletransportadores especiales (tile VO/9 en posicion fija).
-// entrada(mapa1/2)→cueva(mapa5), mapa4→mapa3, mapa3→mapa4, cueva→mapa1.
-// La posicion de la entrada al mundo es aleatoria cada partida (randomiza_entrada).
+// entrada(mapa1)→cueva(mapa5), entrada2_mapa→mapa3, mapa3→entrada2_mapa, cueva→mapa1.
+// La posicion de la segunda entrada es aleatoria cada partida (randomiza_entrada).
 void check_warp(void) { //entrada a cueva (posicion aleatoria cada partida)
     if (mapa_actual == entrada_mapa && mapa_trabajo[hmap] == 9) {
         mapa_actual = 5;
@@ -85,27 +106,36 @@ void check_warp(void) { //entrada a cueva (posicion aleatoria cada partida)
         carga_datos_mapa();
         calculo_frame();
         render_hud_fondo();
+        render_hud_vidas();
+        render_hud_llave();
         render_mapa();
+        render_hero(hx*2, hy*2);
         return;
     }
-    if (mapa_actual == 4 && mapa_trabajo[hmap] == 9) { //entrada a mapa3 desde mapa4
+    if (mapa_actual == entrada2_mapa && mapa_trabajo[hmap] == 9) {
         mapa_actual = 3;
         hx = 7;
         hy = 7;
         carga_datos_mapa();
         calculo_frame();
         render_hud_fondo();
+        render_hud_vidas();
+        render_hud_llave();
         render_mapa();
+        render_hero(hx*2, hy*2);
         return;
     }
-    if (mapa_actual == 3 && hy == alto_mapa-1 && mapa_trabajo[hmap] == 9) { //salida mapa3 a mapa4
-        mapa_actual = 4;
-        hx = 7;
-        hy = 5;
+    if (mapa_actual == 3 && hy == alto_mapa-1 && mapa_trabajo[hmap] == 9) {
+        mapa_actual = entrada2_mapa;
+        hx = entrada2_pos % ancho_mapa;
+        hy = entrada2_pos / ancho_mapa + 1;
         carga_datos_mapa();
         calculo_frame();
         render_hud_fondo();
+        render_hud_vidas();
+        render_hud_llave();
         render_mapa();
+        render_hero(hx*2, hy*2);
         return;
     }
     if (mapa_actual == 5 && hy == alto_mapa-1 && (hx == 7 || hx == 8)) { //salida de cueva
@@ -115,7 +145,10 @@ void check_warp(void) { //entrada a cueva (posicion aleatoria cada partida)
         carga_datos_mapa();
         calculo_frame();
         render_hud_fondo();
+        render_hud_vidas();
+        render_hud_llave();
         render_mapa();
+        render_hero(hx*2, hy*2);
         return;
     }
 }
@@ -158,7 +191,7 @@ void sword_erase(void) {
     }
 }
 
-// Comprueba si el tile delante del heroe contiene al enemigo y lo elimina con 1 golpe,
+// Comprueba si el tile delante del heroe contiene un enemigo y lo elimina con 1 golpe,
 // soltando la llave en ese tile con probabilidad 50%.
 void check_sword_hit(void) {
     unsigned char tx, ty;
@@ -174,6 +207,7 @@ void check_sword_hit(void) {
         if (rand_next() & 1) { // 50% drop chance
             llave_mapa = mapa_actual;
             llave_pos  = ey * ancho_mapa + ex;
+            tile_bajo_llave = mapa_trabajo[llave_pos];
             mapa_trabajo[llave_pos] = 13;
             llave_en_mapa = 1;
         }
@@ -187,9 +221,11 @@ void check_llave(void) {
     if (hmap != llave_pos) return;
     llave_en_mapa = 0;
     tiene_llave = 1;
+    sonido_llave();
     mapa_trabajo[llave_pos] = 0;
     render_tile(0, llave_pos % ancho_mapa, llave_pos / ancho_mapa);
     render_hud_llave();
+    render_hero(hx*2, hy*2);
 }
 
 void update_attack(void) {

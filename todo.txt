@@ -1,0 +1,34 @@
+pantalla carga
+
+menu principal
+	redefinir
+	¿cargar/salvar?
+
+juego
+	status superior
+	añadir jefe final
+	añadir mazmorreo
+		empujar bloques
+		abrir puertas
+	añadir mas mapas
+	añadir otra arma
+
+¿pantalla inventario?
+
+pantalla game over -> stats - score -> menu principal
+
+----
+
+fixes
+	no es necesario poner la entrada a la mazmorra en sitios diferentes de la pantalla, lo que tiene que ser aleatorio es la pantalla de entrada, no la ubicacion de la entrada en la pantalla, con que este en el centro esta bien
+
+	el octo no dispara
+	implementar jefe
+
+----
+
+terminar de escribir tfg
+
+dos videos
+	trailer (1-2 min)
+	disertacion (15-20 minutos)

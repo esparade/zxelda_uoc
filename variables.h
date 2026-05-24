@@ -31,7 +31,7 @@ extern unsigned char mapa5[];
     defb 0,1,1,0,0,0,0,0,0,0,0,0,1,1,1,0
     defb 0,1,1,0,0,0,0,0,0,0,0,1,1,1,1,0
     defb 0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0
-    ._mapa2 //start_lft 001
+    ._mapa2 //start_rgh 001
     defb 0,1,1,0,0,2,0,0,0,0,2,0,2,0,2,0
     defb 0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0
     defb 0,1,1,0,0,2,0,0,0,0,2,0,2,0,2,0
@@ -55,8 +55,8 @@ extern unsigned char mapa5[];
     defb 0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0
     defb 0,1,1,0,0,0,0,0,0,0,0,0,0,1,1,0
     defb 0,1,1,0,0,0,0,0,0,0,0,0,0,1,1,0
-    defb 0,1,0,0,0,0,0,8,0,0,0,0,0,0,1,0
-    defb 0,1,0,0,0,0,6,9,7,0,0,0,0,0,1,0
+    defb 0,1,0,0,0,0,0,0,0,0,0,0,0,0,1,0
+    defb 0,1,0,0,0,0,0,0,0,0,0,0,0,0,1,0
     defb 0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0
     defb 0,1,1,0,0,0,0,0,0,0,0,0,0,1,1,0
     defb 0,1,1,0,0,0,0,0,0,0,0,0,0,1,1,0
@@ -82,19 +82,28 @@ unsigned char eanim;   // frame animacion enemigo
 unsigned char emov;    // contador movimiento enemigo
 unsigned char eactive; // enemigo activo en este mapa
 
-unsigned char llave_en_mapa; // 1 si la llave esta en el suelo
-unsigned char llave_mapa;   // en que mapa cayo la llave
-unsigned char llave_pos;    // indice en mapa_trabajo donde esta la llave
-unsigned char tiene_llave;  // 1 si el heroe la recogio
+unsigned char borde_actual = 6; // color de borde vigente (bits 0-2 de puerto 254)
 
+unsigned char llave_en_mapa;    // 1 si la llave esta en el suelo
+unsigned char llave_mapa;       // en que mapa cayo la llave
+unsigned char llave_pos;        // indice en mapa_trabajo donde esta la llave
+unsigned char tiene_llave;      // 1 si el heroe la recogio
+unsigned char tile_bajo_llave;  // tile original donde cayo la llave
+
+unsigned char vidas;
 unsigned char rand_seed; // semilla del generador; se inicializa con el registro R del Z80 (aleatorio en arranque)
-unsigned char entrada_mapa; // mapa donde aparece la entrada (1 o 2)
-unsigned char entrada_pos;  // indice en mapa_trabajo (y*16+x)
+unsigned char llave_anim;
+unsigned char entrada_mapa; // mapa de la entrada 1 (siempre 1)
+unsigned char entrada_pos;  // posicion fija de la entrada 1
+unsigned char entrada2_mapa; // mapa de la entrada 2 (2 o 5, aleatorio)
+unsigned char entrada2_pos;  // posicion aleatoria de la entrada 2
 
 // posiciones validas en mapa1: (3,1) (6,1) (8,1) (3,3) (9,3) (4,5) (11,5) (3,6)
 const unsigned char cand1[8] = {19, 22, 24, 51, 57, 84, 91, 99};
 // posiciones validas en mapa2: (3,1) (7,1) (3,3) (7,3) (4,5) (9,5) (3,7) (6,7)
 const unsigned char cand2[8] = {19, 23, 51, 55, 84, 89, 115, 118};
+// posiciones validas en mapa4: (4,3) (7,3) (10,3) (4,4) (7,4) (10,4) (5,5) (9,5)
+const unsigned char cand4[8] = {52, 55, 58, 68, 71, 74, 85, 89};
 
 void init_rand(void) {
     #asm
@@ -111,44 +120,63 @@ unsigned char rand_next(void) {
 
 void randomiza_entrada(void) {
     unsigned char r;
+    // entrada 1: siempre en mapa 1, posicion fija
+    entrada_mapa = 1;
+    entrada_pos = 19; // (3,1) en mapa1
+    // entrada 2: aleatoria entre mapa 2 y mapa 4
     r = rand_next();
-    entrada_mapa = (r & 1) ? 2 : 1;
+    entrada2_mapa = (r & 128) ? 4 : 2;
     r = rand_next() & 7;
-    entrada_pos = (entrada_mapa == 1) ? cand1[r] : cand2[r];
+    entrada2_pos = (entrada2_mapa == 2) ? cand2[r] : cand4[r];
 }
 
-// Carga en mapa_trabajo los tiles del mapa actual y fija el color de borde.
-// Activa el enemigo solo en mapa1; en el resto permanece inactivo.
+// Carga en mapa_trabajo los tiles del mapa actual, activa el enemigo correspondiente y fija el color de borde.
 void carga_datos_mapa (void) {
-    eactive = (mapa_actual == 1) ? 1 : 0;
+    // reset del enemigo (se reactivara segun el mapa)
+    eactive = 0;
+    eanim = 0;
+    emov = 0;
     if (mapa_actual == 1) {
-        port_out (254,6);
+        eactive = 1;
+        borde_actual = 6; port_out(254, borde_actual);
         for (x = 0; x < ancho_mapa * alto_mapa; x++) {
             mapa_trabajo[x] = mapa1[x];
         }
-        if (entrada_mapa == 1) mapa_trabajo[entrada_pos] = 9;
+        mapa_trabajo[entrada_pos] = 9;
     }
     if (mapa_actual == 2) {
-        port_out (254,6);
+        borde_actual = 6; port_out(254, borde_actual);
         for (x = 0; x < ancho_mapa * alto_mapa; x++) {
             mapa_trabajo[x] = mapa2[x];
         }
-        if (entrada_mapa == 2) mapa_trabajo[entrada_pos] = 9;
+        if (entrada2_mapa == 2) {
+            mapa_trabajo[entrada2_pos] = 9;
+            mapa_trabajo[entrada2_pos - 1] = 6;
+            mapa_trabajo[entrada2_pos + 1] = 7;
+            mapa_trabajo[entrada2_pos - ancho_mapa] = 8;
+        }
     }
     if (mapa_actual == 3) {
-        port_out (254,0);
+        eactive = 1; ex = 10; ey = 4;
+        borde_actual = 0; port_out(254, borde_actual);
         for (x = 0; x < ancho_mapa * alto_mapa; x++) {
             mapa_trabajo[x] = mapa3[x];
         }
     }
     if (mapa_actual == 4) {
-        port_out (254,6);
+        borde_actual = 6; port_out(254, borde_actual);
         for (x = 0; x < ancho_mapa * alto_mapa; x++) {
             mapa_trabajo[x] = mapa4[x];
         }
+        if (entrada2_mapa == 4) {
+            mapa_trabajo[entrada2_pos] = 9;
+            mapa_trabajo[entrada2_pos - 1] = 6;
+            mapa_trabajo[entrada2_pos + 1] = 7;
+            mapa_trabajo[entrada2_pos - ancho_mapa] = 8;
+        }
     }
     if (mapa_actual == 5) {
-        port_out (254,0);
+        borde_actual = 0; port_out(254, borde_actual);
         for (x = 0; x < ancho_mapa * alto_mapa; x++) {
             mapa_trabajo[x] = mapa5[x];
         }
@@ -183,6 +211,9 @@ void inicia_variables_juego(void) {
     hmap = 0;
     anim = 0;
     vista = 0;
+
+    //vidas
+    vidas = NUMERO_DE_VIDAS;
 
     //items
     llave_en_mapa = 0;

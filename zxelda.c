@@ -31,6 +31,7 @@ void main (void) {
                 calculo_frame();
                 check_warp();
                 check_llave();
+                anima_llave();
                 mueve_enemigo();
                 animacion_enemigo();
                 update_attack();

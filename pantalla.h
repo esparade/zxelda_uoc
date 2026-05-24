@@ -2,7 +2,7 @@
 //07abr'26
 
 void init_pantalla (void) {
-    port_out (254,6); //border color. 0_black, 1_blue, 2_red, 3_magenta, 4_green, 5_teal, 6_yellow, 7_white
+    borde_actual = 6; port_out(254, borde_actual);
     cls(0);
 }
 
@@ -74,23 +74,50 @@ int render_tile(int grafico, int x, int y) {
             put_sprite_x16 (wrld_door_left, x*2+MAPA_OX, y*2+MAPA_OY);
         break;
         case 7:
-            put_sprite_x16 (wrld_door_rght, x*2+MAPA_OX, y*2+MAPA_OY);
+            put_sprite_x16 (wrld_door_right, x*2+MAPA_OX, y*2+MAPA_OY);
         break;
         case 8:
-            put_sprite_8x16 (wrld_door_up, x*2+MAPA_OX, y*2+MAPA_OY);
+            put_sprite_16x8 (wrld_door_up, x*2+MAPA_OX, y*2+1+MAPA_OY);
         break;
         case 9:
             put_sprite_x16 (sprite_negro, x*2+MAPA_OX, y*2+MAPA_OY);
         break;
         case 13:
-            put_sprite_x8 (item_llave, x*2+MAPA_OX, y*2+MAPA_OY);
+            render_tile(tile_bajo_llave, x, y);
+            put_sprite_x8_mask(item_llave, x*2+MAPA_OX, y*2+MAPA_OY);
         break;
     }
 }
 
 void render_hud_llave(void) {
     if (tiene_llave) {
-        put_sprite_x16(item_llave, 14, 2);
+        put_sprite_x8_mask_noclr(item_llave_trans, 14, 2);
+    }
+}
+
+void render_hud_vidas(void) {
+    unsigned char i;
+    unsigned char *lleno, *vacio;
+    if (mapa_actual == 3) {
+        put_sprite_x8(hud_lV_neg, 2, 2);
+        put_sprite_x8(hud_lI_neg, 3, 2);
+        put_sprite_x8(hud_lD_neg, 4, 2);
+        put_sprite_x8(hud_lA_neg, 5, 2);
+        lleno = hud_corazon_neg;
+        vacio = hud_corazon_vacio_neg;
+    } else {
+        put_sprite_x8(hud_lV_ama, 2, 2);
+        put_sprite_x8(hud_lI_ama, 3, 2);
+        put_sprite_x8(hud_lD_ama, 4, 2);
+        put_sprite_x8(hud_lA_ama, 5, 2);
+        lleno = hud_corazon_ama;
+        vacio = hud_corazon_vacio_ama;
+    }
+    for (i = 0; i < NUMERO_DE_VIDAS; i++) {
+        if (i < vidas)
+            put_sprite_x8(lleno, 7 + i*2, 2);
+        else
+            put_sprite_x8(vacio, 7 + i*2, 2);
     }
 }
 
@@ -101,10 +128,10 @@ int render_hero(int x, int y) {
         case 0: //up
             switch (anim) {
                 case 0:
-                    put_sprite_x16 (plyr_upA,rx,ry);
+                    put_sprite_x16_mask_ink (plyr_upA,rx,ry);
                     break;
                 case 1:
-                    put_sprite_x16 (plyr_upB,rx,ry);
+                    put_sprite_x16_mask_ink (plyr_upB,rx,ry);
                     break;
                 }
             anim++;
@@ -117,10 +144,10 @@ int render_hero(int x, int y) {
         case 1: //der
             switch (anim) {
                 case 0:
-                    put_sprite_x16 (plyr_rghA,rx,ry);
+                    put_sprite_x16_mask_ink (plyr_rghA,rx,ry);
                     break;
                 case 1:
-                    put_sprite_x16 (plyr_rghB,rx,ry);
+                    put_sprite_x16_mask_ink (plyr_rghB,rx,ry);
                     break;
                 }
             anim++;
@@ -129,14 +156,14 @@ int render_hero(int x, int y) {
                 anim = 0;
             }
             break;
-        
+
         case 2: //abaj
             switch (anim) {
                 case 0:
-                    put_sprite_x16 (plyr_dwnA,rx,ry);
+                    put_sprite_x16_mask_ink (plyr_dwnA,rx,ry);
                     break;
                 case 1:
-                    put_sprite_x16 (plyr_dwnB,rx,ry);
+                    put_sprite_x16_mask_ink (plyr_dwnB,rx,ry);
                     break;
                 }
             anim++;
@@ -145,14 +172,14 @@ int render_hero(int x, int y) {
                 anim = 0;
             }
             break;
-        
+
         case 3: //izq
             switch (anim) {
                 case 0:
-                    put_sprite_x16 (plyr_lftA,rx,ry);
+                    put_sprite_x16_mask_ink (plyr_lftA,rx,ry);
                     break;
                 case 1:
-                    put_sprite_x16 (plyr_lftB,rx,ry);
+                    put_sprite_x16_mask_ink (plyr_lftB,rx,ry);
                     break;
                 }
             anim++;
@@ -179,6 +206,7 @@ void cambiar_pantalla (unsigned char nueva) {
         case PANTALLA_JUEGO:
             inicia_variables_juego();
             render_hud_fondo();
+            render_hud_vidas();
             render_mapa();
             render_hud_llave();
             render_hero(hx*2, hy*2);

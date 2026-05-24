@@ -19,6 +19,8 @@ void cambiar_mapa(unsigned char dir) {
     }
     calculo_frame();
     render_hud_fondo();
+    render_hud_vidas();
+    render_hud_llave();
     render_mapa();
     render_hero(hx*2, hy*2);
 }
@@ -32,6 +34,7 @@ void control_teclas_juego (void) {
 
         if (vista != 0) { // primer pulso: orienta el sprite antes de mover (consume 1 frame)
             vista = 0;
+            restaura_fondo_tile();
             render_hero(hx*2,hy*2);
             wait_int();
             wait_int();
@@ -39,7 +42,7 @@ void control_teclas_juego (void) {
             return;
         }
 
-        if (mapa_trabajo[hmap-ancho_mapa] == 1) {
+        if (es_solido(mapa_trabajo[hmap-ancho_mapa])) {
             return;
         }
         x8=hx*2;
@@ -50,6 +53,7 @@ void control_teclas_juego (void) {
         wait_int();
         wait_int();
         render_tile(mapa_trabajo[hmap],hx,hy);
+        render_tile(mapa_trabajo[hmap-ancho_mapa],hx,hy-1);
         render_hero(x8,y8);
         hy--;
         calculo_frame();
@@ -65,6 +69,7 @@ void control_teclas_juego (void) {
 
         if (vista !=1) { //animacion plyr der
             vista = 1;
+            restaura_fondo_tile();
             render_hero(hx*2,hy*2);
             wait_int();
             wait_int();
@@ -72,7 +77,7 @@ void control_teclas_juego (void) {
             return;
         }
 
-        if (mapa_trabajo[hmap+1]==1) {
+        if (es_solido(mapa_trabajo[hmap+1])) {
             return;
         }
         x8=(hx*2)+1;
@@ -83,6 +88,7 @@ void control_teclas_juego (void) {
         wait_int();
         wait_int();
         render_tile(mapa_trabajo[hmap],hx,hy);
+        render_tile(mapa_trabajo[hmap+1],hx+1,hy);
         render_hero(x8,y8);
         hx++;
         calculo_frame();
@@ -98,6 +104,7 @@ void control_teclas_juego (void) {
 
         if (vista != 2) { //anim plyr mov izq
             vista = 2;
+            restaura_fondo_tile();
             render_hero(hx*2,hy*2);
             wait_int();
             wait_int();
@@ -105,7 +112,7 @@ void control_teclas_juego (void) {
             return;
         }
 
-        if (mapa_trabajo[hmap+ancho_mapa] == 1) {
+        if (es_solido(mapa_trabajo[hmap+ancho_mapa])) {
             return;
         }
         x8=hx*2;
@@ -116,6 +123,7 @@ void control_teclas_juego (void) {
         wait_int();
         wait_int();
         render_tile(mapa_trabajo[hmap],hx,hy);
+        render_tile(mapa_trabajo[hmap+ancho_mapa],hx,hy+1);
         render_hero(x8,y8);
         hy++;
         calculo_frame();
@@ -131,6 +139,7 @@ void control_teclas_juego (void) {
 
         if (vista != 3) { //anim plyr mov izq
             vista = 3;
+            restaura_fondo_tile();
             render_hero(hx*2,hy*2);
             wait_int();
             wait_int();
@@ -138,7 +147,7 @@ void control_teclas_juego (void) {
             return;
         }
 
-        if (mapa_trabajo[hmap - 1] == 1) {
+        if (es_solido(mapa_trabajo[hmap - 1])) {
             return;
         }
 
@@ -153,6 +162,7 @@ void control_teclas_juego (void) {
         wait_int();
         wait_int();
         render_tile(mapa_trabajo[hmap],hx,hy);
+        render_tile(mapa_trabajo[hmap-1],hx-1,hy);
         render_hero(x8,y8);
         hx--;
         calculo_frame();
@@ -162,7 +172,8 @@ void control_teclas_juego (void) {
 
     if ((port_in(32766)&1)==0) { //SPACE - ataque
         if (attack_timer == 0) {
-            attack_timer = 8; // la espada permanece visible 8 frames
+            attack_timer = 4; // la espada permanece visible 4 frames
+            sonido_golpe();
             check_sword_hit();
         }
     }
