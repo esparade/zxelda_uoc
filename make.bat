@@ -13,13 +13,13 @@ REM _________________________________________________________
 echo ## COMPILANDO
 zcc +zx -vn zxelda.c -o zxelda.bin -lndos -zorg=24200
 echo ## CONSTRUYENDO CINTA
-rem cambia JUEGO por el nombre que quieres que salga en Program:
-rem Si quieres pantalla de carga renombra loaderzx_con_pantalla.bas por loaderzx.bas
+rem -s define el nombre que sale en program:
+rem para pantalla de carga renombra loaderzx_con_pantalla.bas por loaderzx.bas
 utilszx\bas2tap -a10 -sZXELDA loaderzx_con_pantalla.bas loaderzx.tap
-rem Si quieres pantalla de carga quita el siguiente "rem"
-utilszx\bin2tap -o screenzx.tap -a 16384 loadingzx.bin
+rem para pantalla de carga quitar/poner el siguiente "REM"
+utilszx\bin2tap -o loading_screen.tap -a 16384 loadingzx.bin
 utilszx\bin2tap -o mainzx.tap -a 24200 zxelda.bin
-copy /b loaderzx.tap + screenzx.tap + mainzx.tap zxelda.tap
+copy /b loaderzx.tap + loading_screen.tap + mainzx.tap zxelda.tap
 REM _________________________________________________________
 REM Borramos ficheros temporales generados
 REM _________________________________________________________
