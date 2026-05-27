@@ -1,0 +1,97 @@
+--------
+mundo:
+--------
+
+- el mundo tiene 13 pasos
+- se hace un walk aleatorio
+supongamos:
+  m
+  l 
+j-i
+k h-g
+    f
+c-d-e
+b-a
+
+es lo mismo que retorcer:
+a-b-c-d-e-f-g-h-i-l-m
+                j
+                k
+                                                                                                                                              b
+las bifurcaciones tienen 3 conexiones en lugar de 2, la profundidad maxima de las ramas es 3 si es posible, tanto seguidas a-b-c como sueltas a-c, probabilidad del 25% de que haya una bifurcacion, hay que comprobar primero si el desvio pisaria otro mapa (en el mundo no hay solapamientos), limitar los desvios (limite maximo de dinero)
+
+otra posibilidad seria:
+g-f l-k
+  e   j
+  d-h-i-l-m
+a-b-c
+
+es lo mismo que retorcer:
+  c
+a-b-d-h-i-l-m
+    e   j
+    f   k
+    g
+
+al final de las ramas sueltas se situa la entrada a la mazmorra, solo hay 1 y esta en cualquiera de ellas, en la que no esta, hay oro que sirve para mejorar el personaje en la tienda
+
+--------
+mazmorra:
+--------
+
+- la mazmorra tiene 13 pasos (el primero es la entrada, el ultimo es el jefe)
+- se hace un walk aleatorio
+supongamos:
+  m
+  l 
+j-i
+k h-g
+    f
+c-d-e
+b-a
+
+es lo mismo que retorcer:
+a-b-c-d-e-f-g-h-i-k-l-m
+                j
+                k
+                                                                                                                                b
+las bifurcaciones tienen 3 conexiones en lugar de 2, la profundidad maxima de las ramas es 3, tanto seguidas a-b-c como sueltas a-c, probabilidad del 25% de que haya un desvio, probabilidad 50% de profundidad de la rama, no importa si las habitaciones quedarian solapadas sobre el plano (mas desconcertante), limitar los desvios (limite maximo de dinero)
+
+otra posibilidad seria:
+a-b-c-d-h-i-l-m
+      e   j
+      f   k
+      g
+
+al final de las ramas sueltas hay oro, que sirve para mejorar el personaje en la tienda
+
+no todas las puertas estan cerradas, pero hay que saber si en el camino hay una puerta cerrada, si la hay, el numero de enemigos por salir se reparte las posibilidades de soltar la llave, si ya tienes la llave, ningun enemigo da llave
+(supongamos que la 4 pantalla tiene la puerta cerrada, hasta alli, hay 5 enemigos por habitacion, 20 enemigos, el primer enemigo en morir tiene 1/20 de posibilidades de soltar la llave, luego 1/19 y asi hasta llegar a 1/1)
+
+--------
+
+hay que hacer que la progresion de los monstruos supere la del player para que el juego irremediablemente acabe (morir de un toque, enemigos inmortales)
+
+player:
+3hp
+1dmg
+
+puedes comprar (si tienes dinero)
++1hp
+ó
++1dmg
+
+enemigos:
+      1      2      3      4      etc
+octo: 1hp    1hp    2hp    2hp
+      1dmg   1dmg   2dmg   2dmg
+
+      1      2      3      4      etc
+kngh: 1hp    2hp    3hp    4hp
+      1dmg   2dmg   3dmg   4dmg
+
+      1      2      3      4      etc
+boss: 5hp    6hp    7hp    8hp
+      1dmg   2dmg   3dmg   5dmg (fibo)
+
+posiblemente todas las progresiones deban de ser fibonacci, dependiendo de cuantas mejoras (+1's puedas adquirir por run)

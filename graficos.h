@@ -31,23 +31,18 @@ extern unsigned char swrd_lft [];
 
 extern unsigned char enmy_octoD_a [];
 extern unsigned char enmy_octoD_b [];
+extern unsigned char enmy_hvy [];
 
 extern unsigned char item_llave [];
 extern unsigned char item_llave_trans [];
+extern unsigned char item_corazon [];
 
-extern unsigned char hud_corazon_ama [];
-extern unsigned char hud_corazon_neg [];
-extern unsigned char hud_corazon_vacio_ama [];
-extern unsigned char hud_corazon_vacio_neg [];
+extern unsigned char hud_corazon [];
+extern unsigned char hud_corazon_vacio [];
 
-extern unsigned char hud_lV_ama [];
-extern unsigned char hud_lI_ama [];
-extern unsigned char hud_lD_ama [];
-extern unsigned char hud_lA_ama [];
-extern unsigned char hud_lV_neg [];
-extern unsigned char hud_lI_neg [];
-extern unsigned char hud_lD_neg [];
-extern unsigned char hud_lA_neg [];
+extern unsigned char fuente [];
+#define F_DIG(n) (&fuente[(n) * 8])
+#define F_LET(c) (&fuente[(10 + (c) - 'a') * 8])
 
 #asm
     ._wrld_frst
@@ -103,6 +98,13 @@ extern unsigned char hud_lA_neg [];
 	DEFB	170,170,  1,  0,  0,  0,  1,  0
 	DEFB	  0,  0,  1,  0,  0,  0,  1,  0
 	DEFB	  7,  7,  7,  7
+
+	._dngn_tomb
+	DEFB	  3,192,  7,224, 14,112, 30,120
+	DEFB	 24, 24, 24, 24, 30,120, 30,120
+	DEFB	 30,120, 30,120, 31,248, 31,248
+	DEFB	124,174, 98,106, 75,166,127,254
+	DEFB	 57, 57, 57, 57
 
 
     ._plyr_upA
@@ -181,8 +183,6 @@ extern unsigned char hud_lA_neg [];
 	DEFB	  0,255,  0,127,  0,  1,  0,  0
 	DEFB	 60, 60
 
-
-
     ._enmy_octoD_a
 	DEFB	  6, 96,219,219,127,254, 61,188
 	DEFB	255,255,115,206, 36, 36,102,102
@@ -197,6 +197,56 @@ extern unsigned char hud_lA_neg [];
 	DEFB	  3,192,  3,192,  3,192, 15,240
 	DEFB	 58, 58, 58, 58
 
+	._enmy_hvy
+	DEFB	 27,218, 23,235, 12, 51, 13,179
+	DEFB	 13,179, 12, 50,255,250,129,110
+	DEFB	165,246,129,246,129, 62,165,130
+	DEFB	129, 62,255,242, 28, 56, 60, 60
+	DEFB	 58, 58, 58, 58
+
+	;fuente[0..9]=dig, [10..35]=a-z, [36]=coma [37]=punto [38]=comill [39]=excla [40]=interr
+    ._fuente
+    DEFB	 56,108,198,198,198,108, 56,  0 //0
+    DEFB	 56,112,240, 48, 48, 48,252,  0 //1
+    DEFB	124,198,230, 12, 56, 98,252,  0 //2
+    DEFB	254,140, 24, 60,  6,134,124,  0 //3
+    DEFB	 12, 28, 60,108,254, 12, 30,  0 //4
+    DEFB	252,192,252,198,  6,198,124,  0 //5
+    DEFB	 28, 48, 96,252,198,198,124,  0 //6
+    DEFB	254,134, 12, 24, 24, 24, 24,  0 //7
+    DEFB	124,198,198,124,198,198,124,  0 //8
+    DEFB	124,198,198,126,  6, 12,120,  0 //9
+    DEFB	 56,110,198,198,254,198,198,  0 //A
+    DEFB	220,230,198,252,198,198,252,  0
+    DEFB	 62, 99,192,192,192, 99, 62,  0
+    DEFB	248,204,198,198,198,204,248,  0
+    DEFB	126,230,192,252,192,230,126,  0 //E
+    DEFB	254,102, 96,120, 96, 96,240,  0
+    DEFB	124,198,192,222,198,206,122,  0
+    DEFB	198,198,198,254,230,198,198,  0
+    DEFB	252, 48, 48, 48, 48, 48,252,  0 //I
+    DEFB	254, 12,  6,  6,198,108, 56,  0
+    DEFB	198,204,216,248,220,206,198,  0
+    DEFB	224,192,192,192,192,194,254,  0
+    DEFB	236,254,214,214,214,198,204,  0
+    DEFB	236,126,102,102,102,100,228,  0
+    DEFB	124,198,198,198,198,198,124,  0 //O
+    DEFB	220,246,198,198,252,192,192,  0
+    DEFB	124,198,198,198,214,222,124,  0
+    DEFB	220,230,198,198,252,204,198,  0
+    DEFB	124,198,192,124,  6,198,124,  0
+    DEFB	254,178, 48, 48, 48, 48, 48,  0
+    DEFB	230,102,102,198,198,198,124,  0 //U
+    DEFB	230,102,198,198,198,108, 56,  0
+    DEFB	236,102,198,214,214,254,108,  0
+    DEFB	238,198,108, 56,108,198,238,  0
+    DEFB	230,102, 54, 30, 14,198,124,  0
+    DEFB	254,134, 12, 56, 96,194,254,  0 //Z
+    DEFB	  0,  0,  0,  0, 48, 48, 96,  0 //coma
+    DEFB	  0,  0,  0,  0,  0, 96, 96,  0 //punto
+    DEFB	108,108, 36, 72,  0,  0,  0,  0 //comill
+    DEFB	 48,120,120,120, 48,  0, 48,  0 //excla
+    DEFB	124,198,230, 12, 24,  0, 24,  0 //interr
 
     ._item_llave
 	; formato: mascara,pixel x8 filas + 1 byte attr
@@ -210,54 +260,19 @@ extern unsigned char hud_lA_neg [];
 	DEFB	241, 14,236, 19,238, 17,246,  9
 	DEFB	233, 22,223, 32,175, 80, 95,160
 
+	._item_corazon
+	; formato: mascara,pixel x8 filas + 1 byte attr
+	DEFB	147,108,  1,254,  1,254,  1,254
+	DEFB	131,124,199, 56,239, 16,255,  0
+	DEFB	 50, 50, 50, 50
 
-    ; --- letras VIDA, papel amarillo (attr=48: tinta negra) ---
-    ._hud_lV_ama
-	DEFB 195,195,102,102, 60, 24,  0,  0
-	DEFB  48
-    ._hud_lI_ama
-	DEFB  60, 24, 24, 24, 24, 60,  0,  0
-	DEFB  48
-    ._hud_lD_ama
-	DEFB 240,204,198,198,204,240,  0,  0
-	DEFB  48
-    ._hud_lA_ama
-	DEFB  56,108,198,254,198,198,  0,  0
-	DEFB  48
-
-    ; --- letras VIDA, papel negro (attr=7: tinta blanca) ---
-    ._hud_lV_neg
-	DEFB 195,195,102,102, 60, 24,  0,  0
-	DEFB   7
-    ._hud_lI_neg
-	DEFB  60, 24, 24, 24, 24, 60,  0,  0
-	DEFB   7
-    ._hud_lD_neg
-	DEFB 240,204,198,198,204,240,  0,  0
-	DEFB   7
-    ._hud_lA_neg
-	DEFB  56,108,198,254,198,198,  0,  0
-	DEFB   7
-
-    ._hud_corazon_ama
-	; corazon lleno: papel amarillo (48) + tinta roja (2) = 50
+    ._hud_corazon
 	DEFB 108,254,254,254,124, 56, 16,  0
-	DEFB  50
 
-    ._hud_corazon_neg
-	; corazon lleno: papel negro (0) + tinta roja (2) = 2
-	DEFB 108,254,254,254,124, 56, 16,  0
-	DEFB   2
-
-    ._hud_corazon_vacio_ama
-	; corazon vacio: papel amarillo (48) + tinta negra (0) = 48
+    ._hud_corazon_vacio
 	DEFB 108,130,130, 68, 40, 16,  0,  0
-	DEFB  48
 
-    ._hud_corazon_vacio_neg
-	; corazon vacio: papel negro (0) + tinta azul (1) = 1
-	DEFB 108,130,130, 68, 40, 16,  0,  0
-	DEFB   1
+    
 
     ._sprite_negro
     defb 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0

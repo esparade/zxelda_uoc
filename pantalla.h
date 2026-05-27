@@ -27,6 +27,11 @@ void render_mapa (void) {
     
 }
 
+void put_hud_char(unsigned char *pix, unsigned char col, unsigned char row, unsigned char attr) {
+    *((unsigned char *)(22528 + (unsigned int)row * 32 + col)) = attr;
+    put_sprite_x8_noclr(pix, col, row);
+}
+
 // Dibuja el fondo del HUD: negro en mapa3 (mazmorra), amarillo en exteriores.
 void render_hud_fondo(void) {
     unsigned char *borde = (mapa_actual == 3) ? sprite_negro : sprite_amaD;
@@ -49,7 +54,7 @@ void restaura_fondo_tile (void) {
 // Dibuja el tile con el ID dado en la celda (x,y) de la rejilla del mapa.
 // IDs de tile: 0=suelo_mundo  1=arbol  2=matorral  3=bloque_dngn  4=baldosa  5=pared
 //              6=puerta_izq   7=puerta_der  8=puerta_arr  9=void/negro
-//              13=llave
+//              13=llave  14=corazon
 int render_tile(int grafico, int x, int y) {
     switch (grafico) {
         case 0:
@@ -86,38 +91,37 @@ int render_tile(int grafico, int x, int y) {
             render_tile(tile_bajo_llave, x, y);
             put_sprite_x8_mask(item_llave, x*2+MAPA_OX, y*2+MAPA_OY);
         break;
+        case 14:
+            render_tile(tile_bajo_corazon, x, y);
+            put_sprite_x8_mask(item_corazon, x*2+MAPA_OX, y*2+MAPA_OY);
+        break;
     }
 }
 
 void render_hud_llave(void) {
+    put_hud_char(F_LET('l'), 14, 2, 7);
+    put_hud_char(F_LET('l'), 15, 2, 7);
+    put_hud_char(F_LET('a'), 16, 2, 7);
+    put_hud_char(F_LET('v'), 17, 2, 7);
+    put_hud_char(F_LET('e'), 18, 2, 7);
+    put_hud_char(F_LET('s'), 19, 2, 7);
     if (tiene_llave) {
-        put_sprite_x8_mask_noclr(item_llave_trans, 14, 2);
+        put_sprite_x8_mask_noclr(item_llave_trans, 20, 2);
     }
+    put_hud_char(F_DIG(tiene_llave), 21, 2, 7);
 }
 
 void render_hud_vidas(void) {
-    unsigned char i;
-    unsigned char *lleno, *vacio;
-    if (mapa_actual == 3) {
-        put_sprite_x8(hud_lV_neg, 2, 2);
-        put_sprite_x8(hud_lI_neg, 3, 2);
-        put_sprite_x8(hud_lD_neg, 4, 2);
-        put_sprite_x8(hud_lA_neg, 5, 2);
-        lleno = hud_corazon_neg;
-        vacio = hud_corazon_vacio_neg;
-    } else {
-        put_sprite_x8(hud_lV_ama, 2, 2);
-        put_sprite_x8(hud_lI_ama, 3, 2);
-        put_sprite_x8(hud_lD_ama, 4, 2);
-        put_sprite_x8(hud_lA_ama, 5, 2);
-        lleno = hud_corazon_ama;
-        vacio = hud_corazon_vacio_ama;
-    }
-    for (i = 0; i < NUMERO_DE_VIDAS; i++) {
-        if (i < vidas)
-            put_sprite_x8(lleno, 7 + i*2, 2);
+    unsigned char n;
+    put_hud_char(F_LET('v'), 2, 2, 7);
+    put_hud_char(F_LET('i'), 3, 2, 7);
+    put_hud_char(F_LET('d'), 4, 2, 7);
+    put_hud_char(F_LET('a'), 5, 2, 7);
+    for (n = 0; n < NUMERO_DE_VIDAS; n++) {
+        if (n < vidas)
+            put_hud_char(hud_corazon, 7 + n*2, 2, 2);
         else
-            put_sprite_x8(vacio, 7 + i*2, 2);
+            put_hud_char(hud_corazon_vacio, 7 + n*2, 2, 1);
     }
 }
 

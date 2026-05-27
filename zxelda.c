@@ -7,6 +7,7 @@
 #include <lib\sonidoszx.h>
 
 #include <config.h>
+#include <mapas.h>
 #include <variables.h>
 #include <graficos.h>
 #include <pantalla.h>
@@ -31,9 +32,12 @@ void main (void) {
                 calculo_frame();
                 check_warp();
                 check_llave();
+                check_corazon();
                 anima_llave();
                 mueve_enemigo();
                 animacion_enemigo();
+                mueve_enemigo2();
+                animacion_enemigo2();
                 update_attack();
             break;
 

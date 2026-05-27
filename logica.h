@@ -17,7 +17,7 @@ void anima_llave(void) {
 
 // Tiles solidos (bloquean movimiento): arbol(1), bloque(3), pared(5),
 // puerta_izq(6), puerta_der(7), puerta_arr(8).
-// Son pasables: suelo(0), matorral(2), baldosa(4), void(9), llave(13).
+// Son pasables: suelo(0), matorral(2), baldosa(4), void(9), llave(13), corazon(14).
 int es_solido(unsigned char tile) {
     return tile==1 || tile==3 || tile==5 || tile==6 || tile==7 || tile==8;
 }
@@ -101,7 +101,7 @@ void calculo_frame(void) {
 void check_warp(void) { //entrada a cueva (posicion aleatoria cada partida)
     if (mapa_actual == entrada_mapa && mapa_trabajo[hmap] == 9) {
         mapa_actual = 5;
-        hx = 6;
+        hx = 7;
         hy = 7;
         carga_datos_mapa();
         calculo_frame();
@@ -140,8 +140,8 @@ void check_warp(void) { //entrada a cueva (posicion aleatoria cada partida)
     }
     if (mapa_actual == 5 && hy == alto_mapa-1 && (hx == 7 || hx == 8)) { //salida de cueva
         mapa_actual = 1;
-        hx = 2;
-        hy = 2;
+        hx = entrada_pos % ancho_mapa;
+        hy = entrada_pos / ancho_mapa + 1;
         carga_datos_mapa();
         calculo_frame();
         render_hud_fondo();
@@ -191,28 +191,60 @@ void sword_erase(void) {
     }
 }
 
+// Suelta un item en la posicion del enemigo eliminado.
+// En mapa3 o mapa5 (mazmorras) suelta la llave; en cualquier otro mapa, un corazon.
+void drop_item(unsigned char ix, unsigned char iy) {
+    unsigned char pos = iy * ancho_mapa + ix;
+    if (mapa_actual == 3 || mapa_actual == 5) {
+        llave_mapa = mapa_actual;
+        llave_pos  = pos;
+        tile_bajo_llave = mapa_trabajo[pos];
+        mapa_trabajo[pos] = 13;
+        llave_en_mapa = 1;
+    } else {
+        corazon_mapa = mapa_actual;
+        corazon_pos  = pos;
+        tile_bajo_corazon = mapa_trabajo[pos];
+        mapa_trabajo[pos] = 14;
+        corazon_en_mapa = 1;
+    }
+}
+
 // Comprueba si el tile delante del heroe contiene un enemigo y lo elimina con 1 golpe,
-// soltando la llave en ese tile con probabilidad 50%.
+// soltando un item aleatorio con probabilidad 50%.
 void check_sword_hit(void) {
     unsigned char tx, ty;
-    if (!eactive) return;
     switch(vista) {
         case 0: tx=hx;   ty=hy-1; break;
         case 1: tx=hx+1; ty=hy;   break;
         case 2: tx=hx;   ty=hy+1; break;
         case 3: tx=hx-1; ty=hy;   break;
     }
-    if (ex == tx && ey == ty) {
+    if (eactive && ex == tx && ey == ty) {
         eactive = 0;
-        if (rand_next() & 1) { // 50% drop chance
-            llave_mapa = mapa_actual;
-            llave_pos  = ey * ancho_mapa + ex;
-            tile_bajo_llave = mapa_trabajo[llave_pos];
-            mapa_trabajo[llave_pos] = 13;
-            llave_en_mapa = 1;
-        }
+        if (rand_next() & 1) drop_item(ex, ey);
         render_tile(mapa_trabajo[ey*ancho_mapa+ex], ex, ey);
     }
+    if (e2active && e2x == tx && e2y == ty) {
+        e2active = 0;
+        if (rand_next() & 1) drop_item(e2x, e2y);
+        render_tile(mapa_trabajo[e2y*ancho_mapa+e2x], e2x, e2y);
+    }
+}
+
+void check_corazon(void) {
+    if (!corazon_en_mapa) return;
+    if (mapa_actual != corazon_mapa) return;
+    if (hmap != corazon_pos) return;
+    corazon_en_mapa = 0;
+    sonido_corazon();
+    if (vidas < NUMERO_DE_VIDAS) {
+        vidas++;
+        render_hud_vidas();
+    }
+    mapa_trabajo[corazon_pos] = tile_bajo_corazon;
+    render_tile(tile_bajo_corazon, corazon_pos % ancho_mapa, corazon_pos / ancho_mapa);
+    render_hero(hx*2, hy*2);
 }
 
 void check_llave(void) {
@@ -237,11 +269,7 @@ void update_attack(void) {
 
 void animacion_enemigo(void) {
     if (!eactive) return;
-    if (eanim == 0)
-        put_sprite_x16(enmy_octoD_a, ex*2+MAPA_OX, ey*2+MAPA_OY);
-    else
-        put_sprite_x16(enmy_octoD_b, ex*2+MAPA_OX, ey*2+MAPA_OY);
-    eanim ^= 1;
+    put_sprite_x16(enmy_hvy, ex*2+MAPA_OX, ey*2+MAPA_OY);
 }
 
 // El enemigo persigue al heroe tile a tile (sin pathfinding), se mueve cada 16 frames.
@@ -257,6 +285,46 @@ void mueve_enemigo(void) {
     else if (ey < hy) ey++;
     else if (ey > hy) ey--;
     if (ex == hx && ey == hy) {
+        cambiar_pantalla(PANTALLA_GAME_OVER);
+    }
+}
+
+void animacion_enemigo2(void) {
+    if (!e2active) return;
+    if (eanim == 0)
+        put_sprite_x16(enmy_octoD_a, e2x*2+MAPA_OX, e2y*2+MAPA_OY);
+    else
+        put_sprite_x16(enmy_octoD_b, e2x*2+MAPA_OX, e2y*2+MAPA_OY);
+    eanim ^= 1;
+}
+
+void mueve_enemigo2(void) {
+    unsigned char ny;
+    if (!e2active) return;
+    e2mov++;
+    if (e2mov < 16) return;
+    e2mov = 0;
+    render_tile(mapa_trabajo[e2y*ancho_mapa+e2x], e2x, e2y);
+    if (rand_next() & 1) {
+        ny = e2y + 1;
+        if (ny < alto_mapa && !es_solido(mapa_trabajo[ny*ancho_mapa+e2x]))
+            e2y = ny;
+        else {
+            ny = e2y - 1;
+            if (ny < alto_mapa && !es_solido(mapa_trabajo[ny*ancho_mapa+e2x]))
+                e2y = ny;
+        }
+    } else {
+        ny = e2y - 1;
+        if (ny < alto_mapa && !es_solido(mapa_trabajo[ny*ancho_mapa+e2x]))
+            e2y = ny;
+        else {
+            ny = e2y + 1;
+            if (ny < alto_mapa && !es_solido(mapa_trabajo[ny*ancho_mapa+e2x]))
+                e2y = ny;
+        }
+    }
+    if (e2x == hx && e2y == hy) {
         cambiar_pantalla(PANTALLA_GAME_OVER);
     }
 }

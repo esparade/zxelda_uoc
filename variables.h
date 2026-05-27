@@ -14,64 +14,6 @@ unsigned char ancho_mapa;
 unsigned char alto_mapa;
 unsigned char mapa_actual;
 unsigned char mapa_trabajo[144];
-extern unsigned char mapa1[];
-extern unsigned char mapa2[];
-extern unsigned char mapa3[];
-extern unsigned char mapa4[];
-extern unsigned char mapa5[];
-
-#asm
-    ._mapa1 //start 000
-    defb 0,1,1,1,1,1,1,0,0,1,1,1,1,1,1,0
-    defb 0,1,1,0,1,1,0,0,0,1,1,1,1,1,1,0
-    defb 0,1,1,0,0,0,0,0,0,1,1,1,1,1,1,0
-    defb 0,1,0,0,0,0,0,0,0,0,1,1,1,1,1,0
-    defb 0,1,0,0,0,0,0,0,0,0,0,0,0,0,1,0
-    defb 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-    defb 0,1,1,0,0,0,0,0,0,0,0,0,1,1,1,0
-    defb 0,1,1,0,0,0,0,0,0,0,0,1,1,1,1,0
-    defb 0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0
-    ._mapa2 //start_rgh 001
-    defb 0,1,1,0,0,2,0,0,0,0,2,0,2,0,2,0
-    defb 0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0
-    defb 0,1,1,0,0,2,0,0,0,0,2,0,2,0,2,0
-    defb 0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0
-    defb 0,1,1,0,0,0,0,0,0,0,2,0,2,0,2,0
-    defb 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-    defb 0,1,1,0,0,2,0,0,0,0,2,0,2,0,2,0
-    defb 0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0
-    defb 0,1,1,2,2,2,2,2,2,2,2,2,2,2,2,0
-    ._mapa3 //dngn_001
-    defb 9,5,5,5,5,5,5,3,3,5,5,5,5,5,5,9
-    defb 9,5,9,9,9,9,9,4,4,9,9,9,9,9,5,9
-    defb 9,5,9,4,4,4,9,3,4,4,4,9,4,9,5,9
-    defb 9,5,9,4,9,4,9,4,9,9,4,9,4,9,5,9
-    defb 9,5,4,4,9,4,9,4,4,9,4,9,4,4,5,9
-    defb 9,5,9,4,9,4,9,9,4,9,4,9,4,9,5,9
-    defb 9,5,9,4,9,4,4,4,3,9,4,9,4,9,5,9
-    defb 9,5,9,9,9,9,9,4,4,9,4,4,4,9,5,9
-    defb 9,5,5,5,5,5,5,9,9,5,5,5,5,5,5,9
-    ._mapa4 //start -1 dungeon enter
-    defb 0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0
-    defb 0,1,1,0,0,0,0,0,0,0,0,0,0,1,1,0
-    defb 0,1,1,0,0,0,0,0,0,0,0,0,0,1,1,0
-    defb 0,1,0,0,0,0,0,0,0,0,0,0,0,0,1,0
-    defb 0,1,0,0,0,0,0,0,0,0,0,0,0,0,1,0
-    defb 0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-    defb 0,1,1,0,0,0,0,0,0,0,0,0,0,1,1,0
-    defb 0,1,1,0,0,0,0,0,0,0,0,0,0,1,1,0
-    defb 0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0
-    ._mapa5 //from_start_room_door
-    defb 0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0
-    defb 0,1,0,0,0,0,0,0,0,0,0,0,0,0,1,0
-    defb 0,1,0,0,0,0,0,0,0,0,0,0,0,0,1,0
-    defb 0,1,0,0,0,0,0,0,0,0,0,0,0,0,1,0
-    defb 0,1,0,11,0,0,0,10,0,0,0,0,11,0,1,0
-    defb 0,1,0,0,0,0,0,12,0,0,0,0,0,0,1,0
-    defb 0,1,0,0,0,0,0,0,0,0,0,0,0,0,1,0
-    defb 0,1,0,0,0,0,0,0,0,0,0,0,0,0,1,0
-    defb 0,1,1,1,1,1,1,0,0,1,1,1,1,1,1,0
-#endasm
 
 unsigned char Fx_anim;
 unsigned char attack_timer;
@@ -82,6 +24,11 @@ unsigned char eanim;   // frame animacion enemigo
 unsigned char emov;    // contador movimiento enemigo
 unsigned char eactive; // enemigo activo en este mapa
 
+unsigned char e2x;     // enemigo2 pos x (tile)
+unsigned char e2y;     // enemigo2 pos y (tile)
+unsigned char e2mov;   // contador movimiento enemigo2
+unsigned char e2active;// enemigo2 activo en este mapa
+
 unsigned char borde_actual = 6; // color de borde vigente (bits 0-2 de puerto 254)
 
 unsigned char llave_en_mapa;    // 1 si la llave esta en el suelo
@@ -89,6 +36,11 @@ unsigned char llave_mapa;       // en que mapa cayo la llave
 unsigned char llave_pos;        // indice en mapa_trabajo donde esta la llave
 unsigned char tiene_llave;      // 1 si el heroe la recogio
 unsigned char tile_bajo_llave;  // tile original donde cayo la llave
+
+unsigned char corazon_en_mapa;  // 1 si el corazon esta en el suelo
+unsigned char corazon_mapa;     // en que mapa cayo el corazon
+unsigned char corazon_pos;      // indice en mapa_trabajo donde esta el corazon
+unsigned char tile_bajo_corazon;// tile original donde cayo el corazon
 
 unsigned char vidas;
 unsigned char rand_seed; // semilla del generador; se inicializa con el registro R del Z80 (aleatorio en arranque)
@@ -130,12 +82,14 @@ void randomiza_entrada(void) {
     entrada2_pos = (entrada2_mapa == 2) ? cand2[r] : cand4[r];
 }
 
-// Carga en mapa_trabajo los tiles del mapa actual, activa el enemigo correspondiente y fija el color de borde.
+// Carga en mapa_trabajo los tiles del mapa actual, activa los enemigos correspondientes y fija el color de borde.
 void carga_datos_mapa (void) {
-    // reset del enemigo (se reactivara segun el mapa)
+    // reset de todos los enemigos (se reactivaran segun el mapa)
     eactive = 0;
     eanim = 0;
     emov = 0;
+    e2active = 0;
+    e2mov = 0;
     if (mapa_actual == 1) {
         eactive = 1;
         borde_actual = 6; port_out(254, borde_actual);
@@ -145,6 +99,7 @@ void carga_datos_mapa (void) {
         mapa_trabajo[entrada_pos] = 9;
     }
     if (mapa_actual == 2) {
+        e2active = 1; e2x = 8; e2y = 4;
         borde_actual = 6; port_out(254, borde_actual);
         for (x = 0; x < ancho_mapa * alto_mapa; x++) {
             mapa_trabajo[x] = mapa2[x];
@@ -220,6 +175,9 @@ void inicia_variables_juego(void) {
     llave_mapa = 0;
     llave_pos = 0;
     tiene_llave = 0;
+    corazon_en_mapa = 0;
+    corazon_mapa = 0;
+    corazon_pos = 0;
 
     //ataque
     attack_timer = 0;
@@ -230,6 +188,12 @@ void inicia_variables_juego(void) {
     eanim = 0;
     emov = 0;
     eactive = 1;
+
+    //enemigo2
+    e2x = 0;
+    e2y = 0;
+    e2mov = 0;
+    e2active = 0;
 
     //mapa actual
     ancho_mapa = 16;
