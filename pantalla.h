@@ -1,5 +1,7 @@
-//zxelda v0.1b
-//07abr'26
+void put_hud_char(unsigned char *pix, unsigned char col, unsigned char row, unsigned char attr) {
+    *((unsigned char *)(22528 + (unsigned int)row * 32 + col)) = attr;
+    put_sprite_x8_noclr(pix, col, row);
+}
 
 void init_pantalla (void) {
     borde_actual = 6; port_out(254, borde_actual);
@@ -12,7 +14,15 @@ void render_intro (void) {
 
 void render_game_over (void) {
     cls(0);
-    //TODO: dibujar pantalla de game over
+    put_hud_char(F_LET('h'), 11, 11, 7);
+    put_hud_char(F_LET('a'), 12, 11, 7);
+    put_hud_char(F_LET('s'), 13, 11, 7);
+    put_hud_char(F_LET('m'), 15, 11, 7);
+    put_hud_char(F_LET('u'), 16, 11, 7);
+    put_hud_char(F_LET('e'), 17, 11, 7);
+    put_hud_char(F_LET('r'), 18, 11, 7);
+    put_hud_char(F_LET('t'), 19, 11, 7);
+    put_hud_char(F_LET('o'), 20, 11, 7);
 }
 
 // Dibuja todos los tiles del mapa actual recorriendo mapa_trabajo fila a fila.
@@ -24,17 +34,20 @@ void render_mapa (void) {
             contador++;
         }
     }
-    
+
 }
 
-void put_hud_char(unsigned char *pix, unsigned char col, unsigned char row, unsigned char attr) {
-    *((unsigned char *)(22528 + (unsigned int)row * 32 + col)) = attr;
-    put_sprite_x8_noclr(pix, col, row);
-}
-
-// Dibuja el fondo del HUD: negro en mapa3 (mazmorra), amarillo en exteriores.
+// Dibuja el fondo del HUD: negro en mazmorras (mapas 3 y 6), amarillo en exteriores.
 void render_hud_fondo(void) {
-    unsigned char *borde = (mapa_actual == 3) ? sprite_negro : sprite_amaD;
+    unsigned char *borde;
+    if (mapa_actual == 3 || mapa_actual == 6) {
+        borde = sprite_negro;
+        for (y = 0; y < 6; y++)
+            for (x = 0; x < 32; x++)
+                *((unsigned char *)(22528 + (unsigned int)y * 32 + x)) = 0;
+    } else {
+        borde = sprite_amaD;
+    }
     for (x=0; x<3; x++) {
         put_sprite_x16(borde, 0,  x*2);
         put_sprite_x16(borde, 30, x*2);
@@ -42,7 +55,91 @@ void render_hud_fondo(void) {
 }
 
 void render_menu (void) {
-    //put_partial1v_sprite_x16(menu8x8,0,0); //tile misterioso 1PLYR
+    put_hud_char(F_LET('z'), 13, 4, 7);
+    put_hud_char(F_LET('x'), 14, 4, 7);
+    put_hud_char(F_LET('e'), 15, 4, 7);
+    put_hud_char(F_LET('l'), 16, 4, 7);
+    put_hud_char(F_LET('d'), 17, 4, 7);
+    put_hud_char(F_LET('a'), 18, 4, 7);
+
+    put_hud_char(F_DIG(1),   10, 15, 7);
+    put_hud_char(F_LET('t'), 12, 15, 7);
+    put_hud_char(F_LET('e'), 13, 15, 7);
+    put_hud_char(F_LET('c'), 14, 15, 7);
+    put_hud_char(F_LET('l'), 15, 15, 7);
+    put_hud_char(F_LET('a'), 16, 15, 7);
+    put_hud_char(F_LET('d'), 17, 15, 7);
+    put_hud_char(F_LET('o'), 18, 15, 7);
+    
+    put_hud_char(F_DIG(2),   10, 16, 7);
+    put_hud_char(F_LET('k'), 12, 16, 7);
+    put_hud_char(F_LET('e'), 13, 16, 7);
+    put_hud_char(F_LET('m'), 14, 16, 7);
+    put_hud_char(F_LET('p'), 15, 16, 7);
+    put_hud_char(F_LET('s'), 16, 16, 7);
+    put_hud_char(F_LET('t'), 17, 16, 7);
+    put_hud_char(F_LET('o'), 18, 16, 7);
+    put_hud_char(F_LET('n'), 19, 16, 7);
+    
+    put_hud_char(F_DIG(3),   10, 17, 7);
+    put_hud_char(F_LET('r'), 12, 17, 7);
+    put_hud_char(F_LET('e'), 13, 17, 7);
+    put_hud_char(F_LET('d'), 14, 17, 7);
+    put_hud_char(F_LET('e'), 15, 17, 7);
+    put_hud_char(F_LET('f'), 16, 17, 7);
+    put_hud_char(F_LET('i'), 17, 17, 7);
+    put_hud_char(F_LET('n'), 18, 17, 7);
+    put_hud_char(F_LET('i'), 19, 17, 7);
+    put_hud_char(F_LET('r'), 20, 17, 7);
+
+    put_hud_char(F_LET('u'),  4, 21, 7);
+    put_hud_char(F_LET('o'),  5, 21, 7);
+    put_hud_char(F_LET('c'),  6, 21, 7);
+
+    put_hud_char(F_DIG(2),    8, 21, 7);
+    put_hud_char(F_DIG(0),    9, 21, 7);
+    put_hud_char(F_DIG(2),   10, 21, 7);
+    put_hud_char(F_DIG(6),   11, 21, 7);
+
+    put_hud_char(F_LET('n'), 13, 21, 7);
+    put_hud_char(F_LET('o'), 14, 21, 7);
+    put_hud_char(F_LET('t'), 15, 21, 7);
+
+    put_hud_char(F_LET('l'), 17, 21, 7);
+    put_hud_char(F_LET('i'), 18, 21, 7);
+    put_hud_char(F_LET('c'), 19, 21, 7);
+    put_hud_char(F_LET('e'), 20, 21, 7);
+    put_hud_char(F_LET('n'), 21, 21, 7);
+    put_hud_char(F_LET('s'), 22, 21, 7);
+    put_hud_char(F_LET('e'), 23, 21, 7);
+    put_hud_char(F_LET('d'), 24, 21, 7);
+
+    put_hud_char(F_LET('b'), 26, 21, 7);
+    put_hud_char(F_LET('y'), 27, 21, 7);
+
+    put_hud_char(F_LET('n'),  4, 22, 7);
+    put_hud_char(F_LET('i'),  5, 22, 7);
+    put_hud_char(F_LET('n'),  6, 22, 7);
+    put_hud_char(F_LET('t'),  7, 22, 7);
+    put_hud_char(F_LET('e'),  8, 22, 7);
+    put_hud_char(F_LET('n'),  9, 22, 7);
+    put_hud_char(F_LET('d'), 10, 22, 7);
+    put_hud_char(F_LET('o'), 11, 22, 7);
+
+    put_hud_char(F_LET('v'), 14, 22, 7);
+    put_hud_char(F_LET('e'), 15, 22, 7);
+    put_hud_char(F_LET('r'), 16, 22, 7);
+    put_hud_char(F_LET('s'), 17, 22, 7);
+    put_hud_char(F_LET('i'), 18, 22, 7);
+    put_hud_char(F_LET('o'), 19, 22, 7);
+    put_hud_char(F_LET('n'), 20, 22, 7);
+
+    put_hud_char(F_LET('b'), 22, 22, 7);
+    put_hud_char(F_LET('y'), 23, 22, 7);
+
+    put_hud_char(F_LET('j'), 25, 22, 7);
+    put_hud_char(F_LET('g'), 26, 22, 7);
+    put_hud_char(F_LET('h'), 27, 22, 7);
 }
 
 // Redibuja el tile del mapa bajo el heroe (borra el sprite del heroe de su posicion actual).
@@ -54,7 +151,7 @@ void restaura_fondo_tile (void) {
 // Dibuja el tile con el ID dado en la celda (x,y) de la rejilla del mapa.
 // IDs de tile: 0=suelo_mundo  1=arbol  2=matorral  3=bloque_dngn  4=baldosa  5=pared
 //              6=puerta_izq   7=puerta_der  8=puerta_arr  9=void/negro
-//              13=llave  14=corazon
+//              10/11=objetos_cueva  12=bloque_cerrado  13=fuego  14=corazon  15=llave
 int render_tile(int grafico, int x, int y) {
     switch (grafico) {
         case 0:
@@ -87,7 +184,19 @@ int render_tile(int grafico, int x, int y) {
         case 9:
             put_sprite_x16 (sprite_negro, x*2+MAPA_OX, y*2+MAPA_OY);
         break;
+        case 10:
+            put_sprite_x16 (itm_bigSwrd, x*2+MAPA_OX, y*2+MAPA_OY);
+        break;
+        case 11:
+            put_sprite_x16 (itm_bigHrth, x*2+MAPA_OX, y*2+MAPA_OY);
+        break;
+        case 12:
+            put_sprite_x16 (dngn_blck, x*2+MAPA_OX, y*2+MAPA_OY);
+        break;
         case 13:
+            put_sprite_x16 (dngn_fire, x*2+MAPA_OX, y*2+MAPA_OY);
+        break;
+        case 15:
             render_tile(tile_bajo_llave, x, y);
             put_sprite_x8_mask(item_llave, x*2+MAPA_OX, y*2+MAPA_OY);
         break;
@@ -98,31 +207,41 @@ int render_tile(int grafico, int x, int y) {
     }
 }
 
-void render_hud_llave(void) {
-    put_hud_char(F_LET('l'), 14, 2, 7);
-    put_hud_char(F_LET('l'), 15, 2, 7);
-    put_hud_char(F_LET('a'), 16, 2, 7);
-    put_hud_char(F_LET('v'), 17, 2, 7);
-    put_hud_char(F_LET('e'), 18, 2, 7);
-    put_hud_char(F_LET('s'), 19, 2, 7);
-    if (tiene_llave) {
-        put_sprite_x8_mask_noclr(item_llave_trans, 20, 2);
-    }
-    put_hud_char(F_DIG(tiene_llave), 21, 2, 7);
+void render_hud_pts(void) {
+    put_hud_char(F_LET('p'), 16, 1, 7);
+    put_hud_char(F_LET('t'), 17, 1, 7);
+    put_hud_char(F_LET('s'), 18, 1, 7);
+    put_hud_char(F_DIG(pts), 23, 1, 7);
 }
 
 void render_hud_vidas(void) {
-    unsigned char n;
-    put_hud_char(F_LET('v'), 2, 2, 7);
-    put_hud_char(F_LET('i'), 3, 2, 7);
-    put_hud_char(F_LET('d'), 4, 2, 7);
-    put_hud_char(F_LET('a'), 5, 2, 7);
-    for (n = 0; n < NUMERO_DE_VIDAS; n++) {
-        if (n < vidas)
-            put_hud_char(hud_corazon, 7 + n*2, 2, 2);
-        else
-            put_hud_char(hud_corazon_vacio, 7 + n*2, 2, 1);
-    }
+    put_hud_char(hud_corazon, 14, 2, 2);
+    put_hud_char(F_LET('v'), 16, 2, 7);
+    put_hud_char(F_LET('i'), 17, 2, 7);
+    put_hud_char(F_LET('d'), 18, 2, 7);
+    put_hud_char(F_LET('a'), 19, 2, 7);
+    put_hud_char(F_DIG(vidas), 23, 2, 7);
+}
+
+void render_hud_fuerza(void) {
+    put_hud_char(F_LET('f'), 16, 3, 7);
+    put_hud_char(F_LET('u'), 17, 3, 7);
+    put_hud_char(F_LET('e'), 18, 3, 7);
+    put_hud_char(F_LET('r'), 19, 3, 7);
+    put_hud_char(F_LET('z'), 20, 3, 7);
+    put_hud_char(F_LET('a'), 21, 3, 7);
+    put_hud_char(F_DIG(fuerza), 23, 3, 7);
+}
+
+void render_hud_llave(void) {
+    put_sprite_x8_mask(item_llave, 14, 4);
+    put_hud_char(F_LET('l'), 16, 4, 7);
+    put_hud_char(F_LET('l'), 17, 4, 7);
+    put_hud_char(F_LET('a'), 18, 4, 7);
+    put_hud_char(F_LET('v'), 19, 4, 7);
+    put_hud_char(F_LET('e'), 20, 4, 7);
+    put_hud_char(F_LET('s'), 21, 4, 7);
+    put_hud_char(F_DIG(tiene_llave), 23, 4, 7);
 }
 
 int render_hero(int x, int y) {
@@ -205,14 +324,17 @@ void cambiar_pantalla (unsigned char nueva) {
             render_intro();
         break;
         case PANTALLA_MENU:
+            borde_actual = 0; port_out(254, 0);
             render_menu();
         break;
         case PANTALLA_JUEGO:
             inicia_variables_juego();
             render_hud_fondo();
+            render_hud_pts();
             render_hud_vidas();
-            render_mapa();
+            render_hud_fuerza();
             render_hud_llave();
+            render_mapa();
             render_hero(hx*2, hy*2);
         break;
         case PANTALLA_GAME_OVER:

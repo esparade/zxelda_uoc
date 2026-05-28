@@ -1,6 +1,3 @@
-//zxelda v0.1b
-//07abr'26
-
 unsigned char modo_app=0; //0 menu, 1 juego
 unsigned char x,y; //render mapa
 
@@ -17,6 +14,7 @@ unsigned char mapa_trabajo[144];
 
 unsigned char Fx_anim;
 unsigned char attack_timer;
+unsigned char inv_timer;
 
 unsigned char ex;      // enemigo pos x (tile)
 unsigned char ey;      // enemigo pos y (tile)
@@ -29,7 +27,14 @@ unsigned char e2y;     // enemigo2 pos y (tile)
 unsigned char e2mov;   // contador movimiento enemigo2
 unsigned char e2active;// enemigo2 activo en este mapa
 
+unsigned char npc_active; // npc estatico activo en este mapa
+unsigned char npc_x;      // npc pos x (tile)
+unsigned char npc_y;      // npc pos y (tile)
+
 unsigned char borde_actual = 6; // color de borde vigente (bits 0-2 de puerto 254)
+
+unsigned char puerta6_abierta;  // 1 si la puerta de mapa4 hacia mapa6 esta abierta
+unsigned char mapa_anterior;    // mapa desde el que se entro a mapa6 (3 o 4)
 
 unsigned char llave_en_mapa;    // 1 si la llave esta en el suelo
 unsigned char llave_mapa;       // en que mapa cayo la llave
@@ -42,7 +47,9 @@ unsigned char corazon_mapa;     // en que mapa cayo el corazon
 unsigned char corazon_pos;      // indice en mapa_trabajo donde esta el corazon
 unsigned char tile_bajo_corazon;// tile original donde cayo el corazon
 
+unsigned char pts;
 unsigned char vidas;
+unsigned char fuerza;
 unsigned char rand_seed; // semilla del generador; se inicializa con el registro R del Z80 (aleatorio en arranque)
 unsigned char llave_anim;
 unsigned char entrada_mapa; // mapa de la entrada 1 (siempre 1)
@@ -90,6 +97,7 @@ void carga_datos_mapa (void) {
     emov = 0;
     e2active = 0;
     e2mov = 0;
+    npc_active = 0;
     if (mapa_actual == 1) {
         eactive = 1;
         borde_actual = 6; port_out(254, borde_actual);
@@ -117,6 +125,10 @@ void carga_datos_mapa (void) {
         for (x = 0; x < ancho_mapa * alto_mapa; x++) {
             mapa_trabajo[x] = mapa3[x];
         }
+        if (!puerta6_abierta) {
+            mapa_trabajo[7] = 12;
+            mapa_trabajo[8] = 12;
+        }
     }
     if (mapa_actual == 4) {
         borde_actual = 6; port_out(254, borde_actual);
@@ -131,9 +143,18 @@ void carga_datos_mapa (void) {
         }
     }
     if (mapa_actual == 5) {
+        npc_active = 1; npc_x = 7; npc_y = 2;
         borde_actual = 0; port_out(254, borde_actual);
         for (x = 0; x < ancho_mapa * alto_mapa; x++) {
             mapa_trabajo[x] = mapa5[x];
+        }
+    }
+    if (mapa_actual == 6) {
+        eactive = 1; ex = 4; ey = 4;
+        e2active = 1; e2x = 10; e2y = 4;
+        borde_actual = 0; port_out(254, borde_actual);
+        for (x = 0; x < ancho_mapa * alto_mapa; x++) {
+            mapa_trabajo[x] = mapa6[x];
         }
     }
 }
@@ -142,6 +163,8 @@ void carga_datos_mapa (void) {
 // mapa1: derecha→mapa2, izquierda→mapa4
 // mapa2: izquierda→mapa1
 // mapa4: derecha→mapa1
+// mapa3: arriba→mapa6
+// mapa6: abajo→mapa3
 unsigned char get_mapa_conexion(unsigned char mapa, unsigned char dir) {
     switch(mapa) {
         case 1:
@@ -153,6 +176,12 @@ unsigned char get_mapa_conexion(unsigned char mapa, unsigned char dir) {
         break;
         case 4:
             if (dir == DIR_DER) return 1;
+        break;
+        case 3:
+            if (dir == DIR_ARR && puerta6_abierta) return 6;
+        break;
+        case 6:
+            if (dir == DIR_ABA) return mapa_anterior;
         break;
     }
     return 0;
@@ -167,8 +196,10 @@ void inicia_variables_juego(void) {
     anim = 0;
     vista = 0;
 
-    //vidas
+    //stats
+    pts = 0;
     vidas = NUMERO_DE_VIDAS;
+    fuerza = 1;
 
     //items
     llave_en_mapa = 0;
@@ -181,6 +212,7 @@ void inicia_variables_juego(void) {
 
     //ataque
     attack_timer = 0;
+    inv_timer = 0;
 
     //enemigo
     ex = 7;
@@ -194,6 +226,15 @@ void inicia_variables_juego(void) {
     e2y = 0;
     e2mov = 0;
     e2active = 0;
+
+    //npc estatico
+    npc_active = 0;
+    npc_x = 0;
+    npc_y = 0;
+
+    //puertas y navegacion
+    puerta6_abierta = 0;
+    mapa_anterior = 0;
 
     //mapa actual
     ancho_mapa = 16;

@@ -1,6 +1,3 @@
-//zxelda v0.1b
-//07abr'26
-
 extern unsigned char sprite_negro [];
 extern unsigned char sprite_amaD [];
 
@@ -13,7 +10,7 @@ extern unsigned char wrld_door_right [];
 extern unsigned char dngn_tile [];
 extern unsigned char dngn_blck [];
 extern unsigned char dngn_wall [];
-
+extern unsigned char dngn_fire [];
 
 extern unsigned char plyr_upA [];
 extern unsigned char plyr_upB [];
@@ -28,6 +25,7 @@ extern unsigned char swrd_rgh [];
 extern unsigned char swrd_dwn [];
 extern unsigned char swrd_lft [];
 
+extern unsigned char npc_shopper [];
 
 extern unsigned char enmy_octoD_a [];
 extern unsigned char enmy_octoD_b [];
@@ -36,6 +34,9 @@ extern unsigned char enmy_hvy [];
 extern unsigned char item_llave [];
 extern unsigned char item_llave_trans [];
 extern unsigned char item_corazon [];
+
+extern unsigned char itm_bigHrth [];
+extern unsigned char itm_bigSwrd [];
 
 extern unsigned char hud_corazon [];
 extern unsigned char hud_corazon_vacio [];
@@ -65,17 +66,17 @@ extern unsigned char fuente [];
 	DEFB	 56, 56
 
     ._wrld_door_left
-	DEFB	126, 63, 24, 96, 62, 79, 69, 79
-	DEFB	131, 76,185, 76,169, 79,129, 76
-	DEFB	 81, 63,138, 76,146, 76,177, 63
-	DEFB	129, 76,153,127,145, 76, 81,127
+	DEFB	 60, 63, 66, 96,129, 79,133, 79
+	DEFB	141, 76,153, 76, 66, 79, 60,204
+	DEFB	126,255, 24,204,126, 76,133,127
+	DEFB	131, 76,129,127,129, 76,129,127
 	DEFB	 56, 56, 56, 56
 
     ._wrld_door_right
-	DEFB	252,126,  6, 24,242,124,242,132
-	DEFB	 50,179, 50,153,242,137, 50,161
-	DEFB	252,157, 50,129, 50,145,252,137
-	DEFB	 50,153,254, 65, 50,162,254,177
+	DEFB	252, 60,  6, 66,242,129,242,161
+	DEFB	 50,177, 50,153,242, 66, 51, 60
+	DEFB	255,126, 51, 24, 50,126,254,161
+	DEFB	 50,193,254,129, 50,129,254,129
 	DEFB	 56, 56, 56, 56
 
     ._dngn_tile
@@ -92,6 +93,13 @@ extern unsigned char fuente [];
 	DEFB	 95,247,191,251,127,253,255,254
 	DEFB	 56, 56, 56, 56
 
+	._dngn_fire
+	DEFB	  0, 64,  4,132, 16,164, 36,194
+	DEFB	 15,104, 45,218, 91, 86,122,189
+	DEFB	114,173,160, 87,233,  9,229, 70
+	DEFB	115,230,115,204, 60, 28,  7,240
+	DEFB	 2, 2, 2, 2
+
 	._dngn_wall
 	DEFB	170,170,  0,  1,  0,  0,  0,  1
 	DEFB	  0,  0,  0,  1,  0,  0,  0,  1
@@ -105,7 +113,6 @@ extern unsigned char fuente [];
 	DEFB	 30,120, 30,120, 31,248, 31,248
 	DEFB	124,174, 98,106, 75,166,127,254
 	DEFB	 57, 57, 57, 57
-
 
     ._plyr_upA
 	DEFB	  7,224, 15,240, 47,244, 47,244
@@ -204,6 +211,27 @@ extern unsigned char fuente [];
 	DEFB	129, 62,255,242, 28, 56, 60, 60
 	DEFB	 58, 58, 58, 58
 
+	._npc_shopper
+	DEFB	 15,240, 31,248, 24, 24, 10, 80
+	DEFB	  4, 32,  4, 32, 63,252,102,102
+	DEFB	119,238,118,110, 75,210, 81,138
+	DEFB	 47,244, 12, 48, 60, 60, 24, 24
+	DEFB	 53, 53, 53, 53
+
+	._itm_bigHrth
+	DEFB	  0,  0, 24, 24, 60, 60,126,126
+	DEFB	255,255,255,255,255,255,255,255
+	DEFB	127,254, 63,252, 31,248, 15,240
+	DEFB	  7,224,  3,192,  1,128,  0,  0
+	DEFB	 51, 51, 51, 51
+
+	._itm_bigSwrd
+	DEFB	  0,128,  0,128,  1,128,  1,128
+	DEFB	  1,128,  1,128,  1,128,  1,128
+	DEFB	  1,128,  1,128,  1,128, 15,240
+	DEFB	  9,144,  3,192,  1,128,  3,192
+	DEFB	 51, 51, 51, 51
+
 	;fuente[0..9]=dig, [10..35]=a-z, [36]=coma [37]=punto [38]=comill [39]=excla [40]=interr
     ._fuente
     DEFB	 56,108,198,198,198,108, 56,  0 //0
@@ -218,7 +246,7 @@ extern unsigned char fuente [];
     DEFB	124,198,198,126,  6, 12,120,  0 //9
     DEFB	 56,110,198,198,254,198,198,  0 //A
     DEFB	220,230,198,252,198,198,252,  0
-    DEFB	 62, 99,192,192,192, 99, 62,  0
+	DEFB	 60,102,192,192,192,102, 60,  0
     DEFB	248,204,198,198,198,204,248,  0
     DEFB	126,230,192,252,192,230,126,  0 //E
     DEFB	254,102, 96,120, 96, 96,240,  0
@@ -253,7 +281,7 @@ extern unsigned char fuente [];
 	; mascara = ~pixel (1=transparente, 0=opaco)
 	DEFB	241, 14,236, 19,238, 17,246,  9
 	DEFB	233, 22,223, 32,175, 80, 95,160
-	DEFB	 52, 52, 52, 52
+	DEFB	  6, 6, 6, 6
 
 	._item_llave_trans
 	; formato: mascara,pixel x8 filas, sin byte attr
@@ -271,8 +299,6 @@ extern unsigned char fuente [];
 
     ._hud_corazon_vacio
 	DEFB 108,130,130, 68, 40, 16,  0,  0
-
-    
 
     ._sprite_negro
     defb 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0

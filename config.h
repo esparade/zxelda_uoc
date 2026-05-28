@@ -1,7 +1,4 @@
-//zxelda v0.1b
-//07abr'26
-
-#define NUMERO_DE_VIDAS 1
+#define NUMERO_DE_VIDAS 3
 
 // pantallas / screens
 #define PANTALLA_INTRO    0

@@ -1,6 +1,3 @@
-; ASM source file created by SevenuP v1.20
-; SevenuP (C) Copyright 2002-2006 by Jaime Tejedor Gomez, aka Metalbrain
-
 ;GRAPHIC DATA:
 ;Pixel Size:      ( 16,  16)
 ;Char Size:       (  2,   2)
@@ -10,8 +7,8 @@
 ;Mask:            No
 
 wrld_door_left:
-	DEFB	126, 63, 24, 96, 62, 79, 69, 79
-	DEFB	131, 76,185, 76,169, 79,129, 76
-	DEFB	 81, 63,138, 76,146, 76,177, 63
-	DEFB	129, 76,153,127,145, 76, 81,127
+	DEFB	 60, 63, 66, 96,129, 79,133, 79
+	DEFB	141, 76,153, 76, 66, 79, 60,204
+	DEFB	126,255, 24,204,126, 76,133,127
+	DEFB	131, 76,129,127,129, 76,129,127
 	DEFB	 56, 56, 56, 56

@@ -1,6 +1,3 @@
-//zxelda v0.1b
-//07abr'26
-
 int x8,y8;
 
 // Cambia al mapa adyacente en la direccion dada y coloca al heroe en el borde de entrada opuesto.
@@ -8,6 +5,7 @@ int x8,y8;
 void cambiar_mapa(unsigned char dir) {
     unsigned char destino = get_mapa_conexion(mapa_actual, dir);
     if (destino == 0) return; // sin conexion en esa direccion
+    if (destino == 6) mapa_anterior = mapa_actual; // guarda origen solo al entrar en mapa6
     mapa_actual = destino;
     carga_datos_mapa();
     switch(dir) {
@@ -18,8 +16,11 @@ void cambiar_mapa(unsigned char dir) {
         case DIR_ARR: hy = alto_mapa-1;   break; // salio por arriba -> entra por abajo
     }
     calculo_frame();
+    cls(0);
     render_hud_fondo();
+    render_hud_pts();
     render_hud_vidas();
+    render_hud_fuerza();
     render_hud_llave();
     render_mapa();
     render_hero(hx*2, hy*2);
@@ -190,7 +191,13 @@ void control_teclas_intro(void) {
 }
 
 void control_teclas_menu(void) {
-    if ((port_in(63486)&1)==0) { //tecla 1 -> jugar
+    if ((port_in(63486)&1)==0) { //tecla 1 -> jugar (teclado)
+        cambiar_pantalla(PANTALLA_JUEGO);
+    }
+    if ((port_in(63486)&2)==0) { //tecla 2 -> jugar (kempston)
+        cambiar_pantalla(PANTALLA_JUEGO);
+    }
+    if ((port_in(63486)&4)==0) { //tecla 3 -> redefinir (stub)
         cambiar_pantalla(PANTALLA_JUEGO);
     }
 }

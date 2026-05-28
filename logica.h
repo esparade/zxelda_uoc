@@ -1,6 +1,3 @@
-//zxelda v0.1b
-//07abr'26
-
 void anima_llave(void) {
     unsigned char ink;
     if (!llave_en_mapa || mapa_actual != llave_mapa) return;
@@ -12,14 +9,33 @@ void anima_llave(void) {
     item_llave[17] = 48 | ink;
     item_llave[18] = 48 | ink;
     item_llave[19] = 48 | ink;
-    render_tile(13, llave_pos % ancho_mapa, llave_pos / ancho_mapa);
+    render_tile(15, llave_pos % ancho_mapa, llave_pos / ancho_mapa);
 }
 
 // Tiles solidos (bloquean movimiento): arbol(1), bloque(3), pared(5),
-// puerta_izq(6), puerta_der(7), puerta_arr(8).
-// Son pasables: suelo(0), matorral(2), baldosa(4), void(9), llave(13), corazon(14).
+// puerta_izq(6), puerta_der(7), puerta_arr(8), puerta_cerrada(12).
+// Son pasables: suelo(0), matorral(2), baldosa(4), void(9), fuego(13) e items(14,15).
 int es_solido(unsigned char tile) {
-    return tile==1 || tile==3 || tile==5 || tile==6 || tile==7 || tile==8;
+    return tile==1 || tile==3 || tile==5 || tile==6 || tile==7 || tile==8 || tile==12;
+}
+
+// Abre el pasillo superior de mapa3 si el heroe tiene la llave y esta en fila 1
+// frente al hueco (cols 7-8). Consume la llave, sustituye PC(12) por VO(9) y activa sonido.
+void check_puerta6(void) {
+    if (mapa_actual != 3) return;
+    if (puerta6_abierta) return;
+    if (!tiene_llave) return;
+    if (hy != 1) return;
+    if (hx != 7 && hx != 8) return;
+    puerta6_abierta = 1;
+    tiene_llave = 0;
+    mapa_trabajo[7] = 9;
+    mapa_trabajo[8] = 9;
+    render_tile(9, 7, 0);
+    render_tile(9, 8, 0);
+    render_hud_llave();
+    borde_actual = 0; port_out(254, 0);
+    sonido_secreto();
 }
 
 void animacion_hero(void) {
@@ -105,8 +121,11 @@ void check_warp(void) { //entrada a cueva (posicion aleatoria cada partida)
         hy = 7;
         carga_datos_mapa();
         calculo_frame();
+        cls(0);
         render_hud_fondo();
+        render_hud_pts();
         render_hud_vidas();
+        render_hud_fuerza();
         render_hud_llave();
         render_mapa();
         render_hero(hx*2, hy*2);
@@ -118,8 +137,11 @@ void check_warp(void) { //entrada a cueva (posicion aleatoria cada partida)
         hy = 7;
         carga_datos_mapa();
         calculo_frame();
+        cls(0);
         render_hud_fondo();
+        render_hud_pts();
         render_hud_vidas();
+        render_hud_fuerza();
         render_hud_llave();
         render_mapa();
         render_hero(hx*2, hy*2);
@@ -131,8 +153,11 @@ void check_warp(void) { //entrada a cueva (posicion aleatoria cada partida)
         hy = entrada2_pos / ancho_mapa + 1;
         carga_datos_mapa();
         calculo_frame();
+        cls(0);
         render_hud_fondo();
+        render_hud_pts();
         render_hud_vidas();
+        render_hud_fuerza();
         render_hud_llave();
         render_mapa();
         render_hero(hx*2, hy*2);
@@ -144,8 +169,11 @@ void check_warp(void) { //entrada a cueva (posicion aleatoria cada partida)
         hy = entrada_pos / ancho_mapa + 1;
         carga_datos_mapa();
         calculo_frame();
+        cls(0);
         render_hud_fondo();
+        render_hud_pts();
         render_hud_vidas();
+        render_hud_fuerza();
         render_hud_llave();
         render_mapa();
         render_hero(hx*2, hy*2);
@@ -153,7 +181,7 @@ void check_warp(void) { //entrada a cueva (posicion aleatoria cada partida)
     }
 }
 
-void sword_render(void) { //logica del ataque a espada
+void sword_render(void) { //ataque con espada
     switch(vista) {
         case 0: // arriba
             if (hy == 0) return;
@@ -192,14 +220,14 @@ void sword_erase(void) {
 }
 
 // Suelta un item en la posicion del enemigo eliminado.
-// En mapa3 o mapa5 (mazmorras) suelta la llave; en cualquier otro mapa, un corazon.
+// En mapa3 siempre suelta la llave (necesaria para abrir puerta6); en otro mapa, un corazon.
 void drop_item(unsigned char ix, unsigned char iy) {
     unsigned char pos = iy * ancho_mapa + ix;
-    if (mapa_actual == 3 || mapa_actual == 5) {
+    if (mapa_actual == 3) {
         llave_mapa = mapa_actual;
         llave_pos  = pos;
         tile_bajo_llave = mapa_trabajo[pos];
-        mapa_trabajo[pos] = 13;
+        mapa_trabajo[pos] = 15;
         llave_en_mapa = 1;
     } else {
         corazon_mapa = mapa_actual;
@@ -267,13 +295,47 @@ void update_attack(void) {
     if (attack_timer == 0) sword_erase();
 }
 
+void render_npc(void) {
+    unsigned char col;
+    if (!npc_active) return;
+    put_sprite_x16(npc_shopper, npc_x*2+MAPA_OX, npc_y*2+MAPA_OY+1);
+    col = 9;
+    put_hud_char(F_LET('c'), col++, 9, 48);
+    put_hud_char(F_LET('o'), col++, 9, 48);
+    put_hud_char(F_LET('m'), col++, 9, 48);
+    put_hud_char(F_LET('p'), col++, 9, 48);
+    put_hud_char(F_LET('r'), col++, 9, 48);
+    put_hud_char(F_LET('a'), col++, 9, 48);
+    put_hud_char(F_LET('t'), col++, 9, 48);
+    put_hud_char(F_LET('e'), col++, 9, 48);
+    col++,
+    put_hud_char(F_LET('a'), col++, 9, 48);
+    put_hud_char(F_LET('l'), col++, 9, 48);
+    put_hud_char(F_LET('g'), col++, 9, 48);
+    put_hud_char(F_LET('o'), col++, 9, 48);
+    col = 13;
+    put_hud_char(F_LET('p'), col++, 10, 48);
+    put_hud_char(F_LET('r'), col++, 10, 48);
+    put_hud_char(F_LET('i'), col++, 10, 48);
+    put_hud_char(F_LET('m'), col++, 10, 48);
+    put_hud_char(F_LET('o'), col++, 10, 48);
+    // precio 100 sword
+    put_hud_char(F_DIG(1), 10, 16, 48);
+    put_hud_char(F_DIG(0), 11, 16, 48);
+    put_hud_char(F_DIG(0), 12, 16, 48);
+    // precio 100 hearth
+    put_hud_char(F_DIG(1), 18, 16, 48);
+    put_hud_char(F_DIG(0), 19, 16, 48);
+    put_hud_char(F_DIG(0), 20, 16, 48);
+}
+
 void animacion_enemigo(void) {
     if (!eactive) return;
     put_sprite_x16(enmy_hvy, ex*2+MAPA_OX, ey*2+MAPA_OY);
 }
 
 // El enemigo persigue al heroe tile a tile (sin pathfinding), se mueve cada 16 frames.
-// Si coincide con el heroe, provoca game over directamente (sin sistema de dano ni invulnerabilidad).
+// Si coincide con el heroe y inv_timer==0, inflige dano y activa invulnerabilidad.
 void mueve_enemigo(void) {
     if (!eactive) return;
     emov++;
@@ -284,8 +346,12 @@ void mueve_enemigo(void) {
     else if (ex > hx) ex--;
     else if (ey < hy) ey++;
     else if (ey > hy) ey--;
-    if (ex == hx && ey == hy) {
-        cambiar_pantalla(PANTALLA_GAME_OVER);
+    if (ex == hx && ey == hy && inv_timer == 0) {
+        vidas--;
+        sonido_danio();
+        render_hud_vidas();
+        inv_timer = 40;
+        if (vidas == 0) cambiar_pantalla(PANTALLA_GAME_OVER);
     }
 }
 
@@ -324,7 +390,11 @@ void mueve_enemigo2(void) {
                 e2y = ny;
         }
     }
-    if (e2x == hx && e2y == hy) {
-        cambiar_pantalla(PANTALLA_GAME_OVER);
+    if (e2x == hx && e2y == hy && inv_timer == 0) {
+        vidas--;
+        sonido_danio();
+        render_hud_vidas();
+        inv_timer = 40;
+        if (vidas == 0) cambiar_pantalla(PANTALLA_GAME_OVER);
     }
 }

@@ -1,6 +1,3 @@
-//zxelda v0.1b
-//07abr'26
-
 #include <stdio.h>
 
 #include <lib\motorzx.h>
@@ -18,7 +15,7 @@
 
 void main (void) {
     init_pantalla();
-    cambiar_pantalla(PANTALLA_JUEGO);
+    cambiar_pantalla(PANTALLA_MENU);
 
     while(!zx_break()) { //infinte loop
         switch(modo_app) {
@@ -31,13 +28,16 @@ void main (void) {
             case PANTALLA_JUEGO:
                 calculo_frame();
                 check_warp();
+                check_puerta6();
                 check_llave();
                 check_corazon();
                 anima_llave();
+                if (inv_timer > 0) inv_timer--;
                 mueve_enemigo();
                 animacion_enemigo();
                 mueve_enemigo2();
                 animacion_enemigo2();
+                render_npc();
                 update_attack();
             break;
 

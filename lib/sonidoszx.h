@@ -41,6 +41,62 @@ void sonido_corazon (void) {
 	}
 }
 
+void sonido_danio (void) {
+	unsigned char i;
+	for (i = 0; i < 12; i++) {
+		port_out(254, borde_actual | 16);
+		port_out(254, borde_actual);
+	}
+	for (i = 0; i < 24; i++) {
+		port_out(254, borde_actual | 16);
+		port_out(254, borde_actual | 16);
+		port_out(254, borde_actual);
+		port_out(254, borde_actual);
+	}
+}
+
+void sonido_secreto (void) {
+    unsigned char i;
+    for (i = 0; i < 20; i++) {
+        port_out(254, borde_actual | 16);
+        port_out(254, borde_actual | 16);
+        port_out(254, borde_actual | 16);
+        port_out(254, borde_actual | 16);
+        port_out(254, borde_actual | 16);
+        port_out(254, borde_actual | 16);
+        port_out(254, borde_actual | 16);
+        port_out(254, borde_actual | 16);
+        port_out(254, borde_actual);
+        port_out(254, borde_actual);
+        port_out(254, borde_actual);
+        port_out(254, borde_actual);
+        port_out(254, borde_actual);
+        port_out(254, borde_actual);
+        port_out(254, borde_actual);
+        port_out(254, borde_actual);
+    }
+    for (i = 0; i < 28; i++) {
+        port_out(254, borde_actual | 16);
+        port_out(254, borde_actual | 16);
+        port_out(254, borde_actual | 16);
+        port_out(254, borde_actual | 16);
+        port_out(254, borde_actual);
+        port_out(254, borde_actual);
+        port_out(254, borde_actual);
+        port_out(254, borde_actual);
+    }
+    for (i = 0; i < 36; i++) {
+        port_out(254, borde_actual | 16);
+        port_out(254, borde_actual | 16);
+        port_out(254, borde_actual);
+        port_out(254, borde_actual);
+    }
+    for (i = 0; i < 50; i++) {
+        port_out(254, borde_actual | 16);
+        port_out(254, borde_actual);
+    }
+}
+
 void sonido_llave (void) {
 	unsigned char i;
 	for (i = 0; i < 20; i++) {

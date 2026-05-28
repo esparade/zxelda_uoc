@@ -1,6 +1,3 @@
-; ASM source file created by SevenuP v1.20
-; SevenuP (C) Copyright 2002-2006 by Jaime Tejedor Gomez, aka Metalbrain
-
 ;GRAPHIC DATA:
 ;Pixel Size:      ( 16,  16)
 ;Char Size:       (  2,   2)
@@ -9,7 +6,7 @@
 ;Interleave:      Sprite
 ;Mask:            No
 
-enmy_boss:
+enmy_radeon:
 	DEFB	  7,224, 30,120, 38,100, 47,244
 	DEFB	 63,252, 62,124, 78,114, 95,250
 	DEFB	127,254,126,126,158,121,191,253
