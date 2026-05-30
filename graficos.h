@@ -27,9 +27,16 @@ extern unsigned char swrd_lft [];
 
 extern unsigned char npc_shopper [];
 
-extern unsigned char enmy_octoD_a [];
-extern unsigned char enmy_octoD_b [];
+extern unsigned char enmy_octoUp [];
+extern unsigned char enmy_octoRight [];
+extern unsigned char enmy_octoDown [];
+extern unsigned char enmy_octoLeft [];
+extern unsigned char enmy_octoShot [];
+
 extern unsigned char enmy_hvy [];
+
+extern unsigned char enmy_boss [];
+extern unsigned char enmy_bossFire [];
 
 extern unsigned char item_llave [];
 extern unsigned char item_llave_trans [];
@@ -190,19 +197,37 @@ extern unsigned char fuente [];
 	DEFB	  0,255,  0,127,  0,  1,  0,  0
 	DEFB	 60, 60
 
-    ._enmy_octoD_a
+	._enmy_octoUp
+	DEFB	  0,  0, 15,240,  7,224, 51,204
+	DEFB	 28, 56, 18, 72,246,111,102,102
+	DEFB	 36, 36,115,206,255,255, 61,188
+	DEFB	127,254,219,219,  6, 96,  0,  0
+	DEFB	 58, 58, 58, 58
+
+	._enmy_octoRight
+	DEFB	 36, 64, 54,192, 31,200, 62,120
+	DEFB	 60, 18, 93,214,118,238, 62, 14
+	DEFB	 62, 14,118,238, 93,214, 60, 18
+	DEFB	 62,120, 31,200, 54,192, 36, 64
+	DEFB	 58, 58, 58, 58
+
+    ._enmy_octoDown
 	DEFB	  6, 96,219,219,127,254, 61,188
 	DEFB	255,255,115,206, 36, 36,102,102
 	DEFB	246,111, 18, 72, 28, 56, 51,204
 	DEFB	  7,224, 15,240,  0,  0,  0,  0
 	DEFB	 58, 58, 58, 58
 
-    ._enmy_octoD_b
-	DEFB	  6, 96, 27,216,255,255,125,190
-	DEFB	 63,252,243,207,100, 38, 38,100
-	DEFB	118,110, 82, 74, 28, 56, 27,216
-	DEFB	  3,192,  3,192,  3,192, 15,240
+	._enmy_octoLeft
+	DEFB	  2, 36,  3,108, 19,248, 30,124
+	DEFB	 72, 60,107,186,119,110,112,124
+	DEFB	112,124,119,110,107,186, 72, 60
+	DEFB	 30,124, 19,248,  3,108,  2, 36
 	DEFB	 58, 58, 58, 58
+
+	._enmy_octoShot
+	DEFB	 94,178,127,223,219,227,126,116
+	DEFB	 58
 
 	._enmy_hvy
 	DEFB	 27,218, 23,235, 12, 51, 13,179
@@ -210,6 +235,20 @@ extern unsigned char fuente [];
 	DEFB	165,246,129,246,129, 62,165,130
 	DEFB	129, 62,255,242, 28, 56, 60, 60
 	DEFB	 58, 58, 58, 58
+
+	._enmy_boss
+	DEFB	  7,224, 30,120, 38,100, 47,244
+	DEFB	 63,252, 62,124, 78,114, 95,250
+	DEFB	127,254,126,126,158,121,191,253
+	DEFB	252, 63,251,223,118,110, 44, 52
+	DEFB	 57, 57, 57, 57
+
+	._enmy_bossFire
+	DEFB	  3,192,  7,224, 15,240, 24, 24
+	DEFB	 51,204, 54,108,116, 46,117,174
+	DEFB	117,174,116, 46, 54,108, 51,204
+	DEFB	 24, 24, 15,240,  7,224,  3,192
+	DEFB	 61, 61, 61, 61
 
 	._npc_shopper
 	DEFB	 15,240, 31,248, 24, 24, 10, 80

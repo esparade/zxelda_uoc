@@ -142,6 +142,80 @@ void render_menu (void) {
     put_hud_char(F_LET('h'), 27, 22, 7);
 }
 
+void render_redefine_paso(void) {
+    cls(0);
+    // "redefine"
+    put_hud_char(F_LET('r'), 12,  4, 7);
+    put_hud_char(F_LET('e'), 13,  4, 7);
+    put_hud_char(F_LET('d'), 14,  4, 7);
+    put_hud_char(F_LET('e'), 15,  4, 7);
+    put_hud_char(F_LET('f'), 16,  4, 7);
+    put_hud_char(F_LET('i'), 17,  4, 7);
+    put_hud_char(F_LET('n'), 18,  4, 7);
+    put_hud_char(F_LET('e'), 19,  4, 7);
+    // "pulsa tecla para"
+    put_hud_char(F_LET('p'), 8,  11, 7);
+    put_hud_char(F_LET('u'), 9,  11, 7);
+    put_hud_char(F_LET('l'), 10, 11, 7);
+    put_hud_char(F_LET('s'), 11, 11, 7);
+    put_hud_char(F_LET('a'), 12, 11, 7);
+    put_hud_char(F_LET('t'), 14, 11, 7);
+    put_hud_char(F_LET('e'), 15, 11, 7);
+    put_hud_char(F_LET('c'), 16, 11, 7);
+    put_hud_char(F_LET('l'), 17, 11, 7);
+    put_hud_char(F_LET('a'), 18, 11, 7);
+    put_hud_char(F_LET('p'), 20, 11, 7);
+    put_hud_char(F_LET('a'), 21, 11, 7);
+    put_hud_char(F_LET('r'), 22, 11, 7);
+    put_hud_char(F_LET('a'), 23, 11, 7);
+    // nombre de la accion segun redef_paso
+    switch(redef_paso) {
+        case 1: // "arriba"
+            put_hud_char(F_LET('a'), 13, 12, 7);
+            put_hud_char(F_LET('r'), 14, 12, 7);
+            put_hud_char(F_LET('r'), 15, 12, 7);
+            put_hud_char(F_LET('i'), 16, 12, 7);
+            put_hud_char(F_LET('b'), 17, 12, 7);
+            put_hud_char(F_LET('a'), 18, 12, 7);
+        break;
+        case 2: // "abajo"
+            put_hud_char(F_LET('a'), 13, 12, 7);
+            put_hud_char(F_LET('b'), 14, 12, 7);
+            put_hud_char(F_LET('a'), 15, 12, 7);
+            put_hud_char(F_LET('j'), 16, 12, 7);
+            put_hud_char(F_LET('o'), 17, 12, 7);
+        break;
+        case 3: // "izquierda"
+            put_hud_char(F_LET('i'), 11, 12, 7);
+            put_hud_char(F_LET('z'), 12, 12, 7);
+            put_hud_char(F_LET('q'), 13, 12, 7);
+            put_hud_char(F_LET('u'), 14, 12, 7);
+            put_hud_char(F_LET('i'), 15, 12, 7);
+            put_hud_char(F_LET('e'), 16, 12, 7);
+            put_hud_char(F_LET('r'), 17, 12, 7);
+            put_hud_char(F_LET('d'), 18, 12, 7);
+            put_hud_char(F_LET('a'), 19, 12, 7);
+        break;
+        case 4: // "derecha"
+            put_hud_char(F_LET('d'), 12, 12, 7);
+            put_hud_char(F_LET('e'), 13, 12, 7);
+            put_hud_char(F_LET('r'), 14, 12, 7);
+            put_hud_char(F_LET('e'), 15, 12, 7);
+            put_hud_char(F_LET('c'), 16, 12, 7);
+            put_hud_char(F_LET('h'), 17, 12, 7);
+            put_hud_char(F_LET('a'), 18, 12, 7);
+        break;
+        case 5: // "ataque"
+            put_hud_char(F_LET('a'), 13, 12, 7);
+            put_hud_char(F_LET('t'), 14, 12, 7);
+            put_hud_char(F_LET('a'), 15, 12, 7);
+            put_hud_char(F_LET('q'), 16, 12, 7);
+            put_hud_char(F_LET('u'), 17, 12, 7);
+            put_hud_char(F_LET('e'), 18, 12, 7);
+        break;
+    }
+}
+
 // Redibuja el tile del mapa bajo el heroe (borra el sprite del heroe de su posicion actual).
 void restaura_fondo_tile (void) {
     unsigned char tile=mapa_trabajo[hmap];

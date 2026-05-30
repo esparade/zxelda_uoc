@@ -27,6 +27,13 @@ unsigned char e2y;     // enemigo2 pos y (tile)
 unsigned char e2mov;   // contador movimiento enemigo2
 unsigned char e2active;// enemigo2 activo en este mapa
 
+unsigned char boss_active; // jefe final activo (mapa6)
+unsigned char boss_x;      // tile x del boss
+unsigned char boss_y;      // tile y del boss
+unsigned char boss_hp;     // vida del boss (3 golpes)
+unsigned char boss_mov;    // contador movimiento boss
+unsigned char boss_form;   // formacion de fuego: 0=X (diagonales), 1=+ (cardinales)
+
 unsigned char npc_active; // npc estatico activo en este mapa
 unsigned char npc_x;      // npc pos x (tile)
 unsigned char npc_y;      // npc pos y (tile)
@@ -46,6 +53,26 @@ unsigned char corazon_en_mapa;  // 1 si el corazon esta en el suelo
 unsigned char corazon_mapa;     // en que mapa cayo el corazon
 unsigned char corazon_pos;      // indice en mapa_trabajo donde esta el corazon
 unsigned char tile_bajo_corazon;// tile original donde cayo el corazon
+
+// teclas redefinibles: port 16-bit + mascara de bit
+unsigned int  key_arr_port; unsigned char key_arr_mask; // arriba
+unsigned int  key_abj_port; unsigned char key_abj_mask; // abajo
+unsigned int  key_izq_port; unsigned char key_izq_mask; // izquierda
+unsigned int  key_der_port; unsigned char key_der_mask; // derecha
+unsigned int  key_atk_port; unsigned char key_atk_mask; // ataque
+
+unsigned char redef_paso;   // 0=inactivo 1-5=capturando accion
+unsigned char redef_espera; // 1=esperar a que se suelten teclas
+
+void inicia_teclas(void) {
+    key_arr_port = 64510; key_arr_mask = 1; // Q
+    key_abj_port = 65022; key_abj_mask = 1; // A
+    key_izq_port = 57342; key_izq_mask = 2; // O
+    key_der_port = 57342; key_der_mask = 1; // P
+    key_atk_port = 32766; key_atk_mask = 1; // SPACE
+    redef_paso   = 0;
+    redef_espera = 0;
+}
 
 unsigned char pts;
 unsigned char vidas;
@@ -150,8 +177,7 @@ void carga_datos_mapa (void) {
         }
     }
     if (mapa_actual == 6) {
-        eactive = 1; ex = 4; ey = 4;
-        e2active = 1; e2x = 10; e2y = 4;
+        boss_active = 1; boss_x = 7; boss_y = 4; boss_hp = 3; boss_mov = 0; boss_form = 0;
         borde_actual = 0; port_out(254, borde_actual);
         for (x = 0; x < ancho_mapa * alto_mapa; x++) {
             mapa_trabajo[x] = mapa6[x];
@@ -226,6 +252,14 @@ void inicia_variables_juego(void) {
     e2y = 0;
     e2mov = 0;
     e2active = 0;
+
+    //boss
+    boss_active = 0;
+    boss_x = 7;
+    boss_y = 4;
+    boss_hp = 3;
+    boss_mov = 0;
+    boss_form = 0;
 
     //npc estatico
     npc_active = 0;

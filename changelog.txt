@@ -1,8 +1,2 @@
-- se ha implementado todas las pantallas del juego (carga, titulo, juego, game over)
-- se han alineado las variables de inventario y se han creado los objetos de la aventura
-- se ha creado la tienda
-- se ha redibujado la mazmorra 'nsu'
-- se ha implementado la mecanica de abrir las puertas de las mazmorras con llaves
-- el personaje recibe puntos de daño
-- si los puntos de vida llegan a 0, el jugador muere
-- se han arreglado los graficos de la entrada a la mazmorra
+- se ha implementado la funcionalidad de redefinir en el menu
+- se ha implementado al boss final con sus 4 fuegos alrededor, alternando entre posicion alrededor X y +

@@ -14,6 +14,7 @@
 #pragma output STACKPTR = 65000
 
 void main (void) {
+    inicia_teclas();
     init_pantalla();
     cambiar_pantalla(PANTALLA_MENU);
 
@@ -37,6 +38,8 @@ void main (void) {
                 animacion_enemigo();
                 mueve_enemigo2();
                 animacion_enemigo2();
+                mueve_boss();
+                animacion_boss();
                 render_npc();
                 update_attack();
             break;

@@ -25,8 +25,8 @@ extern unsigned char mapa6[];
     defc PC = 12   ; puerta cerrada (bloqueada con llave)
     defc FG = 13   ; fuego (decorativo)
 
-    ._mapa1 //start 000
-    defb SL,AR,AR,AR,AR,AR,AR,SL,SL,AR,AR,AR,AR,AR,AR,SL
+    ._mapa1 //start point
+    defb SL,AR,AR,AR,AR,AR,AR,AR,AR,AR,AR,AR,AR,AR,AR,SL
     defb SL,AR,AR,SL,AR,AR,SL,SL,SL,AR,AR,AR,AR,AR,AR,SL
     defb SL,AR,AR,SL,SL,SL,SL,SL,SL,AR,AR,AR,AR,AR,AR,SL
     defb SL,AR,SL,SL,SL,SL,SL,SL,SL,SL,AR,AR,AR,AR,AR,SL
@@ -36,7 +36,7 @@ extern unsigned char mapa6[];
     defb SL,AR,AR,SL,SL,SL,SL,SL,SL,SL,SL,AR,AR,AR,AR,SL
     defb SL,AR,AR,AR,AR,AR,AR,AR,AR,AR,AR,AR,AR,AR,AR,SL
 
-    ._mapa2 //start_rgh 001
+    ._mapa2 //arboleda
     defb SL,AR,AR,SL,SL,MA,SL,SL,SL,SL,MA,SL,MA,SL,MA,SL
     defb SL,AR,AR,SL,SL,SL,SL,SL,SL,SL,SL,SL,SL,SL,SL,SL
     defb SL,AR,AR,SL,SL,MA,SL,SL,SL,SL,MA,SL,MA,SL,MA,SL
@@ -56,6 +56,17 @@ extern unsigned char mapa6[];
     defb VO,MU,RK,PS,RK,PS,RK,RK,PS,RK,PS,RK,PS,RK,MU,VO
     defb VO,MU,RK,PS,RK,PS,PS,PS,PS,RK,PS,RK,PS,RK,MU,VO
     defb VO,MU,RK,RK,RK,RK,RK,PS,PS,RK,PS,PS,PS,RK,MU,VO
+    defb VO,FG,MU,MU,MU,MU,MU,VO,VO,MU,MU,MU,MU,MU,FG,VO
+
+    ._mapa6 //dngn_002
+    defb VO,FG,MU,MU,MU,MU,MU,MU,MU,MU,MU,MU,MU,MU,FG,VO
+    defb VO,MU,PS,PS,PS,PS,PS,PS,PS,PS,PS,PS,PS,PS,MU,VO
+    defb VO,MU,PS,PS,PS,PS,PS,PS,PS,PS,PS,PS,PS,PS,MU,VO
+    defb VO,MU,PS,PS,PS,PS,PS,PS,PS,RK,PS,PS,PS,PS,MU,VO
+    defb VO,MU,PS,PS,PS,PS,PS,PS,PS,PS,PS,PS,PS,PS,MU,VO
+    defb VO,MU,PS,PS,PS,PS,PS,PS,PS,PS,PS,PS,PS,PS,MU,VO
+    defb VO,MU,PS,PS,PS,PS,PS,PS,PS,PS,PS,PS,PS,PS,MU,VO
+    defb VO,MU,PS,PS,PS,PS,PS,PS,PS,PS,PS,PS,PS,PS,MU,VO
     defb VO,FG,MU,MU,MU,MU,MU,VO,VO,MU,MU,MU,MU,MU,FG,VO
 
     ._mapa4 //start -1 dungeon enter
@@ -79,15 +90,4 @@ extern unsigned char mapa6[];
     defb SL,AR,SL,SL,SL,SL,SL,SL,SL,SL,SL,SL,SL,SL,AR,SL
     defb SL,AR,SL,SL,SL,SL,SL,SL,SL,SL,SL,SL,SL,SL,AR,SL
     defb SL,AR,AR,AR,AR,AR,AR,SL,SL,AR,AR,AR,AR,AR,AR,SL
-
-    ._mapa6 //dngn_002 (arriba de mapa3)
-    defb VO,FG,MU,MU,MU,MU,MU,MU,MU,MU,MU,MU,MU,MU,FG,VO
-    defb VO,MU,PS,PS,PS,PS,PS,PS,PS,PS,PS,PS,PS,PS,MU,VO
-    defb VO,MU,PS,RK,PS,PS,PS,PS,PS,PS,PS,PS,RK,PS,MU,VO
-    defb VO,MU,PS,PS,PS,RK,PS,PS,PS,RK,PS,PS,PS,PS,MU,VO
-    defb VO,MU,PS,PS,PS,PS,PS,PS,PS,PS,PS,PS,PS,PS,MU,VO
-    defb VO,MU,PS,PS,PS,RK,PS,PS,PS,RK,PS,PS,PS,PS,MU,VO
-    defb VO,MU,PS,RK,PS,PS,PS,PS,PS,PS,PS,PS,RK,PS,MU,VO
-    defb VO,MU,PS,PS,PS,PS,PS,PS,PS,PS,PS,PS,PS,PS,MU,VO
-    defb VO,FG,MU,MU,MU,MU,MU,VO,VO,MU,MU,MU,MU,MU,FG,VO
 #endasm

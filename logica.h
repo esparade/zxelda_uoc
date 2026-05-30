@@ -238,8 +238,15 @@ void drop_item(unsigned char ix, unsigned char iy) {
     }
 }
 
-// Comprueba si el tile delante del heroe contiene un enemigo y lo elimina con 1 golpe,
-// soltando un item aleatorio con probabilidad 50%.
+void erase_boss_tiles(unsigned char bx, unsigned char by) {
+    unsigned char r, c;
+    for (r = by-1; r <= by+1; r++)
+        for (c = bx-1; c <= bx+1; c++)
+            render_tile(mapa_trabajo[r*ancho_mapa+c], c, r);
+}
+
+// Comprueba si el tile delante del heroe contiene un enemigo y lo elimina con 1 golpe.
+// El boss necesita boss_hp golpes; los demas enemigos mueren de 1 y sueltan item con prob 50%.
 void check_sword_hit(void) {
     unsigned char tx, ty;
     switch(vista) {
@@ -257,6 +264,14 @@ void check_sword_hit(void) {
         e2active = 0;
         if (rand_next() & 1) drop_item(e2x, e2y);
         render_tile(mapa_trabajo[e2y*ancho_mapa+e2x], e2x, e2y);
+    }
+    if (boss_active && boss_y == ty && boss_x == tx) {
+        boss_hp--;
+        if (boss_hp == 0) {
+            boss_active = 0;
+            erase_boss_tiles(boss_x, boss_y);
+            drop_item(boss_x, boss_y);
+        }
     }
 }
 
@@ -396,5 +411,58 @@ void mueve_enemigo2(void) {
         render_hud_vidas();
         inv_timer = 40;
         if (vidas == 0) cambiar_pantalla(PANTALLA_GAME_OVER);
+    }
+}
+
+void animacion_boss(void) {
+    if (!boss_active || mapa_actual != 6) return;
+    if (boss_form == 0) {
+        // X: diagonales
+        put_sprite_x16(enmy_bossFire, (boss_x-1)*2+MAPA_OX, (boss_y-1)*2+MAPA_OY);
+        put_sprite_x16(enmy_bossFire, (boss_x+1)*2+MAPA_OX, (boss_y-1)*2+MAPA_OY);
+        put_sprite_x16(enmy_bossFire, (boss_x-1)*2+MAPA_OX, (boss_y+1)*2+MAPA_OY);
+        put_sprite_x16(enmy_bossFire, (boss_x+1)*2+MAPA_OX, (boss_y+1)*2+MAPA_OY);
+    } else {
+        // +: cardinales
+        put_sprite_x16(enmy_bossFire,  boss_x*2   +MAPA_OX, (boss_y-1)*2+MAPA_OY);
+        put_sprite_x16(enmy_bossFire, (boss_x-1)*2+MAPA_OX,  boss_y*2   +MAPA_OY);
+        put_sprite_x16(enmy_bossFire, (boss_x+1)*2+MAPA_OX,  boss_y*2   +MAPA_OY);
+        put_sprite_x16(enmy_bossFire,  boss_x*2   +MAPA_OX, (boss_y+1)*2+MAPA_OY);
+    }
+    put_sprite_x16(enmy_boss, boss_x*2+MAPA_OX, boss_y*2+MAPA_OY);
+}
+
+// El boss alterna cada 20 frames entre dos patrones (boss_form XOR 1):
+//   form 0: fuego en las 4 esquinas del tile del boss (patron diagonal).
+//   form 1: fuego en los 4 laterales del tile del boss (patron en cruz).
+// Se mueve hacia el heroe limitandose a los tiles interiores (x:3-12, y:2-6).
+// El contacto con el heroe o sus fuegos inflige dano directamente (sin proyectil).
+void mueve_boss(void) {
+    unsigned char ox, oy, dx, dy, hit;
+    if (!boss_active || mapa_actual != 6) return;
+    boss_mov++;
+    if (boss_mov < 20) return;
+    boss_mov = 0;
+    ox = boss_x; oy = boss_y;
+    erase_boss_tiles(ox, oy);
+    boss_form ^= 1;
+    if (boss_x < hx && boss_x < 12) boss_x++;
+    else if (boss_x > hx && boss_x > 3) boss_x--;
+    if (boss_y < hy && boss_y < 6) boss_y++;
+    else if (boss_y > hy && boss_y > 2) boss_y--;
+    if (inv_timer == 0) {
+        dx = (hx >= boss_x) ? hx - boss_x : boss_x - hx;
+        dy = (hy >= boss_y) ? hy - boss_y : boss_y - hy;
+        hit = 0;
+        if (dx == 0 && dy == 0) hit = 1;
+        else if (boss_form == 0 && dx == 1 && dy == 1) hit = 1;
+        else if (boss_form == 1 && ((dx == 1 && dy == 0) || (dx == 0 && dy == 1))) hit = 1;
+        if (hit) {
+            vidas--;
+            sonido_danio();
+            render_hud_vidas();
+            inv_timer = 40;
+            if (vidas == 0) cambiar_pantalla(PANTALLA_GAME_OVER);
+        }
     }
 }
