@@ -3,7 +3,7 @@
 // pantallas / screens
 #define PANTALLA_MENU     0
 #define PANTALLA_JUEGO    1
-#define PANTALLA_INVENTARIO 2
+// #define PANTALLA_INVENTARIO 2
 #define PANTALLA_GAME_OVER 3
 
 // offset de render del mapa en pantalla (chars)

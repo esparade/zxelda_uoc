@@ -1,3 +1,0 @@
-- la llave ahora mantiene siempre el color amarillo
-- el menu ahora tiene textos a color
-- despues de morir ahora se vuelve solo al menu despues de 3s.

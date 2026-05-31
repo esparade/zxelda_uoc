@@ -1,0 +1,7 @@
+v12
+- se han añadido el resto de mapas del juego, 26 en total
+- al matar al boss y recoger el objeto, se vuelve al inicio, con los enemigos mas fuertes
+- ahora el heroe empieza el juego mirando hacia abajo, centrado en la pantalla
+- se ha cambiado la disposicion del mapa dngn_e2 // ID64 y la disposicion de las mazmorras alrededor, para implementar en la siguiente version la mecanica del bloque empujable
+- se han añadido al codigo la totalidad de los comentarios
+- muchisimos fixes

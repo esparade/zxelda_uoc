@@ -1,3 +1,4 @@
+// dibujar caracteres y letras del inventario una a una segun pos-x, pos-y (y color) de los tiles de la pantalla
 void put_hud_char(unsigned char *pix, unsigned char col, unsigned char row, unsigned char attr) {
     *((unsigned char *)(22528 + (unsigned int)row * 32 + col)) = attr;
     put_sprite_x8_noclr(pix, col, row);
@@ -8,34 +9,21 @@ void init_pantalla (void) {
     cls(0);
 }
 
-void render_game_over (void) {
-    cls(0);
-    put_hud_char(F_LET('h'), 11, 11, 7);
-    put_hud_char(F_LET('a'), 12, 11, 7);
-    put_hud_char(F_LET('s'), 13, 11, 7);
-    put_hud_char(F_LET('m'), 15, 11, 7);
-    put_hud_char(F_LET('u'), 16, 11, 7);
-    put_hud_char(F_LET('e'), 17, 11, 7);
-    put_hud_char(F_LET('r'), 18, 11, 7);
-    put_hud_char(F_LET('t'), 19, 11, 7);
-    put_hud_char(F_LET('o'), 20, 11, 7);
-}
-
-// Dibuja todos los tiles del mapa actual recorriendo mapa_trabajo fila a fila.
+// dibuja todos los tiles del mapa recorriendo mapa_trabajo fila a fila
 void render_mapa (void) {
-    int contador=0;
-    for (y=0;y<alto_mapa;y++) {
-        for (x=0;x<ancho_mapa;x++) {
-            render_tile (mapa_trabajo[contador],x,y);
-            contador++;
+    int i = 0;
+    for (y = 0; y < alto_mapa; y++) {
+        for (x = 0; x < ancho_mapa; x++) {
+            render_tile (mapa_trabajo[i],x,y);
+            i++;
         }
     }
 }
 
-// Dibuja el fondo del HUD: negro en mazmorras (mapas 3 y 6), amarillo en exteriores.
+// dibuja el fondo del inventario: negro si borde_actual==0 (mazmorra y cueva), amarillo en world
 void render_hud_fondo(void) {
     unsigned char *borde;
-    if (mapa_actual == 3 || mapa_actual == 6) {
+    if (borde_actual == 0) {
         borde = sprite_negro;
         for (y = 0; y < 6; y++)
             for (x = 0; x < 32; x++)
@@ -221,16 +209,29 @@ void render_redefine_paso(void) {
     }
 }
 
-// Redibuja el tile del mapa bajo el heroe (borra el sprite del heroe de su posicion actual).
+void render_game_over (void) {
+    cls(0);
+    put_hud_char(F_LET('h'), 11, 11, 7);
+    put_hud_char(F_LET('a'), 12, 11, 7);
+    put_hud_char(F_LET('s'), 13, 11, 7);
+    put_hud_char(F_LET('m'), 15, 11, 7);
+    put_hud_char(F_LET('u'), 16, 11, 7);
+    put_hud_char(F_LET('e'), 17, 11, 7);
+    put_hud_char(F_LET('r'), 18, 11, 7);
+    put_hud_char(F_LET('t'), 19, 11, 7);
+    put_hud_char(F_LET('o'), 20, 11, 7);
+}
+
+// redibuja el tile del mapa bajo hero
 void restaura_fondo_tile (void) {
     unsigned char tile=mapa_trabajo[hmap];
     render_tile(tile,hx,hy);
 }
 
-// Dibuja el tile con el ID dado en la celda (x,y) de la rejilla del mapa.
-// IDs de tile: 0=suelo_mundo  1=arbol  2=matorral  3=bloque_dngn  4=baldosa  5=pared
-//              6=puerta_izq   7=puerta_der  8=puerta_arr  9=void/negro
-//              10/11=objetos_cueva  12=bloque_cerrado  13=fuego  14=corazon  15=llave  16=power
+// dibuja el tile con el ID dado en la celda (x,y) de la cuadricula del mapa
+// 0=suelo_mundo  1=arbol  2=matorral  3=bloque_dngn  4=baldosa  5=pared
+// 6=puerta_izq   7=puerta_der  8=puerta_arr  9=void/negro
+// 10/11=objetos_cueva  12=bloque_cerrado  13=fuego  14=corazon  15=llave  16=power  17=tumba  18=agua
 int render_tile(int grafico, int x, int y) {
     switch (grafico) {
         case 0:
@@ -286,6 +287,12 @@ int render_tile(int grafico, int x, int y) {
         case 14:
             render_tile(tile_bajo_corazon, x, y);
             put_sprite_x8_mask(item_corazon, x*2+MAPA_OX, y*2+MAPA_OY);
+        break;
+        case 17:
+            put_sprite_x16(wrld_tomb, x*2+MAPA_OX, y*2+MAPA_OY);
+        break;
+        case 18:
+            put_sprite_x16(wrld_watr, x*2+MAPA_OX, y*2+MAPA_OY);
         break;
     }
 }
@@ -400,13 +407,13 @@ int render_hero(int x, int y) {
     }
 }
 
-// Cambia el estado de la aplicacion, limpia pantalla e inicializa el modo nuevo.
-// En PANTALLA_JUEGO llama a inicia_variables_juego(), que resetea todo el estado de partida.
+// cambia el estado de la aplicacion, limpia pantalla e inicializa el modo
+// en PANTALLA_JUEGO llama a inicia_variables_juego(), que resetea todo
 void cambiar_pantalla (unsigned char nueva) {
     modo_app = nueva;
     cls(0);
     switch (modo_app) {
-case PANTALLA_MENU:
+        case PANTALLA_MENU:
             jgh_color = 0;
             jgh_timer = 0;
             borde_actual = 0; port_out(254, 0);

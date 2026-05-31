@@ -1,6 +1,11 @@
+// Formato sprite x16 (16x16 px): 32 bytes de pixeles (16 filas x 2 bytes/fila) + 4 bytes de atributo ZX.
+// Formato sprite x8 con mascara (8x8 px): 16 bytes alternando (mascara, pixel) x8 filas + 1 byte atributo.
+// El byte de atributo codifica: bit7=flash, bit6=bright, bits3-5=papel, bits0-2=tinta.
 extern unsigned char sprite_negro [];
 extern unsigned char sprite_amaD [];
 
+extern unsigned char wrld_tomb [];
+extern unsigned char wrld_watr [];
 extern unsigned char wrld_frst [];
 extern unsigned char wrld_bush [];
 extern unsigned char wrld_door_up [];
@@ -55,6 +60,20 @@ extern unsigned char fuente [];
 #define F_LET(c) (&fuente[(10 + (c) - 'a') * 8])
 
 #asm
+	._wrld_tomb
+	DEFB	  3,192,  7,224, 14,112, 30,120
+	DEFB	 24, 24, 24, 24, 30,120, 30,120
+	DEFB	 30,120, 30,120, 31,248, 31,248
+	DEFB	124,174, 98,106, 75,166,127,254
+	DEFB	 57, 57, 57, 57
+
+    ._wrld_watr
+    DEFB	255,255,255,255,255,255,255,255
+    DEFB	255,255,255,255,255,255,255,255
+    DEFB	255,255,255,255,255,255,255,255
+    DEFB	255,255,255,255,255,255,255,255
+    DEFB	 69, 69, 69, 69
+
     ._wrld_frst
 	DEFB	224,192,241,240,241,242,113,250
 	DEFB	115,250,243,254,243,224,243,220
