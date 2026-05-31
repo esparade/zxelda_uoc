@@ -20,10 +20,24 @@ void main (void) {
 
     while(!zx_break()) { //infinte loop
         switch(modo_app) {
-            case PANTALLA_INTRO:
-            break;
-
-            case PANTALLA_MENU:
+case PANTALLA_MENU:
+                if (++jgh_timer < 2) break;
+                jgh_timer = 0;
+                {
+                    static unsigned char color_seq[] = {5, 4, 3, 2, 1, 0};
+                    unsigned char attr;
+                    if (++jgh_color >= 6) jgh_color = 0;
+                    attr = color_seq[jgh_color];
+                    *((unsigned char *)(22528 + (unsigned int)22 * 32 + 25)) = attr;
+                    *((unsigned char *)(22528 + (unsigned int)22 * 32 + 26)) = attr;
+                    *((unsigned char *)(22528 + (unsigned int)22 * 32 + 27)) = attr;
+                    *((unsigned char *)(22528 + (unsigned int)7 * 32 + 13)) = attr;
+                    *((unsigned char *)(22528 + (unsigned int)7 * 32 + 14)) = attr;
+                    *((unsigned char *)(22528 + (unsigned int)7 * 32 + 15)) = attr;
+                    *((unsigned char *)(22528 + (unsigned int)7 * 32 + 16)) = attr;
+                    *((unsigned char *)(22528 + (unsigned int)7 * 32 + 17)) = attr;
+                    *((unsigned char *)(22528 + (unsigned int)7 * 32 + 18)) = attr;
+                }
             break;
 
             case PANTALLA_JUEGO:
@@ -32,6 +46,7 @@ void main (void) {
                 check_puerta6();
                 check_llave();
                 check_corazon();
+                check_power();
                 anima_llave();
                 if (inv_timer > 0) inv_timer--;
                 mueve_heavy();
@@ -56,6 +71,8 @@ void main (void) {
             break;
 
             case PANTALLA_GAME_OVER:
+                if (game_over_timer > 0) game_over_timer--;
+                else cambiar_pantalla(PANTALLA_MENU);
             break;
         }
         teclado();

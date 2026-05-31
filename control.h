@@ -214,19 +214,13 @@ void control_teclas_juego (void) {
         }
     }
 
-    if ((port_in(61438)&1)==0) { //tecla 0 -> menu
+    if ((port_in(key_men_port) & key_men_mask)==0) { //menu/reinicio
         cambiar_pantalla(PANTALLA_MENU);
     }
 }
 
-void control_teclas_intro(void) {
-    if ((port_in(63486)&1)==0) { //tecla 1 -> menu
-        cambiar_pantalla(PANTALLA_MENU);
-    }
-}
-
-// Captura una tecla por cada accion (arr/abj/izq/der/atk) y la almacena como port+mascara.
-// Avanza redef_paso hasta 5; al terminar vuelve al menu.
+// Captura una tecla por cada accion (arr/abj/izq/der/atk/menu) y la almacena como port+mascara.
+// Avanza redef_paso hasta 6; al terminar vuelve al menu.
 void control_teclas_redefine(void) {
     unsigned int p;
     unsigned char b;
@@ -244,11 +238,12 @@ void control_teclas_redefine(void) {
         case 3: key_izq_port=p; key_izq_mask=b; break;
         case 4: key_der_port=p; key_der_mask=b; break;
         case 5: key_atk_port=p; key_atk_mask=b; break;
+        case 6: key_men_port=p; key_men_mask=b; break;
     }
     redef_paso++;
     redef_espera = 1;
 
-    if (redef_paso > 5) {
+    if (redef_paso > 6) {
         redef_paso = 0;
         cambiar_pantalla(PANTALLA_MENU);
         return;
@@ -282,10 +277,7 @@ void control_teclas_game_over(void) {
 
 void teclado(void) {
     switch(modo_app) {
-        case PANTALLA_INTRO:
-            control_teclas_intro();
-        break;
-        case PANTALLA_MENU:
+case PANTALLA_MENU:
             control_teclas_menu();
         break;
         case PANTALLA_JUEGO:

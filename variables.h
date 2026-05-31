@@ -53,7 +53,7 @@ unsigned char octo2_shot_y;
 unsigned char octo2_shot_dir;
 unsigned char octo2_shot_mov;
 
-unsigned char boss_active;     // jefe final activo (mapa6)
+unsigned char boss_active;     // jefe final activo en mapa6 (ID6)
 unsigned char boss_x;          // tile x del boss
 unsigned char boss_y;          // tile y del boss
 unsigned char boss_hp;     // vida del boss (8 golpes)
@@ -86,14 +86,20 @@ unsigned char corazon_mapa;     // en que mapa cayo el corazon
 unsigned char corazon_pos;      // indice en mapa_trabajo donde esta el corazon
 unsigned char tile_bajo_corazon;// tile original donde cayo el corazon
 
+unsigned char power_en_mapa;    // 1 si el item_power esta en el suelo
+unsigned char power_mapa;       // en que mapa cayo
+unsigned char power_pos;        // indice en mapa_trabajo
+unsigned char tile_bajo_power;  // tile original donde cayo
+
 // teclas redefinibles: port 16-bit + mascara de bit
 unsigned int  key_arr_port; unsigned char key_arr_mask; // arriba
 unsigned int  key_abj_port; unsigned char key_abj_mask; // abajo
 unsigned int  key_izq_port; unsigned char key_izq_mask; // izquierda
 unsigned int  key_der_port; unsigned char key_der_mask; // derecha
 unsigned int  key_atk_port; unsigned char key_atk_mask; // ataque
+unsigned int  key_men_port; unsigned char key_men_mask; // menu/reinicio
 
-unsigned char redef_paso;   // 0=inactivo 1-5=capturando accion
+unsigned char redef_paso;   // 0=inactivo 1-6=capturando accion
 unsigned char redef_espera; // 1=esperar a que se suelten teclas
 
 void inicia_teclas(void) {
@@ -102,6 +108,7 @@ void inicia_teclas(void) {
     key_izq_port = 57342; key_izq_mask = 2; // O
     key_der_port = 57342; key_der_mask = 1; // P
     key_atk_port = 32766; key_atk_mask = 1; // SPACE
+    key_men_port = 61438;  key_men_mask = 1; // 0
     redef_paso   = 0;
     redef_espera = 0;
 }
@@ -110,7 +117,10 @@ unsigned char pts;
 unsigned char vidas;
 unsigned char fuerza;
 unsigned char rand_seed; // semilla del generador; se inicializa con el registro R del Z80 (aleatorio en arranque)
-unsigned char llave_anim;
+unsigned char enemy_dmg;
+unsigned char game_over_timer;
+unsigned char jgh_color;
+unsigned char jgh_timer;
 unsigned char tienda_mapa; // mapa de la tienda 1 (siempre 1)
 unsigned char tienda_pos;  // posicion fija de la tienda 1
 unsigned char mazmorra_mapa; // mapa de la tienda 2 (2 o 5, aleatorio)
@@ -271,6 +281,7 @@ void inicia_variables_juego(void) {
     pts = 0;
     vidas = NUMERO_DE_VIDAS;
     fuerza = 1;
+    enemy_dmg = 1;
 
     //items
     llave_en_mapa = 0;
@@ -280,6 +291,9 @@ void inicia_variables_juego(void) {
     corazon_en_mapa = 0;
     corazon_mapa = 0;
     corazon_pos = 0;
+    power_en_mapa = 0;
+    power_mapa = 0;
+    power_pos = 0;
 
     //ataque
     attack_timer = 0;

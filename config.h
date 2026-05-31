@@ -1,11 +1,10 @@
 #define NUMERO_DE_VIDAS 3
 
 // pantallas / screens
-#define PANTALLA_INTRO    0
-#define PANTALLA_MENU     1
-#define PANTALLA_JUEGO    2
-#define PANTALLA_INVENTARIO 3
-#define PANTALLA_GAME_OVER 4
+#define PANTALLA_MENU     0
+#define PANTALLA_JUEGO    1
+#define PANTALLA_INVENTARIO 2
+#define PANTALLA_GAME_OVER 3
 
 // offset de render del mapa en pantalla (chars)
 // centrado en x, alineado abajo en y

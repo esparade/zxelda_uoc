@@ -1,20 +1,16 @@
+// Fuerza el atributo de color amarillo en el sprite de la llave para hacerla visible.
 void anima_llave(void) {
-    unsigned char ink;
     if (!llave_en_mapa || mapa_actual != llave_mapa) return;
-    llave_anim++;
-    if (llave_anim >= 28) llave_anim = 0;
-    if (llave_anim & 1) return;                  // actua cada frame
-    ink = (llave_anim >> 2);                     // ink de la llave
-    item_llave[16] = 48 | ink;                   // paper amarillo (48) + nueva tinta
-    item_llave[17] = 48 | ink;
-    item_llave[18] = 48 | ink;
-    item_llave[19] = 48 | ink;
+    item_llave[16] = 6;
+    item_llave[17] = 6;
+    item_llave[18] = 6;
+    item_llave[19] = 6;
     render_tile(15, llave_pos % ancho_mapa, llave_pos / ancho_mapa);
 }
 
 // Tiles solidos (bloquean movimiento): arbol(1), matorral(2), bloque(3), pared(5),
 // puerta_izq(6), puerta_der(7), puerta_arr(8), puerta_cerrada(12).
-// Son pasables: suelo(0), baldosa(4), void(9), fuego(13) e items(14,15).
+// Son pasables: suelo(0), baldosa(4), void(9), fuego(13) e items(14,15,16).
 int es_solido(unsigned char tile) {
     return tile==1 || tile==2 || tile==3 || tile==5 || tile==6 || tile==7 || tile==8 || tile==12;
 }
@@ -238,6 +234,33 @@ void drop_item(unsigned char ix, unsigned char iy) {
     }
 }
 
+void drop_power(unsigned char ix, unsigned char iy) {
+    unsigned char pos = iy * ancho_mapa + ix;
+    power_mapa = mapa_actual;
+    power_pos  = pos;
+    tile_bajo_power = mapa_trabajo[pos];
+    mapa_trabajo[pos] = 16;
+    power_en_mapa = 1;
+}
+
+// Al recoger el item_power: +1 fuerza (max 9) y duplica el dano de enemigos (aumenta dificultad).
+// Reinicia la pantalla de juego para refrescar el estado sin perder pts ni enemy_dmg acumulado.
+void check_power(void) {
+    unsigned char saved_pts, new_dmg, saved_fuerza;
+    if (!power_en_mapa) return;
+    if (mapa_actual != power_mapa) return;
+    if (hmap != power_pos) return;
+    saved_pts = pts;
+    saved_fuerza = fuerza;
+    new_dmg = enemy_dmg * 2;
+    cambiar_pantalla(PANTALLA_JUEGO);
+    pts = saved_pts;
+    enemy_dmg = new_dmg;
+    fuerza = (saved_fuerza < 9) ? saved_fuerza + 1 : 9;
+    render_hud_pts();
+    render_hud_fuerza();
+}
+
 void erase_boss_tiles(unsigned char bx, unsigned char by) {
     unsigned char r, c;
     for (r = by-1; r <= by+1; r++)
@@ -257,21 +280,25 @@ void check_sword_hit(void) {
     }
     if (heavy_active && heavy_x == tx && heavy_y == ty) {
         heavy_active = 0;
+        pts += 3; render_hud_pts();
         if (rand_next() & 1) drop_item(heavy_x, heavy_y);
         render_tile(mapa_trabajo[heavy_y*ancho_mapa+heavy_x], heavy_x, heavy_y);
     }
     if (heavy2_active && heavy2_x == tx && heavy2_y == ty) {
         heavy2_active = 0;
+        pts += 3; render_hud_pts();
         if (rand_next() & 1) drop_item(heavy2_x, heavy2_y);
         render_tile(mapa_trabajo[heavy2_y*ancho_mapa+heavy2_x], heavy2_x, heavy2_y);
     }
     if (octo1_active && octo1_x == tx && octo1_y == ty) {
         octo1_active = 0;
+        pts += 1; render_hud_pts();
         if (rand_next() & 1) drop_item(octo1_x, octo1_y);
         render_tile(mapa_trabajo[octo1_y*ancho_mapa+octo1_x], octo1_x, octo1_y);
     }
     if (octo2_active && octo2_x == tx && octo2_y == ty) {
         octo2_active = 0;
+        pts += 1; render_hud_pts();
         if (rand_next() & 1) drop_item(octo2_x, octo2_y);
         render_tile(mapa_trabajo[octo2_y*ancho_mapa+octo2_x], octo2_x, octo2_y);
     }
@@ -279,8 +306,9 @@ void check_sword_hit(void) {
         boss_hp--;
         if (boss_hp == 0) {
             boss_active = 0;
+            pts += 10; render_hud_pts();
             erase_boss_tiles(boss_x, boss_y);
-            drop_item(boss_x, boss_y);
+            drop_power(boss_x, boss_y);
         }
     }
 }
@@ -307,8 +335,8 @@ void check_llave(void) {
     llave_en_mapa = 0;
     tiene_llave = 1;
     sonido_llave();
-    mapa_trabajo[llave_pos] = 0;
-    render_tile(0, llave_pos % ancho_mapa, llave_pos / ancho_mapa);
+    mapa_trabajo[llave_pos] = tile_bajo_llave;
+    render_tile(tile_bajo_llave, llave_pos % ancho_mapa, llave_pos / ancho_mapa);
     render_hud_llave();
     render_hero(hx*2, hy*2);
 }
@@ -382,7 +410,7 @@ void mueve_heavy(void) {
         heavy_x = nx; heavy_y = ny;
     }
     if (heavy_x == hx && heavy_y == hy && inv_timer == 0) {
-        vidas--;
+        vidas = (vidas >= enemy_dmg) ? vidas - enemy_dmg : 0;
         sonido_danio();
         render_hud_vidas();
         inv_timer = 40;
@@ -406,7 +434,7 @@ void mueve_heavy2(void) {
         heavy2_x = nx; heavy2_y = ny;
     }
     if (heavy2_x == hx && heavy2_y == hy && inv_timer == 0) {
-        vidas--;
+        vidas = (vidas >= enemy_dmg) ? vidas - enemy_dmg : 0;
         sonido_danio();
         render_hud_vidas();
         inv_timer = 40;
@@ -459,7 +487,7 @@ void mueve_octo1(void) {
         octo1_steps = 2 + (rand_next() & 3);
     }
     if (octo1_x == hx && octo1_y == hy && inv_timer == 0) {
-        vidas--;
+        vidas = (vidas >= enemy_dmg) ? vidas - enemy_dmg : 0;
         sonido_danio();
         render_hud_vidas();
         inv_timer = 40;
@@ -510,7 +538,7 @@ void mueve_octo2(void) {
         octo2_steps = 2 + (rand_next() & 3);
     }
     if (octo2_x == hx && octo2_y == hy && inv_timer == 0) {
-        vidas--;
+        vidas = (vidas >= enemy_dmg) ? vidas - enemy_dmg : 0;
         sonido_danio();
         render_hud_vidas();
         inv_timer = 40;
@@ -548,7 +576,7 @@ void mueve_octo1_shot(void) {
         octo1_shot_active = 0;
         render_tile(mapa_trabajo[octo1_shot_y*ancho_mapa+octo1_shot_x], octo1_shot_x, octo1_shot_y);
         render_hero(hx*2, hy*2);
-        vidas--;
+        vidas = (vidas >= enemy_dmg) ? vidas - enemy_dmg : 0;
         sonido_danio();
         render_hud_vidas();
         inv_timer = 40;
@@ -586,7 +614,7 @@ void mueve_octo2_shot(void) {
         octo2_shot_active = 0;
         render_tile(mapa_trabajo[octo2_shot_y*ancho_mapa+octo2_shot_x], octo2_shot_x, octo2_shot_y);
         render_hero(hx*2, hy*2);
-        vidas--;
+        vidas = (vidas >= enemy_dmg) ? vidas - enemy_dmg : 0;
         sonido_danio();
         render_hud_vidas();
         inv_timer = 40;
@@ -640,7 +668,7 @@ void mueve_boss_shot(void) {
         boss_shot_active = 0;
         render_tile(mapa_trabajo[boss_shot_y*ancho_mapa+boss_shot_x], boss_shot_x, boss_shot_y);
         render_hero(hx*2, hy*2);
-        vidas--;
+        vidas = (vidas >= enemy_dmg) ? vidas - enemy_dmg : 0;
         sonido_danio();
         render_hud_vidas();
         inv_timer = 40;
@@ -658,7 +686,7 @@ void check_boss_contact(void) {
     else if (boss_form == 0 && dx == 1 && dy == 1) hit = 1;
     else if (boss_form == 1 && ((dx == 1 && dy == 0) || (dx == 0 && dy == 1))) hit = 1;
     if (hit) {
-        vidas--;
+        vidas = (vidas >= enemy_dmg) ? vidas - enemy_dmg : 0;
         sonido_danio();
         render_hud_vidas();
         inv_timer = 40;
@@ -666,7 +694,7 @@ void check_boss_contact(void) {
     }
 }
 
-// El boss alterna cada 10 frames entre dos patrones (boss_form XOR 1):
+// El boss alterna cada 20 frames entre dos patrones (boss_form XOR 1):
 //   form 0: fuego en las 4 esquinas del tile del boss (patron diagonal).
 //   form 1: fuego en los 4 laterales del tile del boss (patron en cruz).
 // Se mueve hacia el heroe limitandose a los tiles interiores (x:3-12, y:2-6).
@@ -675,7 +703,7 @@ void mueve_boss(void) {
     unsigned char ox, oy;
     if (!boss_active || mapa_actual != 6) return;
     boss_mov++;
-    if (boss_mov < 10) return;
+    if (boss_mov < 20) return;
     boss_mov = 0;
     ox = boss_x; oy = boss_y;
     erase_boss_tiles(ox, oy);

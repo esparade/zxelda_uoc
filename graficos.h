@@ -41,6 +41,8 @@ extern unsigned char enmy_bossFire [];
 extern unsigned char item_llave [];
 extern unsigned char item_llave_trans [];
 extern unsigned char item_corazon [];
+extern unsigned char item_power [];
+extern unsigned char item_points [];
 
 extern unsigned char itm_bigHrth [];
 extern unsigned char itm_bigSwrd [];
@@ -314,6 +316,14 @@ extern unsigned char fuente [];
     DEFB	108,108, 36, 72,  0,  0,  0,  0 //comill
     DEFB	 48,120,120,120, 48,  0, 48,  0 //excla
     DEFB	124,198,230, 12, 24,  0, 24,  0 //interr
+
+    ._item_power
+	DEFB	 24, 36,126,165,165,126, 36, 24
+	DEFB	 4
+
+	._item_points
+	DEFB	 60,126,231,219,219,231,126, 60
+	DEFB	  3
 
     ._item_llave
 	; formato: mascara,pixel x8 filas + 1 byte attr

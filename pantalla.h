@@ -8,10 +8,6 @@ void init_pantalla (void) {
     cls(0);
 }
 
-void render_intro (void) {
-    cls(0);
-}
-
 void render_game_over (void) {
     cls(0);
     put_hud_char(F_LET('h'), 11, 11, 7);
@@ -34,7 +30,6 @@ void render_mapa (void) {
             contador++;
         }
     }
-
 }
 
 // Dibuja el fondo del HUD: negro en mazmorras (mapas 3 y 6), amarillo en exteriores.
@@ -55,31 +50,31 @@ void render_hud_fondo(void) {
 }
 
 void render_menu (void) {
-    put_hud_char(F_LET('z'), 13, 4, 7);
-    put_hud_char(F_LET('x'), 14, 4, 7);
-    put_hud_char(F_LET('e'), 15, 4, 7);
-    put_hud_char(F_LET('l'), 16, 4, 7);
-    put_hud_char(F_LET('d'), 17, 4, 7);
-    put_hud_char(F_LET('a'), 18, 4, 7);
+    put_hud_char(F_LET('z'), 13, 7, 7);
+    put_hud_char(F_LET('x'), 14, 7, 7);
+    put_hud_char(F_LET('e'), 15, 7, 7);
+    put_hud_char(F_LET('l'), 16, 7, 7);
+    put_hud_char(F_LET('d'), 17, 7, 7);
+    put_hud_char(F_LET('a'), 18, 7, 7);
 
-    put_hud_char(F_DIG(1),   10, 15, 7);
-    put_hud_char(F_LET('t'), 12, 15, 7);
-    put_hud_char(F_LET('e'), 13, 15, 7);
-    put_hud_char(F_LET('c'), 14, 15, 7);
-    put_hud_char(F_LET('l'), 15, 15, 7);
-    put_hud_char(F_LET('a'), 16, 15, 7);
-    put_hud_char(F_LET('d'), 17, 15, 7);
-    put_hud_char(F_LET('o'), 18, 15, 7);
+    put_hud_char(F_DIG(1),   10, 15, 2);
+    put_hud_char(F_LET('t'), 12, 15, 2);
+    put_hud_char(F_LET('e'), 13, 15, 2);
+    put_hud_char(F_LET('c'), 14, 15, 2);
+    put_hud_char(F_LET('l'), 15, 15, 2);
+    put_hud_char(F_LET('a'), 16, 15, 2);
+    put_hud_char(F_LET('d'), 17, 15, 2);
+    put_hud_char(F_LET('o'), 18, 15, 2);
     
-    put_hud_char(F_DIG(2),   10, 16, 7);
-    put_hud_char(F_LET('k'), 12, 16, 7);
-    put_hud_char(F_LET('e'), 13, 16, 7);
-    put_hud_char(F_LET('m'), 14, 16, 7);
-    put_hud_char(F_LET('p'), 15, 16, 7);
-    put_hud_char(F_LET('s'), 16, 16, 7);
-    put_hud_char(F_LET('t'), 17, 16, 7);
-    put_hud_char(F_LET('o'), 18, 16, 7);
-    put_hud_char(F_LET('n'), 19, 16, 7);
+    put_hud_char(F_DIG(2),   10, 16, 3);
+    put_hud_char(F_LET('k'), 12, 16, 3);
+    put_hud_char(F_LET('e'), 13, 16, 3);
+    put_hud_char(F_LET('m'), 14, 16, 3);
+    put_hud_char(F_LET('p'), 15, 16, 3);
+    put_hud_char(F_LET('s'), 16, 16, 3);
+    put_hud_char(F_LET('t'), 17, 16, 3);
+    put_hud_char(F_LET('o'), 18, 16, 3);
+    put_hud_char(F_LET('n'), 19, 16, 3);
     
     put_hud_char(F_DIG(3),   10, 17, 7);
     put_hud_char(F_LET('r'), 12, 17, 7);
@@ -92,9 +87,9 @@ void render_menu (void) {
     put_hud_char(F_LET('i'), 19, 17, 7);
     put_hud_char(F_LET('r'), 20, 17, 7);
 
-    put_hud_char(F_LET('u'),  4, 21, 7);
-    put_hud_char(F_LET('o'),  5, 21, 7);
-    put_hud_char(F_LET('c'),  6, 21, 7);
+    put_hud_char(F_LET('u'),  4, 21, 69);
+    put_hud_char(F_LET('o'),  5, 21, 69);
+    put_hud_char(F_LET('c'),  6, 21, 69);
 
     put_hud_char(F_DIG(2),    8, 21, 7);
     put_hud_char(F_DIG(0),    9, 21, 7);
@@ -117,14 +112,14 @@ void render_menu (void) {
     put_hud_char(F_LET('b'), 26, 21, 7);
     put_hud_char(F_LET('y'), 27, 21, 7);
 
-    put_hud_char(F_LET('n'),  4, 22, 7);
-    put_hud_char(F_LET('i'),  5, 22, 7);
-    put_hud_char(F_LET('n'),  6, 22, 7);
-    put_hud_char(F_LET('t'),  7, 22, 7);
-    put_hud_char(F_LET('e'),  8, 22, 7);
-    put_hud_char(F_LET('n'),  9, 22, 7);
-    put_hud_char(F_LET('d'), 10, 22, 7);
-    put_hud_char(F_LET('o'), 11, 22, 7);
+    put_hud_char(F_LET('n'),  4, 22, 66);
+    put_hud_char(F_LET('i'),  5, 22, 66);
+    put_hud_char(F_LET('n'),  6, 22, 66);
+    put_hud_char(F_LET('t'),  7, 22, 66);
+    put_hud_char(F_LET('e'),  8, 22, 66);
+    put_hud_char(F_LET('n'),  9, 22, 66);
+    put_hud_char(F_LET('d'), 10, 22, 66);
+    put_hud_char(F_LET('o'), 11, 22, 66);
 
     put_hud_char(F_LET('v'), 14, 22, 7);
     put_hud_char(F_LET('e'), 15, 22, 7);
@@ -144,7 +139,6 @@ void render_menu (void) {
 
 void render_redefine_paso(void) {
     cls(0);
-    // "redefine"
     put_hud_char(F_LET('r'), 12,  4, 7);
     put_hud_char(F_LET('e'), 13,  4, 7);
     put_hud_char(F_LET('d'), 14,  4, 7);
@@ -153,7 +147,7 @@ void render_redefine_paso(void) {
     put_hud_char(F_LET('i'), 17,  4, 7);
     put_hud_char(F_LET('n'), 18,  4, 7);
     put_hud_char(F_LET('e'), 19,  4, 7);
-    // "pulsa tecla para"
+
     put_hud_char(F_LET('p'), 8,  11, 7);
     put_hud_char(F_LET('u'), 9,  11, 7);
     put_hud_char(F_LET('l'), 10, 11, 7);
@@ -168,9 +162,9 @@ void render_redefine_paso(void) {
     put_hud_char(F_LET('a'), 21, 11, 7);
     put_hud_char(F_LET('r'), 22, 11, 7);
     put_hud_char(F_LET('a'), 23, 11, 7);
-    // nombre de la accion segun redef_paso
+
     switch(redef_paso) {
-        case 1: // "arriba"
+        case 1:
             put_hud_char(F_LET('a'), 13, 12, 7);
             put_hud_char(F_LET('r'), 14, 12, 7);
             put_hud_char(F_LET('r'), 15, 12, 7);
@@ -178,14 +172,14 @@ void render_redefine_paso(void) {
             put_hud_char(F_LET('b'), 17, 12, 7);
             put_hud_char(F_LET('a'), 18, 12, 7);
         break;
-        case 2: // "abajo"
+        case 2:
             put_hud_char(F_LET('a'), 13, 12, 7);
             put_hud_char(F_LET('b'), 14, 12, 7);
             put_hud_char(F_LET('a'), 15, 12, 7);
             put_hud_char(F_LET('j'), 16, 12, 7);
             put_hud_char(F_LET('o'), 17, 12, 7);
         break;
-        case 3: // "izquierda"
+        case 3:
             put_hud_char(F_LET('i'), 11, 12, 7);
             put_hud_char(F_LET('z'), 12, 12, 7);
             put_hud_char(F_LET('q'), 13, 12, 7);
@@ -196,7 +190,7 @@ void render_redefine_paso(void) {
             put_hud_char(F_LET('d'), 18, 12, 7);
             put_hud_char(F_LET('a'), 19, 12, 7);
         break;
-        case 4: // "derecha"
+        case 4:
             put_hud_char(F_LET('d'), 12, 12, 7);
             put_hud_char(F_LET('e'), 13, 12, 7);
             put_hud_char(F_LET('r'), 14, 12, 7);
@@ -205,13 +199,24 @@ void render_redefine_paso(void) {
             put_hud_char(F_LET('h'), 17, 12, 7);
             put_hud_char(F_LET('a'), 18, 12, 7);
         break;
-        case 5: // "ataque"
+        case 5:
             put_hud_char(F_LET('a'), 13, 12, 7);
             put_hud_char(F_LET('t'), 14, 12, 7);
             put_hud_char(F_LET('a'), 15, 12, 7);
             put_hud_char(F_LET('q'), 16, 12, 7);
             put_hud_char(F_LET('u'), 17, 12, 7);
             put_hud_char(F_LET('e'), 18, 12, 7);
+        break;
+        case 6:
+            put_hud_char(F_LET('r'), 11, 12, 7);
+            put_hud_char(F_LET('e'), 12, 12, 7);
+            put_hud_char(F_LET('i'), 13, 12, 7);
+            put_hud_char(F_LET('n'), 14, 12, 7);
+            put_hud_char(F_LET('i'), 15, 12, 7);
+            put_hud_char(F_LET('c'), 16, 12, 7);
+            put_hud_char(F_LET('i'), 17, 12, 7);
+            put_hud_char(F_LET('a'), 18, 12, 7);
+            put_hud_char(F_LET('r'), 19, 12, 7);
         break;
     }
 }
@@ -225,7 +230,7 @@ void restaura_fondo_tile (void) {
 // Dibuja el tile con el ID dado en la celda (x,y) de la rejilla del mapa.
 // IDs de tile: 0=suelo_mundo  1=arbol  2=matorral  3=bloque_dngn  4=baldosa  5=pared
 //              6=puerta_izq   7=puerta_der  8=puerta_arr  9=void/negro
-//              10/11=objetos_cueva  12=bloque_cerrado  13=fuego  14=corazon  15=llave
+//              10/11=objetos_cueva  12=bloque_cerrado  13=fuego  14=corazon  15=llave  16=power
 int render_tile(int grafico, int x, int y) {
     switch (grafico) {
         case 0:
@@ -274,6 +279,10 @@ int render_tile(int grafico, int x, int y) {
             render_tile(tile_bajo_llave, x, y);
             put_sprite_x8_mask(item_llave, x*2+MAPA_OX, y*2+MAPA_OY);
         break;
+        case 16:
+            render_tile(tile_bajo_power, x, y);
+            put_hud_char(item_power, x*2+MAPA_OX, y*2+MAPA_OY, item_power[8]);
+        break;
         case 14:
             render_tile(tile_bajo_corazon, x, y);
             put_sprite_x8_mask(item_corazon, x*2+MAPA_OX, y*2+MAPA_OY);
@@ -282,10 +291,12 @@ int render_tile(int grafico, int x, int y) {
 }
 
 void render_hud_pts(void) {
+    put_hud_char(item_points, 14, 1, item_points[8]);
     put_hud_char(F_LET('p'), 16, 1, 7);
     put_hud_char(F_LET('t'), 17, 1, 7);
     put_hud_char(F_LET('s'), 18, 1, 7);
-    put_hud_char(F_DIG(pts), 23, 1, 7);
+    put_hud_char(F_DIG(pts / 10), 23, 1, 7);
+    put_hud_char(F_DIG(pts % 10), 24, 1, 7);
 }
 
 void render_hud_vidas(void) {
@@ -298,6 +309,7 @@ void render_hud_vidas(void) {
 }
 
 void render_hud_fuerza(void) {
+    put_hud_char(item_power, 14, 3, item_power[8]);
     put_hud_char(F_LET('f'), 16, 3, 7);
     put_hud_char(F_LET('u'), 17, 3, 7);
     put_hud_char(F_LET('e'), 18, 3, 7);
@@ -394,10 +406,9 @@ void cambiar_pantalla (unsigned char nueva) {
     modo_app = nueva;
     cls(0);
     switch (modo_app) {
-        case PANTALLA_INTRO:
-            render_intro();
-        break;
-        case PANTALLA_MENU:
+case PANTALLA_MENU:
+            jgh_color = 0;
+            jgh_timer = 0;
             borde_actual = 0; port_out(254, 0);
             render_menu();
         break;
@@ -412,6 +423,7 @@ void cambiar_pantalla (unsigned char nueva) {
             render_hero(hx*2, hy*2);
         break;
         case PANTALLA_GAME_OVER:
+            game_over_timer = 50;
             render_game_over();
         break;
     }

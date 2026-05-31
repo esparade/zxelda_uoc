@@ -1,5 +1,3 @@
-- se ha implementado por completo al octo, incluyendo el disparo
-- ahora hay dos enemigos independientes en cada pantalla con enemigos
-- se ha arreglado la posicion de la entrada a la mazmorra, ahora esta siempre en el centro
-- se han eliminado los enemigos de la pantalla de la tienda
-- el boss ahora dispara como los octos
+- la llave ahora mantiene siempre el color amarillo
+- el menu ahora tiene textos a color
+- despues de morir ahora se vuelve solo al menu despues de 3s.
