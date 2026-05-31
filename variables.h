@@ -16,23 +16,55 @@ unsigned char Fx_anim;
 unsigned char attack_timer;
 unsigned char inv_timer;
 
-unsigned char ex;      // enemigo pos x (tile)
-unsigned char ey;      // enemigo pos y (tile)
-unsigned char eanim;   // frame animacion enemigo
-unsigned char emov;    // contador movimiento enemigo
-unsigned char eactive; // enemigo activo en este mapa
+unsigned char heavy_x;      // enemigo pos x (tile)
+unsigned char heavy_y;      // enemigo pos y (tile)
+unsigned char heavy_anim;   // frame animacion enemigo
+unsigned char heavy_mov;    // contador movimiento enemigo
+unsigned char heavy_active; // enemigo activo en este mapa
 
-unsigned char e2x;     // enemigo2 pos x (tile)
-unsigned char e2y;     // enemigo2 pos y (tile)
-unsigned char e2mov;   // contador movimiento enemigo2
-unsigned char e2active;// enemigo2 activo en este mapa
+unsigned char heavy2_x;
+unsigned char heavy2_y;
+unsigned char heavy2_mov;
+unsigned char heavy2_active;
 
-unsigned char boss_active; // jefe final activo (mapa6)
-unsigned char boss_x;      // tile x del boss
-unsigned char boss_y;      // tile y del boss
-unsigned char boss_hp;     // vida del boss (3 golpes)
+unsigned char octo1_x;      // enemigo2 pos x (tile)
+unsigned char octo1_y;      // enemigo2 pos y (tile)
+unsigned char octo1_mov;    // contador movimiento enemigo2
+unsigned char octo1_active; // enemigo2 activo en este mapa
+unsigned char octo1_dir;    // direccion actual: 0=up 1=right 2=down 3=left
+unsigned char octo1_steps;  // pasos restantes antes de cambiar direccion
+
+unsigned char octo2_x;      // enemigo3 pos x (tile)
+unsigned char octo2_y;      // enemigo3 pos y (tile)
+unsigned char octo2_mov;    // contador movimiento enemigo3
+unsigned char octo2_active; // enemigo3 activo en este mapa
+unsigned char octo2_dir;    // direccion actual: 0=up 1=right 2=down 3=left
+unsigned char octo2_steps;  // pasos restantes antes de cambiar direccion
+
+unsigned char octo1_shot_active;  // disparo del octo e2
+unsigned char octo1_shot_x;
+unsigned char octo1_shot_y;
+unsigned char octo1_shot_dir;
+unsigned char octo1_shot_mov;
+
+unsigned char octo2_shot_active; // disparo del octo e3
+unsigned char octo2_shot_x;
+unsigned char octo2_shot_y;
+unsigned char octo2_shot_dir;
+unsigned char octo2_shot_mov;
+
+unsigned char boss_active;     // jefe final activo (mapa6)
+unsigned char boss_x;          // tile x del boss
+unsigned char boss_y;          // tile y del boss
+unsigned char boss_hp;     // vida del boss (8 golpes)
 unsigned char boss_mov;    // contador movimiento boss
-unsigned char boss_form;   // formacion de fuego: 0=X (diagonales), 1=+ (cardinales)
+unsigned char boss_form;       // alterna disparo: 0=horizontal 1=vertical
+
+unsigned char boss_shot_active;
+unsigned char boss_shot_x;
+unsigned char boss_shot_y;
+unsigned char boss_shot_dir;
+unsigned char boss_shot_mov;
 
 unsigned char npc_active; // npc estatico activo en este mapa
 unsigned char npc_x;      // npc pos x (tile)
@@ -79,17 +111,11 @@ unsigned char vidas;
 unsigned char fuerza;
 unsigned char rand_seed; // semilla del generador; se inicializa con el registro R del Z80 (aleatorio en arranque)
 unsigned char llave_anim;
-unsigned char entrada_mapa; // mapa de la entrada 1 (siempre 1)
-unsigned char entrada_pos;  // posicion fija de la entrada 1
-unsigned char entrada2_mapa; // mapa de la entrada 2 (2 o 5, aleatorio)
-unsigned char entrada2_pos;  // posicion aleatoria de la entrada 2
+unsigned char tienda_mapa; // mapa de la tienda 1 (siempre 1)
+unsigned char tienda_pos;  // posicion fija de la tienda 1
+unsigned char mazmorra_mapa; // mapa de la tienda 2 (2 o 5, aleatorio)
+unsigned char mazmorra_pos;  // posicion de la tienda 2 (centro del mapa)
 
-// posiciones validas en mapa1: (3,1) (6,1) (8,1) (3,3) (9,3) (4,5) (11,5) (3,6)
-const unsigned char cand1[8] = {19, 22, 24, 51, 57, 84, 91, 99};
-// posiciones validas en mapa2: (3,1) (7,1) (3,3) (7,3) (4,5) (9,5) (3,7) (6,7)
-const unsigned char cand2[8] = {19, 23, 51, 55, 84, 89, 115, 118};
-// posiciones validas en mapa4: (4,3) (7,3) (10,3) (4,4) (7,4) (10,4) (5,5) (9,5)
-const unsigned char cand4[8] = {52, 55, 58, 68, 71, 74, 85, 89};
 
 void init_rand(void) {
     #asm
@@ -98,56 +124,68 @@ void init_rand(void) {
     #endasm
 }
 
-// Generador congruencial lineal: seed = seed*167+13. Rapido y determinista; semilla del registro R del Z80.
+// Generador congruencial lineal: seed = seed*65+13. Rapido y determinista; semilla del registro R del Z80.
 unsigned char rand_next(void) {
-    rand_seed = rand_seed * 167 + 13;
+    rand_seed = rand_seed * 65 + 13;
     return rand_seed;
 }
 
-void randomiza_entrada(void) {
-    unsigned char r;
-    // entrada 1: siempre en mapa 1, posicion fija
-    entrada_mapa = 1;
-    entrada_pos = 19; // (3,1) en mapa1
-    // entrada 2: aleatoria entre mapa 2 y mapa 4
-    r = rand_next();
-    entrada2_mapa = (r & 128) ? 4 : 2;
-    r = rand_next() & 7;
-    entrada2_pos = (entrada2_mapa == 2) ? cand2[r] : cand4[r];
+void randomiza_tienda(void) {
+    // tienda 1: siempre en mapa 1, centro del mapa
+    tienda_mapa = 1;
+    tienda_pos = 19; // (4,2) en mapa1
+    // tienda 2: mapa aleatorio (2 o 4), siempre en el centro
+    mazmorra_mapa = (rand_next() & 128) ? 4 : 2;
+    mazmorra_pos = 71; // (7,4) centro del mapa 16x9
 }
 
 // Carga en mapa_trabajo los tiles del mapa actual, activa los enemigos correspondientes y fija el color de borde.
 void carga_datos_mapa (void) {
     // reset de todos los enemigos (se reactivaran segun el mapa)
-    eactive = 0;
-    eanim = 0;
-    emov = 0;
-    e2active = 0;
-    e2mov = 0;
+    heavy_active = 0;
+    heavy_anim = 0;
+    heavy_mov = 0;
+    heavy2_active = 0;
+    heavy2_mov = 0;
+    octo1_active = 0;
+    octo1_mov = 0;
+    octo1_dir = 1;
+    octo1_steps = 3;
+    octo2_active = 0;
+    octo2_mov = 0;
+    octo2_dir = 1;
+    octo2_steps = 3;
+    octo1_shot_active = 0;
+    octo2_shot_active = 0;
     npc_active = 0;
     if (mapa_actual == 1) {
-        eactive = 1;
         borde_actual = 6; port_out(254, borde_actual);
         for (x = 0; x < ancho_mapa * alto_mapa; x++) {
             mapa_trabajo[x] = mapa1[x];
         }
-        mapa_trabajo[entrada_pos] = 9;
+        mapa_trabajo[tienda_pos] = 9;
     }
     if (mapa_actual == 2) {
-        e2active = 1; e2x = 8; e2y = 4;
+        octo1_active = 1; octo1_x = 8; octo1_y = 4;
+        octo1_dir = (rand_next() >> 6) & 3;
+        octo1_steps = 2 + (rand_next() & 3);
+        octo2_active = 1; octo2_x = 4; octo2_y = 6;
+        octo2_dir = (rand_next() >> 6) & 3;
+        octo2_steps = 2 + (rand_next() & 3);
         borde_actual = 6; port_out(254, borde_actual);
         for (x = 0; x < ancho_mapa * alto_mapa; x++) {
             mapa_trabajo[x] = mapa2[x];
         }
-        if (entrada2_mapa == 2) {
-            mapa_trabajo[entrada2_pos] = 9;
-            mapa_trabajo[entrada2_pos - 1] = 6;
-            mapa_trabajo[entrada2_pos + 1] = 7;
-            mapa_trabajo[entrada2_pos - ancho_mapa] = 8;
+        if (mazmorra_mapa == 2) {
+            mapa_trabajo[mazmorra_pos] = 9;
+            mapa_trabajo[mazmorra_pos - 1] = 6;
+            mapa_trabajo[mazmorra_pos + 1] = 7;
+            mapa_trabajo[mazmorra_pos - ancho_mapa] = 8;
         }
     }
     if (mapa_actual == 3) {
-        eactive = 1; ex = 10; ey = 4;
+        heavy_active = 1; heavy_x = 10; heavy_y = 4;
+        heavy2_active = 1; heavy2_x = 4; heavy2_y = 4;
         borde_actual = 0; port_out(254, borde_actual);
         for (x = 0; x < ancho_mapa * alto_mapa; x++) {
             mapa_trabajo[x] = mapa3[x];
@@ -158,15 +196,21 @@ void carga_datos_mapa (void) {
         }
     }
     if (mapa_actual == 4) {
+        octo1_active = 1; octo1_x = 8; octo1_y = 4;
+        octo1_dir = (rand_next() >> 6) & 3;
+        octo1_steps = 2 + (rand_next() & 3);
+        octo2_active = 1; octo2_x = 4; octo2_y = 6;
+        octo2_dir = (rand_next() >> 6) & 3;
+        octo2_steps = 2 + (rand_next() & 3);
         borde_actual = 6; port_out(254, borde_actual);
         for (x = 0; x < ancho_mapa * alto_mapa; x++) {
             mapa_trabajo[x] = mapa4[x];
         }
-        if (entrada2_mapa == 4) {
-            mapa_trabajo[entrada2_pos] = 9;
-            mapa_trabajo[entrada2_pos - 1] = 6;
-            mapa_trabajo[entrada2_pos + 1] = 7;
-            mapa_trabajo[entrada2_pos - ancho_mapa] = 8;
+        if (mazmorra_mapa == 4) {
+            mapa_trabajo[mazmorra_pos] = 9;
+            mapa_trabajo[mazmorra_pos - 1] = 6;
+            mapa_trabajo[mazmorra_pos + 1] = 7;
+            mapa_trabajo[mazmorra_pos - ancho_mapa] = 8;
         }
     }
     if (mapa_actual == 5) {
@@ -177,7 +221,8 @@ void carga_datos_mapa (void) {
         }
     }
     if (mapa_actual == 6) {
-        boss_active = 1; boss_x = 7; boss_y = 4; boss_hp = 3; boss_mov = 0; boss_form = 0;
+        boss_active = 1; boss_x = 7; boss_y = 4; boss_hp = 8; boss_mov = 0; boss_form = 0;
+        boss_shot_active = 0;
         borde_actual = 0; port_out(254, borde_actual);
         for (x = 0; x < ancho_mapa * alto_mapa; x++) {
             mapa_trabajo[x] = mapa6[x];
@@ -241,25 +286,52 @@ void inicia_variables_juego(void) {
     inv_timer = 0;
 
     //enemigo
-    ex = 7;
-    ey = 7;
-    eanim = 0;
-    emov = 0;
-    eactive = 1;
+    heavy_x = 7;
+    heavy_y = 7;
+    heavy_anim = 0;
+    heavy_mov = 0;
+    heavy_active = 1;
+    heavy2_x = 0;
+    heavy2_y = 0;
+    heavy2_mov = 0;
+    heavy2_active = 0;
 
     //enemigo2
-    e2x = 0;
-    e2y = 0;
-    e2mov = 0;
-    e2active = 0;
+    octo1_x = 0;
+    octo1_y = 0;
+    octo1_mov = 0;
+    octo1_active = 0;
+    octo1_dir = 1;
+    octo1_steps = 3;
+
+    //enemigo3
+    octo2_x = 0;
+    octo2_y = 0;
+    octo2_mov = 0;
+    octo2_active = 0;
+    octo2_dir = 1;
+    octo2_steps = 3;
+
+    //disparo
+    octo1_shot_active = 0;
+    octo1_shot_x = 0;
+    octo1_shot_y = 0;
+    octo1_shot_dir = 0;
+    octo1_shot_mov = 0;
+    octo2_shot_active = 0;
+    octo2_shot_x = 0;
+    octo2_shot_y = 0;
+    octo2_shot_dir = 0;
+    octo2_shot_mov = 0;
 
     //boss
     boss_active = 0;
     boss_x = 7;
     boss_y = 4;
-    boss_hp = 3;
+    boss_hp = 8;
     boss_mov = 0;
     boss_form = 0;
+    boss_shot_active = 0;
 
     //npc estatico
     npc_active = 0;
@@ -275,6 +347,6 @@ void inicia_variables_juego(void) {
     alto_mapa = 9;
     mapa_actual = 1;
     init_rand();
-    randomiza_entrada();
+    randomiza_tienda();
     carga_datos_mapa();
 }

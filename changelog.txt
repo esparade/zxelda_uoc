@@ -1,2 +1,5 @@
-- se ha implementado la funcionalidad de redefinir en el menu
-- se ha implementado al boss final con sus 4 fuegos alrededor, alternando entre posicion alrededor X y +
+- se ha implementado por completo al octo, incluyendo el disparo
+- ahora hay dos enemigos independientes en cada pantalla con enemigos
+- se ha arreglado la posicion de la entrada a la mazmorra, ahora esta siempre en el centro
+- se han eliminado los enemigos de la pantalla de la tienda
+- el boss ahora dispara como los octos

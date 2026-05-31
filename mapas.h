@@ -27,7 +27,7 @@ extern unsigned char mapa6[];
 
     ._mapa1 //start point
     defb SL,AR,AR,AR,AR,AR,AR,AR,AR,AR,AR,AR,AR,AR,AR,SL
-    defb SL,AR,AR,SL,AR,AR,SL,SL,SL,AR,AR,AR,AR,AR,AR,SL
+    defb SL,AR,AR,VO,AR,AR,SL,SL,SL,AR,AR,AR,AR,AR,AR,SL
     defb SL,AR,AR,SL,SL,SL,SL,SL,SL,AR,AR,AR,AR,AR,AR,SL
     defb SL,AR,SL,SL,SL,SL,SL,SL,SL,SL,AR,AR,AR,AR,AR,SL
     defb SL,AR,SL,SL,SL,SL,SL,SL,SL,SL,SL,SL,SL,SL,AR,SL
