@@ -50,6 +50,8 @@ void main (void) {
                 check_power();
                 anima_llave();
                 if (inv_timer > 0) inv_timer--; // invul heroe tras recibir daño (40 frames, 0,8seg a 50hz)
+                mueve_spike();
+                animacion_spike();
                 mueve_heavy();
                 animacion_heavy();
                 mueve_heavy2();

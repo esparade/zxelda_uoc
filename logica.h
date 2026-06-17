@@ -9,10 +9,24 @@ void anima_llave(void) {
 }
 
 // solidosolidos: arbol(1), matorral(2), bloque(3), pared(5),
-// puerta_izq(6), puerta_der(7), puerta_arr(8), puerta_cerrada(12), tumba(17), agua(18).
+// puerta_izq(6), puerta_der(7), puerta_arr(8), puerta_cerrada(12), tumba(17), agua(18), bloque_empujable(19).
 // transparentes: suelo(0), baldosa(4), void(9), fuego(13) e items(14,15,16).
 int es_solido(unsigned char tile) {
-    return tile==1 || tile==2 || tile==3 || tile==5 || tile==6 || tile==7 || tile==8 || tile==12 || tile==17 || tile==18;
+    return tile==1 || tile==2 || tile==3 || tile==5 || tile==6 || tile==7 || tile==8 || tile==12 || tile==17 || tile==18 || tile==19;
+}
+
+// Intenta empujar el bloque empujable en (bx,by) hacia (dest_x,dest_y).
+// Devuelve 1 si el empuje tuvo exito (destino libre), 0 si esta bloqueado.
+// Al empujar, restaura baldosa(4) en la posicion original del bloque.
+unsigned char intenta_empujar_bloque(unsigned char bx, unsigned char by, unsigned char dest_x, unsigned char dest_y) {
+    if (dest_x < 1 || dest_x > ancho_mapa-2) return 0;
+    if (dest_y >= alto_mapa) return 0;
+    if (es_solido(mapa_trabajo[dest_y*ancho_mapa+dest_x])) return 0;
+    mapa_trabajo[by*ancho_mapa+bx] = 4;
+    mapa_trabajo[dest_y*ancho_mapa+dest_x] = 3;
+    render_tile(4, bx, by);
+    render_tile(3, dest_x, dest_y);
+    return 1;
 }
 
 // abre acceso superior de dngn_c3 si tienes llave y estas en fila 1
@@ -383,6 +397,110 @@ void render_npc(void) { // dibuja el mapa de la tienda
     put_hud_char(F_DIG(1), 18, 16, 48);
     put_hud_char(F_DIG(0), 19, 16, 48);
     put_hud_char(F_DIG(0), 20, 16, 48);
+}
+
+void animacion_spike(void) {
+    if (!spike_active) return;
+    put_sprite_x16(enmy_spk, spike1_x*2+MAPA_OX, spike1_y*2+MAPA_OY);
+    put_sprite_x16(enmy_spk, spike2_x*2+MAPA_OX, spike2_y*2+MAPA_OY);
+    put_sprite_x16(enmy_spk, spike3_x*2+MAPA_OX, spike3_y*2+MAPA_OY);
+    put_sprite_x16(enmy_spk, spike4_x*2+MAPA_OX, spike4_y*2+MAPA_OY);
+}
+
+void spike_dmg(unsigned char sx, unsigned char sy) {
+    if (sx == hx && sy == hy && inv_timer == 0) {
+        vidas = (vidas >= enemy_dmg) ? vidas - enemy_dmg : 0;
+        sonido_danio(); render_hud_vidas();
+        inv_timer = 40;
+        if (vidas == 0) cambiar_pantalla(PANTALLA_GAME_OVER);
+    }
+}
+
+// mueve un spike individual un paso en su direccion (state=1) o de vuelta (state=2).
+// dir: 0=arr 1=der 2=abj 3=izq
+void mueve_un_spike(unsigned char *sx, unsigned char *sy,
+                    unsigned char hx2, unsigned char hy2,
+                    unsigned char *state, unsigned char *mov, unsigned char dir) {
+    if (*state == 1) {
+        (*mov)++;
+        if (*mov >= 3) {
+            *mov = 0;
+            render_tile(mapa_trabajo[(*sy)*ancho_mapa+(*sx)], *sx, *sy);
+            switch(dir) {
+                case 0: if (*sy > 0)           (*sy)--; break;
+                case 1: if (*sx < ancho_mapa-1)(*sx)++; break;
+                case 2: if (*sy < alto_mapa-1) (*sy)++; break;
+                case 3: if (*sx > 0)           (*sx)--; break;
+            }
+            spike_dmg(*sx, *sy);
+        }
+    } else if (*state == 2) {
+        (*mov)++;
+        if (*mov >= 16) {
+            *mov = 0;
+            render_tile(mapa_trabajo[(*sy)*ancho_mapa+(*sx)], *sx, *sy);
+            if      (*sx > hx2) (*sx)--;
+            else if (*sx < hx2) (*sx)++;
+            if      (*sy > hy2) (*sy)--;
+            else if (*sy < hy2) (*sy)++;
+            spike_dmg(*sx, *sy);
+            if (*sx == hx2 && *sy == hy2) *state = 0;
+        }
+    }
+}
+
+// 4 spikes en las 4 esquinas con estado independiente, cada spike puede pertenecer
+// a un par horizontal (misma fila) o vertical (misma columna) segun donde este hero
+// al acercarte a una pared, el par de esa pared se lanza hacia el centro,
+// choca con sonido metalico y vuelve despacio a las esquinas.
+void mueve_spike(void) {
+    if (!spike_active) return;
+
+    // cuando hero entra en la fila o columna de la pared
+    if (hy == spike1_hy && spike1_state == 0 && spike2_state == 0) { // par horizontal sup
+        spike1_state=1; spike1_dir=1; spike1_mov=0;
+        spike2_state=1; spike2_dir=3; spike2_mov=0;
+    }
+    if (hy == spike3_hy && spike3_state == 0 && spike4_state == 0) { // par horizontal inf
+        spike3_state=1; spike3_dir=1; spike3_mov=0;
+        spike4_state=1; spike4_dir=3; spike4_mov=0;
+    }
+    if (hx == spike1_hx && spike1_state == 0 && spike3_state == 0) { // par vertical izq
+        spike1_state=1; spike1_dir=2; spike1_mov=0;
+        spike3_state=1; spike3_dir=0; spike3_mov=0;
+    }
+    if (hx == spike2_hx && spike2_state == 0 && spike4_state == 0) { // par vertical der
+        spike2_state=1; spike2_dir=2; spike2_mov=0;
+        spike4_state=1; spike4_dir=0; spike4_mov=0;
+    }
+
+    // movimiento de cada spike
+    mueve_un_spike(&spike1_x,&spike1_y,spike1_hx,spike1_hy,&spike1_state,&spike1_mov,spike1_dir); // spike 1 top left
+    mueve_un_spike(&spike2_x,&spike2_y,spike2_hx,spike2_hy,&spike2_state,&spike2_mov,spike2_dir); // spike 2 top right
+    mueve_un_spike(&spike3_x,&spike3_y,spike3_hx,spike3_hy,&spike3_state,&spike3_mov,spike3_dir); // spike 3 down left
+    mueve_un_spike(&spike4_x,&spike4_y,spike4_hx,spike4_hy,&spike4_state,&spike4_mov,spike4_dir); // spike 4 down right
+
+    // colision - cuando el par se encuentra en el centro, cambian estado a retorno y suenan
+    if (spike1_state==1 && spike2_state==1 &&                             // par horizontal sup
+        spike1_y==spike2_y && spike2_x<=spike1_x+1) {
+        spike1_state=2; spike1_mov=0; spike2_state=2; spike2_mov=0;
+        sonido_choque_spike();
+    }
+    if (spike3_state==1 && spike4_state==1 &&                             // par horizontal inf
+        spike3_y==spike4_y && spike4_x<=spike3_x+1) {
+        spike3_state=2; spike3_mov=0; spike4_state=2; spike4_mov=0;
+        sonido_choque_spike();
+    }
+    if (spike1_state==1 && spike3_state==1 &&                             // par vertical izq
+        spike1_x==spike3_x && spike3_y<=spike1_y+1) {
+        spike1_state=2; spike1_mov=0; spike3_state=2; spike3_mov=0;
+        sonido_choque_spike();
+    }
+    if (spike2_state==1 && spike4_state==1 &&                             // par vertical der
+        spike2_x==spike4_x && spike4_y<=spike2_y+1) {
+        spike2_state=2; spike2_mov=0; spike4_state=2; spike4_mov=0;
+        sonido_choque_spike();
+    }
 }
 
 void animacion_heavy(void) {

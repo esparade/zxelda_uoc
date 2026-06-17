@@ -37,6 +37,7 @@ extern unsigned char enmy_octoRight [];
 extern unsigned char enmy_octoDown [];
 extern unsigned char enmy_octoLeft [];
 extern unsigned char enmy_octoShot [];
+extern unsigned char enmy_spk [];
 
 extern unsigned char enmy_hvy [];
 
@@ -270,6 +271,13 @@ extern unsigned char fuente [];
 	DEFB	117,174,116, 46, 54,108, 51,204
 	DEFB	 24, 24, 15,240,  7,224,  3,192
 	DEFB	 61, 61, 61, 61
+
+	._enmy_spk
+	DEFB	  2, 64,  2, 64,  2, 64,  2, 64
+	DEFB	  7,224, 10, 80,253,191, 11,208
+	DEFB	 11,208,253,191, 10, 80,  7,224
+	DEFB	  2, 64,  2, 64,  2, 64,  2, 64
+	DEFB	 57, 57, 57, 57
 
 	._npc_shopper
 	DEFB	 15,240, 31,248, 24, 24, 10, 80

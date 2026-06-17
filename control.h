@@ -80,7 +80,9 @@ void control_teclas_juego (void) {
             return;
         }
 
-        if (es_solido(mapa_trabajo[hmap-ancho_mapa])) { //cancelar movimiento tile solido
+        if (mapa_trabajo[hmap-ancho_mapa] == 19) {
+            if (!intenta_empujar_bloque(hx, hy-1, hx, hy-2)) return;
+        } else if (es_solido(mapa_trabajo[hmap-ancho_mapa])) { //cancelar movimiento tile solido
             return;
         }
 
@@ -116,7 +118,9 @@ void control_teclas_juego (void) {
             return;
         }
 
-        if (es_solido(mapa_trabajo[hmap+1])) { //cancelar movimiento tile solido
+        if (mapa_trabajo[hmap+1] == 19) {
+            if (!intenta_empujar_bloque(hx+1, hy, hx+2, hy)) return;
+        } else if (es_solido(mapa_trabajo[hmap+1])) { //cancelar movimiento tile solido
             return;
         }
 
@@ -152,7 +156,9 @@ void control_teclas_juego (void) {
             return;
         }
 
-        if (es_solido(mapa_trabajo[hmap+ancho_mapa])) { //cancelar movimiento tile solido
+        if (mapa_trabajo[hmap+ancho_mapa] == 19) {
+            if (!intenta_empujar_bloque(hx, hy+1, hx, hy+2)) return;
+        } else if (es_solido(mapa_trabajo[hmap+ancho_mapa])) { //cancelar movimiento tile solido
             return;
         }
         x8=hx*2;          // medio char en la columna del tile actual
@@ -187,7 +193,9 @@ void control_teclas_juego (void) {
             return;
         }
 
-        if (es_solido(mapa_trabajo[hmap - 1])) { //cancelar movimiento tile solido
+        if (mapa_trabajo[hmap-1] == 19) {
+            if (!intenta_empujar_bloque(hx-1, hy, hx-2, hy)) return;
+        } else if (es_solido(mapa_trabajo[hmap - 1])) { //cancelar movimiento tile solido
             return;
         }
         x8=(hx*2)-1; // medio char en la columna del tile actual (posicion intermedia)

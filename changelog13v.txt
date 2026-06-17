@@ -1,0 +1,4 @@
+v13
+- se ha implementado la funcionalidad del bloque empujable
+- ahora el bloque empujable obliga al jugador a recorrer las mazmorras alrededor de dng_e2 // ID64 en cierto orden
+- se ha implementado al enemigo spike, son unos pinchos en las esquinas de los mapas que se acercan al jugador en linea recta si este se acerca

@@ -294,6 +294,9 @@ int render_tile(int grafico, int x, int y) {
         case 18:
             put_sprite_x16(wrld_watr, x*2+MAPA_OX, y*2+MAPA_OY);
         break;
+        case 19:
+            put_sprite_x16(dngn_blck, x*2+MAPA_OX, y*2+MAPA_OY);
+        break;
     }
 }
 

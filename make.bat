@@ -1,14 +1,11 @@
 @echo off
-REM _________________________________________________________
-REM Inicializamos las variables de sistema de Z88DK
-REM _________________________________________________________
-echo "ESTA ES LA VERSION 1.10"
+echo "z88dk version 1.10"
 set Z88DK_PATH=c:\z88dk10
 set PATH=%Z88DK_PATH%\bin;%PATH%
 set Z80_OZFILES=%Z88DK_PATH%\Lib\
 set ZCCCFG=%Z88DK_PATH%\Lib\Config\
 REM _________________________________________________________
-REM Compilamos el juego
+REM compilamos
 REM _________________________________________________________
 echo ## COMPILANDO
 zcc +zx -vn zxelda.c -o zxelda.bin -lndos -zorg=24200
@@ -21,7 +18,7 @@ utilszx\bin2tap -o loading_screen.tap -a 16384 loadingzx.bin
 utilszx\bin2tap -o mainzx.tap -a 24200 zxelda.bin
 copy /b loaderzx.tap + loading_screen.tap + mainzx.tap zxelda.tap
 REM _________________________________________________________
-REM Borramos ficheros temporales generados
+REM borrando temporales
 REM _________________________________________________________
 echo ## BORRANDO TEMPORALES
 del loaderzx.tap
@@ -30,6 +27,6 @@ del zxelda.bin
 del *.def
 echo ## FIN
 REM _________________________________________________________
-REM Esperamos a que el usuario pulse una tecla para cerrar
+REM pulsa para salir
 REM _________________________________________________________
 pause

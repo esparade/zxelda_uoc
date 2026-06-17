@@ -50,6 +50,7 @@ extern unsigned char dngn_g2[];
     defc FG = 13   ; fuego (transparente)
     defc TB = 17   ; tumba (solida)
     defc WT = 18   ; agua (solida)
+    defc PB = 19   ; bloque empujable (solido, se desplaza una casilla al empujarlo)
 
 ; world
 ;   1 2 3 4 5 6
@@ -269,7 +270,7 @@ extern unsigned char dngn_g2[];
     defb VO,MU,RK,RK,RK,RK,RK,PS,PS,RK,RK,RK,RK,RK,MU,VO
     defb VO,MU,RK,RK,RK,RK,RK,RK,PS,RK,RK,RK,RK,RK,MU,VO
     defb VO,RK,RK,RK,RK,RK,RK,RK,PS,RK,RK,RK,RK,RK,RK,VO
-    defb VO,VO,PS,PS,PS,PS,PS,PS,PS,PS,PS,PS,PS,PS,VO,VO
+    defb VO,VO,PS,PS,PS,PS,PS,PS,PB,PS,PS,PS,PS,PS,VO,VO
     defb VO,RK,RK,RK,RK,RK,RK,RK,PS,RK,RK,RK,RK,RK,RK,VO
     defb VO,MU,RK,RK,RK,RK,RK,RK,PS,RK,RK,RK,RK,RK,MU,VO
     defb VO,MU,RK,RK,RK,RK,RK,PS,PS,RK,RK,RK,RK,RK,MU,VO
@@ -354,8 +355,8 @@ extern unsigned char dngn_g2[];
 
     ._dngn_a1 //ID50
     defb VO,FG,MU,MU,MU,MU,RK,VO,VO,RK,MU,MU,MU,MU,FG,VO
-    defb VO,MU,PS,PS,PS,PS,PS,PS,PS,RK,PS,PS,PS,PS,MU,VO
-    defb VO,MU,PS,RK,RK,RK,RK,RK,RK,RK,RK,RK,RK,PS,MU,VO
+    defb VO,MU,PS,PS,PS,PS,PS,PS,PS,RK,RK,RK,RK,RK,MU,VO
+    defb VO,MU,PS,RK,RK,RK,RK,RK,RK,RK,RK,RK,RK,RK,MU,VO
     defb VO,MU,PS,PS,PS,PS,PS,PS,PS,PS,PS,PS,RK,RK,RK,VO
     defb VO,MU,RK,RK,RK,RK,RK,RK,RK,RK,RK,PS,RK,PS,VO,VO
     defb VO,MU,PS,PS,PS,PS,PS,PS,PS,PS,PS,PS,RK,PS,RK,VO

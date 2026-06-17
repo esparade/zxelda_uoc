@@ -74,6 +74,13 @@ unsigned char borde_actual = 6; // color de borde actual (bits 0-2 de puerto 254
 
 unsigned char puerta_abierta;  // 1 si la puerta del dungeon se abrio (persistente)
 
+unsigned char spike_active;
+// estado independiente por spike: permite reaccionar en horizontal Y vertical
+unsigned char spike1_x, spike1_y, spike1_hx, spike1_hy, spike1_state, spike1_mov, spike1_dir;
+unsigned char spike2_x, spike2_y, spike2_hx, spike2_hy, spike2_state, spike2_mov, spike2_dir;
+unsigned char spike3_x, spike3_y, spike3_hx, spike3_hy, spike3_state, spike3_mov, spike3_dir;
+unsigned char spike4_x, spike4_y, spike4_hx, spike4_hy, spike4_state, spike4_mov, spike4_dir;
+
 unsigned char llave_en_mapa;    // 1 si la llave esta en el suelo
 unsigned char llave_mapa;       // en que mapa cayo la llave
 unsigned char llave_pos;        // indice en mapa_trabajo donde esta la llave
@@ -173,6 +180,8 @@ void carga_datos_mapa (void) {
     octo1_shot_active = 0;
     octo2_shot_active = 0;
     npc_active = 0;
+    spike_active = 0;
+    spike1_state=0; spike2_state=0; spike3_state=0; spike4_state=0;
     // heavy: spawnea solo en mazmorra incluyendo boss
     if (mapa_actual == 59 || mapa_actual == 67 || mapa_actual == 70 || mapa_actual == 50 || mapa_actual == 51 || mapa_actual == 53 || mapa_actual == 54 || mapa_actual == 55 || mapa_actual == 61 || mapa_actual == 62 || mapa_actual == 63 || mapa_actual == 65) {
         heavy_active = 1; heavy_x = 10; heavy_y = 4;
@@ -349,6 +358,11 @@ void carga_datos_mapa (void) {
         for (x = 0; x < ancho_mapa * alto_mapa; x++) {
             mapa_trabajo[x] = dngn_b1[x];
         }
+        spike_active=1;
+        spike1_x=2;  spike1_y=1;  spike1_hx=2;  spike1_hy=1;  spike1_state=0; spike1_mov=0; spike1_dir=0;
+        spike2_x=13; spike2_y=1;  spike2_hx=13; spike2_hy=1;  spike2_state=0; spike2_mov=0; spike2_dir=0;
+        spike3_x=2;  spike3_y=7;  spike3_hx=2;  spike3_hy=7;  spike3_state=0; spike3_mov=0; spike3_dir=0;
+        spike4_x=13; spike4_y=7;  spike4_hx=13; spike4_hy=7;  spike4_state=0; spike4_mov=0; spike4_dir=0;
     }
     if (mapa_actual == 54) {
         borde_actual = 0; port_out(254, borde_actual);
@@ -361,6 +375,11 @@ void carga_datos_mapa (void) {
         for (x = 0; x < ancho_mapa * alto_mapa; x++) {
             mapa_trabajo[x] = dngn_b3[x];
         }
+        spike_active=1;
+        spike1_x=2;  spike1_y=1;  spike1_hx=2;  spike1_hy=1;  spike1_state=0; spike1_mov=0; spike1_dir=0;
+        spike2_x=13; spike2_y=1;  spike2_hx=13; spike2_hy=1;  spike2_state=0; spike2_mov=0; spike2_dir=0;
+        spike3_x=2;  spike3_y=7;  spike3_hx=2;  spike3_hy=7;  spike3_state=0; spike3_mov=0; spike3_dir=0;
+        spike4_x=13; spike4_y=7;  spike4_hx=13; spike4_hy=7;  spike4_state=0; spike4_mov=0; spike4_dir=0;
     }
     if (mapa_actual == 61) { // dngn_d2
         borde_actual = 0; port_out(254, borde_actual);
@@ -628,6 +647,13 @@ void inicia_variables_juego(void) {
     npc_active = 0;
     npc_x = 0;
     npc_y = 0;
+
+    //spikes
+    spike_active=0;
+    spike1_x=0; spike1_y=0; spike1_hx=0; spike1_hy=0; spike1_state=0; spike1_mov=0; spike1_dir=0;
+    spike2_x=0; spike2_y=0; spike2_hx=0; spike2_hy=0; spike2_state=0; spike2_mov=0; spike2_dir=0;
+    spike3_x=0; spike3_y=0; spike3_hx=0; spike3_hy=0; spike3_state=0; spike3_mov=0; spike3_dir=0;
+    spike4_x=0; spike4_y=0; spike4_hx=0; spike4_hy=0; spike4_state=0; spike4_mov=0; spike4_dir=0;
 
     //puertas
     puerta_abierta = 0;

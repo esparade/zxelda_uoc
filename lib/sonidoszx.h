@@ -97,6 +97,28 @@ void sonido_secreto (void) {
     }
 }
 
+void sonido_choque_spike(void) {
+    unsigned char i;
+    for (i = 0; i < 20; i++) {          // impacto agudo
+        port_out(254, borde_actual | 16);
+        port_out(254, borde_actual | 16);
+        port_out(254, borde_actual);
+        port_out(254, borde_actual);
+    }
+    for (i = 0; i < 20; i++) {          // resonancia metalica
+        port_out(254, borde_actual | 16);
+        port_out(254, borde_actual | 16);
+        port_out(254, borde_actual | 16);
+        port_out(254, borde_actual | 16);
+        port_out(254, borde_actual | 16);
+        port_out(254, borde_actual);
+        port_out(254, borde_actual);
+        port_out(254, borde_actual);
+        port_out(254, borde_actual);
+        port_out(254, borde_actual);
+    }
+}
+
 void sonido_llave (void) {
 	unsigned char i;
 	for (i = 0; i < 20; i++) {
