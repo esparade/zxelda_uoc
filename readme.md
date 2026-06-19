@@ -3,7 +3,7 @@
   <img src="https://github.com/esparade/zxelda_uoc/blob/master/art/concepts/readme.png?raw=true" alt="CHALKBOARD SCRAPING SOUNDS"/>
 </p>
 
-The original _[The Legend of Zelda](https://en.wikipedia.org/wiki/The_Legend_of_Zelda_(video_game))_ game for the [Famicom Disk System](https://en.wikipedia.org/wiki/Famicom_Disk_System) ported over the [ZX Spectrum (48k)](https://en.wikipedia.org/wiki/ZX_Spectrum), with roguelike elements, as a [UOC](https://en.wikipedia.org/wiki/Open_University_of_Catalonia) CS undergraduate thesis project. First semester of 2026. Made by [Esparade](https://github.com/esparade).
+The original _[The Legend of Zelda](https://en.wikipedia.org/wiki/The_Legend_of_Zelda_(video_game))_ game for the [Famicom Disk System](https://en.wikipedia.org/wiki/Famicom_Disk_System) ported over the [ZX Spectrum (48k)](https://en.wikipedia.org/wiki/ZX_Spectrum), with roguelike elements, as a [UOC](https://en.wikipedia.org/wiki/Open_University_of_Catalonia) CS undergraduate thesis project. First semester of 2026. Made by [esparade](https://github.com/esparade).
 
 ## The History so far ##
 **IN AN INCREDIBLE FAR OUT GALAXY LOST IN THE MINDBOGGLING SIZE OF THE UNIVERSE, AN ENTITY OF INFINITE EVIL HAVE MANAGED TO SEIZE THE DOMAINS OF A DUNGEON.  
