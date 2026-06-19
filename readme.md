@@ -162,4 +162,4 @@ All original property are a registered trademark. **©[Nintendo](https://en.wiki
   - Implemented the state system between menu >> game >> menu (0 and 1 keys).
   - Created the first sprites, including the hero.
 - **v0** - 28 Feb
-  - [baseline example by "radastan"](https://foro.speccy.org/viewtopic.php?t=3836), unchanged.
+  - Tutorial example by "radastan", unchanged.
