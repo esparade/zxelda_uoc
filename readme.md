@@ -14,7 +14,7 @@ In this game, your quest is to find a randomly-generated dungeon entrance in the
 
 ## Play ##
 [Grab the **latest version** ROM file.](https://github.com/esparade/zxelda_uoc/releases) Use your emulator / original hardware / modern hardware of choice to play it.  
-You can play it online at my [homepage](https://rnd-usr.com/zxelda-uoc).
+You can play it online at my [homepage](https://rnd-usr.com/zxelda_uoc).
 
 ### Controls ###
 **Default keys**  
