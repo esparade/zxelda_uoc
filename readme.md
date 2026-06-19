@@ -1,4 +1,4 @@
-# ZXelda #
+# ZXelda UOC #
 <p align="center">
   <img src="https://github.com/esparade/zxelda_uoc/blob/master/art/concepts/readme.png?raw=true" alt="CHALKBOARD SCRAPING SOUNDS"/>
 </p>
