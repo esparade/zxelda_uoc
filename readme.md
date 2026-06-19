@@ -67,15 +67,16 @@ Notice final .tap ROM file is 6912 B bigger, which corresponds with the loading 
 
 ### Tests ###
 _Game fully tested on:_  
-**[ZXSpectrum +](https://en.wikipedia.org/wiki/ZX_Spectrum#ZX_Spectrum+)**  
-**[ZXSpectrum 128k +2](https://en.wikipedia.org/wiki/ZX_Spectrum#ZX_Spectrum_+2)**  
-**[ZXSpectrum 128k +2A](https://en.wikipedia.org/wiki/ZX_Spectrum#ZX_Spectrum_+2A,_+2B_and_+3B)**  
-**[ESPectrum (ESP32 SoC emulator)](https://github.com/EremusOne/ESPectrum)**  
-**[Speccy Emulator](https://fms.komkon.org/Speccy/)**  
-**[Fuse Emulator](https://fuse-emulator.sourceforge.net/)**  
+**[ZXSpectrum +](https://en.wikipedia.org/wiki/ZX_Spectrum#ZX_Spectrum+)** /
+**[ZXSpectrum 128k +2](https://en.wikipedia.org/wiki/ZX_Spectrum#ZX_Spectrum_+2)** /
+**[ZXSpectrum 128k +2A](https://en.wikipedia.org/wiki/ZX_Spectrum#ZX_Spectrum_+2A,_+2B_and_+3B)** /
+**[ESPectrum (ESP32 SoC emulator)](https://github.com/EremusOne/ESPectrum)** /
+**[Speccy Emulator](https://fms.komkon.org/Speccy/)** /
+**[Fuse Emulator](https://fuse-emulator.sourceforge.net/)** /
 **[JSspeccy3](https://github.com/gasman/jsspeccy3)**
 
 ### Tools ###
+_Tools and pipeline used to create the game with:_  
 **[bas2tap](https://github.com/speccyorg/bas2tap)** /
 **[beepFX](https://zxaaa.net/view_demo.php?id=11376)** /
 **[beepola](https://github.com/atsidaev/beepola)** /
